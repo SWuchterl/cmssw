@@ -3,7 +3,7 @@
 
 /** \class TriggerSummaryProducerAOD
  *
- *  
+ *
  *  This class is an EDProducer making the HLT summary object for AOD
  *
  *
@@ -45,6 +45,8 @@
 #include "DataFormats/L1Trigger/interface/L1HFRingsFwd.h"
 #include "DataFormats/JetReco/interface/PFJetCollection.h"
 #include "DataFormats/TauReco/interface/PFTauFwd.h"
+
+#include "DataFormats/L1TParticleFlow/interface/PFJet.h"
 
 #include <map>
 #include <set>
@@ -200,5 +202,6 @@ private:
   edm::GetterOfProducts<l1t::JetBxCollection> getL1TJetParticleCollection_;
   edm::GetterOfProducts<l1t::TauBxCollection> getL1TTauParticleCollection_;
   edm::GetterOfProducts<l1t::EtSumBxCollection> getL1TEtSumParticleCollection_;
+  edm::GetterOfProducts<l1t::PFJetCollection> getL1TPFJetCollection_;
 };
 #endif

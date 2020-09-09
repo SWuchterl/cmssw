@@ -44,6 +44,8 @@
 #include "DataFormats/L1Trigger/interface/Tau.h"
 #include "DataFormats/L1Trigger/interface/EtSum.h"
 
+#include "DataFormats/L1TParticleFlow/interface/PFJet.h"
+
 #include "DataFormats/JetReco/interface/PFJetCollection.h"
 #include "DataFormats/TauReco/interface/PFTauFwd.h"
 
@@ -54,6 +56,10 @@
 #include <vector>
 
 #include <typeinfo>
+
+namespace l1t{
+    typedef std::vector<l1t::PFJetRef> PFJetVectorRef;
+}
 
 namespace trigger {
 
@@ -77,6 +83,7 @@ namespace trigger {
   typedef l1t::JetVectorRef VRl1tjet;
   typedef l1t::TauVectorRef VRl1ttau;
   typedef l1t::EtSumVectorRef VRl1tetsum;
+  typedef l1t::PFJetVectorRef VRl1pfjet;
 
   typedef std::vector<reco::PFJetRef> VRpfjet;
   typedef std::vector<reco::PFTauRef> VRpftau;
@@ -124,6 +131,8 @@ namespace trigger {
     VRl1ttau l1ttauRefs_;
     Vids l1tetsumIds_;
     VRl1tetsum l1tetsumRefs_;
+    Vids l1pfjetIds_;
+    VRl1pfjet l1pfjetRefs_;
 
     Vids pfjetIds_;
     VRpfjet pfjetRefs_;
@@ -174,6 +183,8 @@ namespace trigger {
           l1ttauRefs_(),
           l1tetsumIds_(),
           l1tetsumRefs_(),
+          l1pfjetIds_(),
+          l1pfjetRefs_(),
 
           pfjetIds_(),
           pfjetRefs_(),
@@ -222,6 +233,8 @@ namespace trigger {
       std::swap(l1ttauRefs_, other.l1ttauRefs_);
       std::swap(l1tetsumIds_, other.l1tetsumIds_);
       std::swap(l1tetsumRefs_, other.l1tetsumRefs_);
+      std::swap(l1pfjetIds_, other.l1pfjetIds_);
+      std::swap(l1pfjetRefs_, other.l1pfjetRefs_);
 
       std::swap(pfjetIds_, other.pfjetIds_);
       std::swap(pfjetRefs_, other.pfjetRefs_);
@@ -317,6 +330,10 @@ namespace trigger {
       pfmetIds_.push_back(id);
       pfmetRefs_.push_back(ref);
     }
+    void addObject(int id, const l1t::PFJetRef& ref) {
+     l1pfjetIds_.push_back(id);
+     l1pfjetRefs_.push_back(ref);
+   }
 
     ///
     size_type addObjects(const Vids& ids, const VRphoton& refs) {
@@ -428,6 +445,12 @@ namespace trigger {
       l1hfringsRefs_.insert(l1hfringsRefs_.end(), refs.begin(), refs.end());
       return l1hfringsIds_.size();
     }
+    size_type addObjects(const Vids& ids, const VRl1pfjet& refs) {
+     assert(ids.size() == refs.size());
+     l1pfjetIds_.insert(l1pfjetIds_.end(), ids.begin(), ids.end());
+     l1pfjetRefs_.insert(l1pfjetRefs_.end(), refs.begin(), refs.end());
+     return l1pfjetIds_.size();
+   }
 
     size_type addObjects(const Vids& ids, const VRpfjet& refs) {
       assert(ids.size() == refs.size());
@@ -939,6 +962,7 @@ namespace trigger {
       return;
     }
 
+
     void getObjects(Vids& ids, VRl1tegamma& refs) const { getObjects(ids, refs, 0, l1tegammaIds_.size()); }
     void getObjects(Vids& ids, VRl1tegamma& refs, size_type begin, size_type end) const {
       assert(begin <= end);
@@ -1073,6 +1097,40 @@ namespace trigger {
       for (size_type i = begin; i != end; ++i) {
         if (id == l1tetsumIds_[i]) {
           refs[j] = l1tetsumRefs_[i];
+          ++j;
+        }
+      }
+      return;
+    }
+    void getObjects(Vids& ids, VRl1pfjet& refs) const { getObjects(ids, refs, 0, l1pfjetIds_.size()); }
+    void getObjects(Vids& ids, VRl1pfjet& refs, size_type begin, size_type end) const {
+      assert(begin <= end);
+      assert(end <= l1pfjetIds_.size());
+      const size_type n(end - begin);
+      ids.resize(n);
+      refs.resize(n);
+      size_type j(0);
+      for (size_type i = begin; i != end; ++i) {
+        ids[j] = l1pfjetIds_[i];
+        refs[j] = l1pfjetRefs_[i];
+        ++j;
+      }
+    }
+    void getObjects(int id, VRl1pfjet& refs) const { getObjects(id, refs, 0, l1pfjetIds_.size()); }
+    void getObjects(int id, VRl1pfjet& refs, size_type begin, size_type end) const {
+      assert(begin <= end);
+      assert(end <= l1pfjetIds_.size());
+      size_type n(0);
+      for (size_type i = begin; i != end; ++i) {
+        if (id == l1pfjetIds_[i]) {
+          ++n;
+        }
+      }
+      refs.resize(n);
+      size_type j(0);
+      for (size_type i = begin; i != end; ++i) {
+        if (id == l1pfjetIds_[i]) {
+          refs[j] = l1pfjetRefs_[i];
           ++j;
         }
       }
@@ -1253,6 +1311,7 @@ namespace trigger {
     const Vids& l1tmuonIds() const { return l1tmuonIds_; }
     const VRl1tmuon& l1tmuonRefs() const { return l1tmuonRefs_; }
 
+
     size_type l1tegammaSize() const { return l1tegammaIds_.size(); }
     const Vids& l1tegammaIds() const { return l1tegammaIds_; }
     const VRl1tegamma& l1tegammaRefs() const { return l1tegammaRefs_; }
@@ -1268,6 +1327,10 @@ namespace trigger {
     size_type l1tetsumSize() const { return l1tetsumIds_.size(); }
     const Vids& l1tetsumIds() const { return l1tetsumIds_; }
     const VRl1tetsum& l1tetsumRefs() const { return l1tetsumRefs_; }
+
+    size_type l1pfjetSize() const { return l1pfjetIds_.size(); }
+    const Vids& l1pfjetIds() const { return l1pfjetIds_; }
+    const VRl1pfjet& l1pfjetRefs() const { return l1pfjetRefs_; }
   };
 
   // picked up via argument dependent lookup, e-g- by boost::swap()

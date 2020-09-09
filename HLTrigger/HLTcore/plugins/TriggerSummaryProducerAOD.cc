@@ -138,6 +138,8 @@ TriggerSummaryProducerAOD::TriggerSummaryProducerAOD(const edm::ParameterSet& ps
   getPFJetCollection_ = edm::GetterOfProducts<reco::PFJetCollection>(productMatch, this);
   getPFTauCollection_ = edm::GetterOfProducts<reco::PFTauCollection>(productMatch, this);
   getPFMETCollection_ = edm::GetterOfProducts<reco::PFMETCollection>(productMatch, this);
+  getL1TPFJetCollection_ = edm::GetterOfProducts<l1t::PFJetCollection>(productMatch, this);
+
 
   callWhenNewProductsRegistered([this](edm::BranchDescription const& bd) {
     getTriggerFilterObjectWithRefs_(bd);
@@ -162,6 +164,7 @@ TriggerSummaryProducerAOD::TriggerSummaryProducerAOD(const edm::ParameterSet& ps
     getPFJetCollection_(bd);
     getPFTauCollection_(bd);
     getPFMETCollection_(bd);
+    getL1TPFJetCollection_(bd);
   });
 }
 
@@ -333,12 +336,14 @@ void TriggerSummaryProducerAOD::produce(edm::StreamID, edm::Event& iEvent, const
   fillTriggerObjectCollections<EtSumBxCollection>(
       toc, offset, tags, keys, iEvent, getL1TEtSumParticleCollection_, collectionTagsEvent);
   ///
-  fillTriggerObjectCollections<PFJetCollection>(
+  fillTriggerObjectCollections<reco::PFJetCollection>(
       toc, offset, tags, keys, iEvent, getPFJetCollection_, collectionTagsEvent);
   fillTriggerObjectCollections<PFTauCollection>(
       toc, offset, tags, keys, iEvent, getPFTauCollection_, collectionTagsEvent);
   fillTriggerObjectCollections<PFMETCollection>(
       toc, offset, tags, keys, iEvent, getPFMETCollection_, collectionTagsEvent);
+      fillTriggerObjectCollections<l1t::PFJetCollection>(
+          toc, offset, tags, keys, iEvent, getL1TPFJetCollection_, collectionTagsEvent);
   ///
   const unsigned int nk(tags.size());
   LogDebug("TriggerSummaryProducerAOD") << "Number of collections found: " << nk;

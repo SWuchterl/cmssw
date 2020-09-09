@@ -19,4 +19,6 @@
 <use name="FWCore/ParameterSet"/>
 <use name="FWCore/Utilities"/>
 <use name="HLTrigger/HLTcore"/>
+<use name="DataFormats/L1TCorrelator"/>
+<use name="DataFormats/L1TParticleFlow"/>
 <flags EDM_PLUGIN="1"/>
