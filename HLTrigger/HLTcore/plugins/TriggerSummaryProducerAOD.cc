@@ -26,6 +26,8 @@
 #include "DataFormats/EgammaCandidates/interface/Electron.h"
 #include "DataFormats/RecoCandidate/interface/RecoChargedCandidate.h"
 #include "DataFormats/JetReco/interface/CaloJet.h"
+#include "DataFormats/JetReco/interface/PFJet.h"
+#include "DataFormats/TauReco/interface/PFTau.h"
 #include "DataFormats/Candidate/interface/CompositeCandidate.h"
 #include "DataFormats/METReco/interface/MET.h"
 #include "DataFormats/METReco/interface/METFwd.h"
@@ -40,15 +42,12 @@
 #include "DataFormats/L1Trigger/interface/L1JetParticle.h"
 #include "DataFormats/L1Trigger/interface/L1MuonParticle.h"
 #include "DataFormats/L1Trigger/interface/L1EtMissParticle.h"
-
 #include "DataFormats/L1Trigger/interface/Muon.h"
 #include "DataFormats/L1Trigger/interface/EGamma.h"
 #include "DataFormats/L1Trigger/interface/Jet.h"
+#include "DataFormats/L1TParticleFlow/interface/PFJet.h"
 #include "DataFormats/L1Trigger/interface/Tau.h"
 #include "DataFormats/L1Trigger/interface/EtSum.h"
-
-#include "DataFormats/JetReco/interface/PFJet.h"
-#include "DataFormats/TauReco/interface/PFTau.h"
 
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "FWCore/Framework/interface/TriggerNamesService.h"
@@ -133,13 +132,12 @@ TriggerSummaryProducerAOD::TriggerSummaryProducerAOD(const edm::ParameterSet& ps
   getL1TMuonParticleCollection_ = edm::GetterOfProducts<l1t::MuonBxCollection>(productMatch, this);
   getL1TEGammaParticleCollection_ = edm::GetterOfProducts<l1t::EGammaBxCollection>(productMatch, this);
   getL1TJetParticleCollection_ = edm::GetterOfProducts<l1t::JetBxCollection>(productMatch, this);
+  getL1TPFJetParticleCollection_ = edm::GetterOfProducts<l1t::PFJetCollection>(productMatch, this);
   getL1TTauParticleCollection_ = edm::GetterOfProducts<l1t::TauBxCollection>(productMatch, this);
   getL1TEtSumParticleCollection_ = edm::GetterOfProducts<l1t::EtSumBxCollection>(productMatch, this);
   getPFJetCollection_ = edm::GetterOfProducts<reco::PFJetCollection>(productMatch, this);
   getPFTauCollection_ = edm::GetterOfProducts<reco::PFTauCollection>(productMatch, this);
   getPFMETCollection_ = edm::GetterOfProducts<reco::PFMETCollection>(productMatch, this);
-  getL1TPFJetCollection_ = edm::GetterOfProducts<l1t::PFJetCollection>(productMatch, this);
-
 
   callWhenNewProductsRegistered([this](edm::BranchDescription const& bd) {
     getTriggerFilterObjectWithRefs_(bd);
@@ -159,12 +157,12 @@ TriggerSummaryProducerAOD::TriggerSummaryProducerAOD(const edm::ParameterSet& ps
     getL1TMuonParticleCollection_(bd);
     getL1TEGammaParticleCollection_(bd);
     getL1TJetParticleCollection_(bd);
+    getL1TPFJetParticleCollection_(bd);
     getL1TTauParticleCollection_(bd);
     getL1TEtSumParticleCollection_(bd);
     getPFJetCollection_(bd);
     getPFTauCollection_(bd);
     getPFMETCollection_(bd);
-    getL1TPFJetCollection_(bd);
   });
 }
 
@@ -331,6 +329,8 @@ void TriggerSummaryProducerAOD::produce(edm::StreamID, edm::Event& iEvent, const
       toc, offset, tags, keys, iEvent, getL1TEGammaParticleCollection_, collectionTagsEvent);
   fillTriggerObjectCollections<JetBxCollection>(
       toc, offset, tags, keys, iEvent, getL1TJetParticleCollection_, collectionTagsEvent);
+  fillTriggerObjectCollections<l1t::PFJetCollection>(
+      toc, offset, tags, keys, iEvent, getL1TPFJetParticleCollection_, collectionTagsEvent);
   fillTriggerObjectCollections<TauBxCollection>(
       toc, offset, tags, keys, iEvent, getL1TTauParticleCollection_, collectionTagsEvent);
   fillTriggerObjectCollections<EtSumBxCollection>(
@@ -342,8 +342,6 @@ void TriggerSummaryProducerAOD::produce(edm::StreamID, edm::Event& iEvent, const
       toc, offset, tags, keys, iEvent, getPFTauCollection_, collectionTagsEvent);
   fillTriggerObjectCollections<PFMETCollection>(
       toc, offset, tags, keys, iEvent, getPFMETCollection_, collectionTagsEvent);
-      fillTriggerObjectCollections<l1t::PFJetCollection>(
-          toc, offset, tags, keys, iEvent, getL1TPFJetCollection_, collectionTagsEvent);
   ///
   const unsigned int nk(tags.size());
   LogDebug("TriggerSummaryProducerAOD") << "Number of collections found: " << nk;
@@ -393,6 +391,7 @@ void TriggerSummaryProducerAOD::produce(edm::StreamID, edm::Event& iEvent, const
       fillFilterObjectMembers(
           iEvent, filterTag, fobs[ifob]->l1tegammaIds(), fobs[ifob]->l1tegammaRefs(), offset, keys, ids);
       fillFilterObjectMembers(iEvent, filterTag, fobs[ifob]->l1tjetIds(), fobs[ifob]->l1tjetRefs(), offset, keys, ids);
+      fillFilterObjectMembers(iEvent, filterTag, fobs[ifob]->l1tpfjetIds(), fobs[ifob]->l1tpfjetRefs(), offset, keys, ids);
       fillFilterObjectMembers(iEvent, filterTag, fobs[ifob]->l1ttauIds(), fobs[ifob]->l1ttauRefs(), offset, keys, ids);
       fillFilterObjectMembers(
           iEvent, filterTag, fobs[ifob]->l1tetsumIds(), fobs[ifob]->l1tetsumRefs(), offset, keys, ids);

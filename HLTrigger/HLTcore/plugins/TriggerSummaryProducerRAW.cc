@@ -89,6 +89,7 @@ void TriggerSummaryProducerRAW::produce(edm::StreamID, edm::Event& iEvent, const
         << fobs[ifob]->l1hfringsSize() << " E/" << fobs[ifob]->pfjetSize() << " F/" << fobs[ifob]->pftauSize() << " G/"
         << fobs[ifob]->pfmetSize() << " I/" << fobs[ifob]->l1tmuonSize() << " J/" << fobs[ifob]->l1tegammaSize()
         << " K/" << fobs[ifob]->l1tjetSize() << " L/" << fobs[ifob]->l1ttauSize() << " M/" << fobs[ifob]->l1tetsumSize()
+        << " N/" << fobs[ifob]->l1tpfjetSize()
         << endl;
     LogTrace("TriggerSummaryProducerRaw")
         << "TriggerSummaryProducerRaw::addFilterObjects(   )"

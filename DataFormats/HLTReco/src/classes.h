@@ -7,12 +7,7 @@
 #include "DataFormats/HLTReco/interface/TriggerEventWithRefs.h"
 #include "DataFormats/HLTReco/interface/HLTPrescaleTable.h"
 #include "DataFormats/Common/interface/Wrapper.h"
+#include "DataFormats/Common/interface/Ref.h"
 
 #include "DataFormats/Candidate/interface/CompositeCandidate.h"
 #include "DataFormats/Candidate/interface/CompositeCandidateFwd.h"
-
-
-#include "DataFormats/L1TParticleFlow/interface/PFJet.h"
-#include "DataFormats/JetReco/interface/PFJetCollection.h"
-
-#include "DataFormats/Common/interface/Ref.h"
