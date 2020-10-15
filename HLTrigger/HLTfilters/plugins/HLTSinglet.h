@@ -43,6 +43,10 @@ private:
   const double max_Mass_;                              // max mass threshold in GeV
   const double min_Eta_;                               // lower eta cut to define eta-range (symmetric)
   const double max_Eta_;                               // upper eta cut to define eta-range (symmetric)
+
+  // template <typename T>
+  // double transferFunction(const T& cand_, const double offlinePt_);
+  // double transferFunction(const l1t::PFJet& cand_, const double offlinePt_);
 };
 
 #endif  // HLTSinglet_h

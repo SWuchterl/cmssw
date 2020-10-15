@@ -111,6 +111,21 @@ void HLTSinglet<T>::fillDescriptions(edm::ConfigurationDescriptions& description
 // member functions
 //
 
+template <typename T>
+double transferFunction(const T& cand_, const double offlinePt_) {
+  return offlinePt_;
+}
+
+template <typename T>
+double transferFunction(const l1t::PFJet& cand_, const double offlinePt_){
+    if(abs(cand_.eta()<1.5)){
+        return (offlinePt_-11.1254)/1.40627;
+    }else if(abs(cand_.eta()<2.4)){
+        return (offlinePt_-24.8375)/1.4152;
+    }else{
+        return (offlinePt_-42.4039)/1.33052;
+    }
+}
 // ------------ method called to produce the data  ------------
 template <typename T>
 bool HLTSinglet<T>::hltFilter(edm::Event& iEvent,
@@ -143,15 +158,29 @@ bool HLTSinglet<T>::hltFilter(edm::Event& iEvent,
   int n(0);
   typename TCollection::const_iterator i(objects->begin());
   for (; i != objects->end(); i++) {
-    if ((i->energy() >= min_E_) && (i->pt() >= min_Pt_) && (i->mass() >= min_Mass_) &&
-        ((max_Mass_ < 0.0) || (i->mass() <= max_Mass_)) && ((min_Eta_ < 0.0) || (std::abs(i->eta()) >= min_Eta_)) &&
-        ((max_Eta_ < 0.0) || (std::abs(i->eta()) <= max_Eta_))) {
-      n++;
-      ref = TRef(objects, distance(objects->begin(), i));
-      int tid = getObjectType<T>(*i);
-      if (tid == 0)
-        tid = triggerType_;
-      filterproduct.addObject(tid, ref);
+    if ((typeid(T) == typeid(l1t::PFJet))){
+        // std::cout<<transferFunction<T>(*i, min_Pt_)<<std::endl;
+        if ((i->energy() >= min_E_) && (i->pt() >= transferFunction<T>(*i, min_Pt_)) && (i->mass() >= min_Mass_) &&
+            ((max_Mass_ < 0.0) || (i->mass() <= max_Mass_)) && ((min_Eta_ < 0.0) || (std::abs(i->eta()) >= min_Eta_)) &&
+            ((max_Eta_ < 0.0) || (std::abs(i->eta()) <= max_Eta_))) {
+          n++;
+          ref = TRef(objects, distance(objects->begin(), i));
+          int tid = getObjectType<T>(*i);
+          if (tid == 0)
+            tid = triggerType_;
+          filterproduct.addObject(tid, ref);
+        }
+    }else{
+        if ((i->energy() >= min_E_) && (i->pt() >= min_Pt_) && (i->mass() >= min_Mass_) &&
+            ((max_Mass_ < 0.0) || (i->mass() <= max_Mass_)) && ((min_Eta_ < 0.0) || (std::abs(i->eta()) >= min_Eta_)) &&
+            ((max_Eta_ < 0.0) || (std::abs(i->eta()) <= max_Eta_))) {
+          n++;
+          ref = TRef(objects, distance(objects->begin(), i));
+          int tid = getObjectType<T>(*i);
+          if (tid == 0)
+            tid = triggerType_;
+          filterproduct.addObject(tid, ref);
+        }
     }
   }
 
