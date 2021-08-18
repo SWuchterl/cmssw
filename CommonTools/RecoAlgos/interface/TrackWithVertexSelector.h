@@ -43,7 +43,9 @@ public:
 
 private:
   uint32_t numberOfValidHits_;
+  uint32_t numberOfValidHitsForGood_;
   uint32_t numberOfValidPixelHits_;
+  uint32_t numberOfValidPixelHitsForGood_;
   uint32_t numberOfLostHits_;
   double normalizedChi2_;
   double ptMin_, ptMax_, etaMin_, etaMax_;
@@ -55,7 +57,7 @@ private:
   edm::EDGetTokenT<reco::VertexCollection> vertexToken_;
   edm::EDGetTokenT<edm::ValueMap<float> > timesToken_, timeResosToken_;
   bool vtxFallback_;
-  double zetaVtx_, rhoVtx_, nSigmaDtVertex_;
+  double zetaVtx_, rhoVtx_, zetaVtxScale_, rhoVtxScale_, zetaVtxSig_, rhoVtxSig_, nSigmaDtVertex_;
 
   reco::VertexCollection const *vcoll_ = nullptr;
   edm::ValueMap<float> const *timescoll_ = nullptr;

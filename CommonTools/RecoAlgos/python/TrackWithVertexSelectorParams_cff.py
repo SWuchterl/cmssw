@@ -14,8 +14,10 @@ trackWithVertexSelectorParams = cms.PSet(
     # quality cuts (valid hits, normalized chi2)
     normalizedChi2 = cms.double(999999.),
     numberOfValidHits = cms.uint32(0),
+    numberOfValidHitsForGood = cms.uint32(999), ## if number of valid hits >= numberOfMaxValidHits, no selection is applied
     numberOfLostHits = cms.uint32(999), ## at most 999 lost hits
     numberOfValidPixelHits = cms.uint32(0), ## at least <n> hits in the pixels
+    numberOfValidPixelHitsForGood = cms.uint32(999), ## if number of valid pixel hits >= numberOfMaxValidPixelHits, no selection is applied
     ptErrorCut = cms.double(0.2), ## [pTError/pT]*max(1,normChi2) <= ptErrorCut
     quality = cms.string("highPurity"), # quality cut as defined in reco::TrackBase
     # compatibility with a vertex ?
@@ -28,6 +30,10 @@ trackWithVertexSelectorParams = cms.PSet(
     # uses vtx=(0,0,0) with deltaZeta=15.9, deltaRho = 0.2
     zetaVtx = cms.double(1.0),
     rhoVtx = cms.double(0.2), ## tags used by b-tagging folks
+    zetaVtxScale = cms.double(1.0),
+    rhoVtxScale = cms.double(1.0), ## tags used by b-tagging folks
+    zetaVtxSig = cms.double(2.0),
+    rhoVtxSig = cms.double(2.0),
     nSigmaDtVertex = cms.double(0),
     # should _not_ be used for the TrackWithVertexRefSelector
     copyExtras = cms.untracked.bool(False), ## copies also extras and rechits on RECO
