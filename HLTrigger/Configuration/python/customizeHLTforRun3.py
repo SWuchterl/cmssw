@@ -5,7 +5,7 @@ from .Run3.fixIsoTrackHBHE import fixIsoTrackHBHE
 
 ## New Tracking (patatrack tracks + single iteration)
 from .Run3.customizeHLTforRun3Tracking import customizeHLTforRun3Tracking
-def TRK_newTracking(process): 
+def TRK_newTracking(process):
     process = customizeHLTforRun3Tracking(process)
     process = fixMenu(process)
     process = fixIsoTrackHBHE(process)
@@ -17,13 +17,13 @@ from .Run3.applyL2TauTag import update as TAU_newL2sequence
 
 ## New tracking (patatrack tracks + single iteration) in muon reco
 from .Run3.customizeMuonHLTForRun3 import customizeMuonHLTForPatatrackWithIsoAndTriplets
-def MUO_newTracking(process): 
+def MUO_newTracking(process):
     process = customizeMuonHLTForPatatrackWithIsoAndTriplets(process, newProcessName = "@currentProcess", loadPatatrack=False)
     return process
 
 ## New ML-based inside-out seeding for muon reconstruction
 from .Run3.customizeMuonHLTForRun3 import customizeIOSeedingPatatrack
-def MUO_newIO(process): 
+def MUO_newIO(process):
     process = customizeIOSeedingPatatrack(process, newProcessName = "@currentProcess")
     return process
 
@@ -32,19 +32,19 @@ from RecoMuon.TrackerSeedGenerator.customizeOIseeding import customizeOIseeding 
 
 ## Replace regional pixel tracks with global pixel tracks in TkMu triggers
 from .Run3.customizeMuonHLTForRun3 import customizeMuonHLTForPatatrackTkMu
-def MUO_updateTkMu(process): 
+def MUO_updateTkMu(process):
     process = customizeMuonHLTForPatatrackWithIsoAndTriplets(process, newProcessName = "@currentProcess", loadPatatrack=False)
     return process
 
 ## Replace regional pixel tracks with global pixel tracks in OpenMu triggers
 from .Run3.customizeMuonHLTForRun3 import customizeMuonHLTForPatatrackOpenMu
-def MUO_updateOpenMu(process): 
+def MUO_updateOpenMu(process):
     process = customizeMuonHLTForPatatrackWithIsoAndTriplets(process, newProcessName = "@currentProcess", loadPatatrack=False)
     return process
 
 ## Replace regional pixel tracks with global pixel tracks in NoVtx triggers
 from .Run3.customizeMuonHLTForRun3 import customizeMuonHLTForPatatrackNoVtx
-def MUO_updateNoVtx(process): 
+def MUO_updateNoVtx(process):
     process = customizeMuonHLTForPatatrackWithIsoAndTriplets(process, newProcessName = "@currentProcess", loadPatatrack=False)
     return process
 
@@ -74,80 +74,64 @@ def fixBtagPrescaler(process):
 
 ## Calo b-tagging: none
 ## PF b-tagging: new regional PF b-tagging [new sequence]
-from .Run3.customise_TRK_replacement import customiseRun3BTagRegionalTracks_Replacement
-def BTV_noCalo_roiPF(process): 
-    process = customiseRun3BTagRegionalTracks_Replacement(process)
+from .Run3.customizeRun3_BTag_noCalo_ROIPF import customizeRun3_BTag_noCalo_ROIPF
+def BTV_noCalo_roiPF_DeepCSV(process):
+    process = customizeRun3_BTag_noCalo_ROIPF(process, addDeepJetPaths=False)
     process = fixBtagPrescaler(process)
-    return process 
+    return process
 
 ## Calo b-tagging: new regional calo b-tagging [new sequence]
 ## PF b-tagging: new regional PF b-tagging [new sequence]
 from .Run3.customizeRun3_BTag_ROICalo_ROIPF import customizeRun3_BTag_ROICalo_ROIPF
-def BTV_roiCalo_roiPF_DeepCSV(process): 
+def BTV_roiCalo_roiPF_DeepCSV(process):
     process = customizeRun3_BTag_ROICalo_ROIPF(process, addDeepJetPaths=False)
     process = fixBtagPrescaler(process)
-    return process 
+    return process
 
 ## Calo b-tagging: new regional calo b-tagging [new sequence]
 ## PF b-tagging: new global PF b-tagging
 from .Run3.customizeRun3_BTag_ROICalo_GlobalPF import customizeRun3_BTag_ROICalo_GlobalPF
-def BTV_roiCalo_globalPF_DeepCSV(process): 
-    process = customizeRun3_BTag_ROICalo_GlobalPF(process, addDeepJetPaths=True)
+def BTV_roiCalo_globalPF_DeepCSV(process):
+    process = customizeRun3_BTag_ROICalo_GlobalPF(process, addDeepJetPaths=False)
     process = fixBtagPrescaler(process)
-    return process 
+    return process
+
+## Calo b-tagging: none
+## PF b-tagging: new regional PF b-tagging [new sequence]
+from .Run3.customizeRun3_BTag_noCalo_ROIPF import customizeRun3_BTag_noCalo_ROIPF
+def BTV_noCalo_roiPF_DeepJet(process):
+    process = customizeRun3_BTag_noCalo_ROIPF(process, addDeepJetPaths=True)
+    process = fixBtagPrescaler(process)
+    return process
 
 ## Calo b-tagging: new regional calo b-tagging [new sequence]
 ## PF b-tagging: new regional PF b-tagging [new sequence]
 from .Run3.customizeRun3_BTag_ROICalo_ROIPF import customizeRun3_BTag_ROICalo_ROIPF
-def BTV_roiCalo_roiPF_DeepJet(process): 
+def BTV_roiCalo_roiPF_DeepJet(process):
     process = customizeRun3_BTag_ROICalo_ROIPF(process, addDeepJetPaths=True)
     process = fixBtagPrescaler(process)
-    return process 
+    return process
 
 ## Calo b-tagging: new regional calo b-tagging [new sequence]
 ## PF b-tagging: new global PF b-tagging
 from .Run3.customizeRun3_BTag_ROICalo_GlobalPF import customizeRun3_BTag_ROICalo_GlobalPF
-def BTV_roiCalo_globalPF_DeepJet(process): 
-    process = customizeRun3_BTag_ROICalo_GlobalPF(process, addDeepJetPaths=False)
+def BTV_roiCalo_globalPF_DeepJet(process):
+    process = customizeRun3_BTag_ROICalo_GlobalPF(process, addDeepJetPaths=True)
     process = fixBtagPrescaler(process)
-    return process 
+    return process
 
 ## Calo b-tagging: new "global" calo b-tagging
 ## PF b-tagging: new global PF b-tagging
-from .Run3.customise_TRK_replacement_globalGlobal_calo import customiseRun3BTagRegionalTracks_Replacement_global_globalCalo
-def BTV_globalCalo_globalPF(process): 
-    process = customiseRun3BTagRegionalTracks_Replacement_global_globalCalo(process)
-    process = fixBtagPrescaler(process)
-    return process 
-
-from .Run3.customise_TRK import addDeepJet
-from .Run3.customise_TRK_deepjet import customiseRun3BTagRegionalTracks_DeepJet
-
-#customiseRun3BTagRegionalTracks_DeepJet
-## Add MC_PFBTagDeepJet
-def BTV_addMCDeepJetPath(process):
-    process = addDeepJet(process, doPF=True, doPuppi=False, roiReplace=False) 
+from .Run3.customizeRun3_BTag_GlobalCalo_GlobalPF import customizeRun3_BTag_GlobalCalo_GlobalPF
+def BTV_globalCalo_globalPF_DeepCSV(process):
+    process = customizeRun3_BTag_GlobalCalo_GlobalPF(process, addDeepJetPaths=False)
     process = fixBtagPrescaler(process)
     return process
 
-## Add MC_PFBTagDeepJet
-def BTV_addMCDeepJetROIForBTagPath(process):
-    process = addDeepJet(process, doPF=True, doPuppi=False, roiReplace=True) 
+## Calo b-tagging: new "global" calo b-tagging
+## PF b-tagging: new global PF b-tagging
+from .Run3.customizeRun3_BTag_GlobalCalo_GlobalPF import customizeRun3_BTag_GlobalCalo_GlobalPF
+def BTV_globalCalo_globalPF_DeepJet(process):
+    process = customizeRun3_BTag_GlobalCalo_GlobalPF(process, addDeepJetPaths=True)
     process = fixBtagPrescaler(process)
     return process
-
-##Add a DeepJet version to all the paths with PF b-tagging
-def BTV_moveToDeepJet(process): 
-    process = addDeepJet(process, doPF=True, doPuppi=False, roiReplace=False)
-    process = customiseRun3BTagRegionalTracks_DeepJet(process)
-    process = fixBtagPrescaler(process)
-    return process
-
-##Add a DeepJet version based on ROI PF to all the paths with PF b-tagging
-def BTV_moveToDeepJetROI(process): 
-    process = addDeepJet(process, doPF=True, doPuppi=False, roiReplace=True)
-    process = customiseRun3BTagRegionalTracks_DeepJet(process)
-    process = fixBtagPrescaler(process)
-    return process
-
-

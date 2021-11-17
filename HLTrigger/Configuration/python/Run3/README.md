@@ -29,26 +29,36 @@ This function should be always included in your studies.
 This function requires MUO_newTracking
 
 - If you want to test the new DeepTau you can import the sequence from **/users/lwezenbe/12_1_X/TauPOG/NewMenu** (https://its.cern.ch/jira/browse/CMSHLT-2175)
-- **TAU_newL2sequence** Update the L2.5 Tau recostruction to the new reconstruction based on ML new pixel tracking (https://its.cern.ch/jira/browse/CMSHLT-2176)
+- **TAU_newL2sequence** Update the L2.5 Tau reconstruction to the new reconstruction based on ML new pixel tracking (https://its.cern.ch/jira/browse/CMSHLT-2176)
 At the moment, this function can be used only on DeepTau paths.
 
-- **BTV_noCalo_roiPF**: duplicates all PFBTagDeepCSV  to a version based on Calo b-tagging: none. PF b-tagging: DeepCSV and new regional PF and tracking. ( https://its.cern.ch/jira/browse/CMSHLT-2186) The CaloBTagDeepCSV paths remain unchanged.
-- **BTV_moveToDeepJetROI**: duplicates all PFBTagDeepCSV  to a version based on Calo b-tagging: none. PF b-tagging: DeepJet and new regional PF and tracking (https://its.cern.ch/jira/browse/CMSHLT-2184)
+- **BTV_noCalo_roiPF_DeepCSV**: moves all PFDeepCSVBTag paths to a version based on Calo b-tagging: none. PF b-tagging: DeepCSV and new regional PF and tracking. ( https://its.cern.ch/jira/browse/CMSHLT-2186) moves also CaloDeepCSVBTag to the new
+- **BTV_noCalo_roiPF_DeepJet**: duplicates all PFBTagDeepCSV  to a version based on Calo b-tagging: none. PF b-tagging: DeepCSV & DeepJet and new regional PF and tracking (https://its.cern.ch/jira/browse/CMSHLT-2184)
 
 Other b-tagging functions with a lower priority are also available for testing:
 
 - BTV_roiCalo_roiPF_DeepCSV. Calo b-tagging: new regional calo b-tagging [new sequence] ## PF b-tagging: new regional DeepCSV PF b-tagging [add new paths] (https://its.cern.ch/jira/browse/CMSHLT-2186)
-- BTV_roiCalo_roiPF_DeepJet. Calo b-tagging: new regional calo b-tagging [new sequence] ## PF b-tagging: new regional DeepJet PF b-tagging [add new paths] (https://its.cern.ch/jira/browse/CMSHLT-2186)
+- BTV_roiCalo_roiPF_DeepJet. Calo b-tagging: new regional calo b-tagging [new sequence] ## PF b-tagging: new regional DeepCSV & DeepJet PF b-tagging [add new paths] (https://its.cern.ch/jira/browse/CMSHLT-2186)
 - BTV_roiCalo_globalPF_DeepCSV. Calo b-tagging: new regional calo b-tagging [new sequence] ## PF b-tagging: new global PF DeepCSV b-tagging (https://its.cern.ch/jira/browse/CMSHLT-2186)
-- BTV_roiCalo_globalPF_DeepPF. Calo b-tagging: new regional calo b-tagging [new sequence] ## PF b-tagging: new global PF DeepPF b-tagging (https://its.cern.ch/jira/browse/CMSHLT-2186)
-All the BTV_roiCalo functions require TRK_newTracking.
-- BTV_globalCalo_globalPF. Calo b-tagging: version based on the global PF tracking. PF b-tagging: global PF b-tagging (https://its.cern.ch/jira/browse/CMSHLT-2186)
-- BTV_moveToDeepJet. duplicates all *PFBTagDeepCSV*  to a version based on Calo b-tagging: none. PF b-tagging:  DeepJet (https://its.cern.ch/jira/browse/CMSHLT-2184)
-- BTV_addMCDeepJetROIForBTagPath. adds MC_PFBTagDeepJetROIForBTag based on DeepJet and the new regional PF (https://its.cern.ch/jira/browse/CMSHLT-2184).
-The DeepJet sequence can be later included in your favorite path.
+- BTV_roiCalo_globalPF_DeepJet. Calo b-tagging: new regional calo b-tagging [new sequence] ## PF b-tagging: new global PF DeepCSV & DeepJet b-tagging (https://its.cern.ch/jira/browse/CMSHLT-2186)
+All the BTV roi functions require TRK_newTracking.
+- BTV_globalCalo_globalPF_DeepCSV. Calo b-tagging: version based on the global PF tracking. PF b-tagging: global PF b-tagging (https://its.cern.ch/jira/browse/CMSHLT-2186)
+- BTV_globalCalo_globalPF_DeepJet. Calo b-tagging: version based on the global PF tracking. PF b-tagging: global PF b-tagging DeepCSV & DeepJet (https://its.cern.ch/jira/browse/CMSHLT-2186)
 
+Overview about all BTag customizers:
+|         customizer name         |      CaloBTagPaths     |                     PFBTagPaths                    | Calo reco |  PF reco  | calo Tagger | PF tagger       |
+|:-------------------------------:|:----------------------:|:--------------------------------------------------:|:---------:|:---------:|:-----------:|-----------------|
+|           None/default          |        unchanged       |              unchanged (oldCalo+oldPF)             | unchanged | unchanged |   DeepCSV   | DeepCSV         |
+|     BTV_noCalo_roiPF_DeepCSV    |   changed(newROIReco)  |                changed(noCalo+newPF)               |   newROI  |  newROIPF |   DeepCSV   | DeepCSV         |
+|     BTV_noCalo_roiPF_DeepJet    |   changed(newROIReco)  |     changed(noCalo+newPF) + duplicated(DeepJet)    |   newROI  |  newROIPF |   DeepCSV   | DeepCSV+DeepJet |
+|    BTV_roiCalo_roiPF_DeepCSV    |   changed(newROIReco)  |               changed(newCalo+newPF)               |   newROI  |  newROIPF |   DeepCSV   | DeepCSV         |
+|    BTV_roiCalo_roiPF_DeepJet    |   changed(newROIReco)  |    changed(newCalo+newPF) + duplicated(DeepJet)    |   newROI  |  newROIPF |   DeepCSV   | DeepCSV+DeepJet |
+|   BTV_roiCalo_globalPF_DeepCSV  |   changed(newROIReco)  |               changed(newCalo+oldPF)               |   newROI  | unchanged |   DeepCSV   | DeepCSV         |
+|   BTV_roiCalo_globalPF_DeepJet  |   changed(newROIReco)  |    changed(newCalo+oldPF) + duplicated(DeepJet)    |   newROI  | unchanged |   DeepCSV   | DeepCSV+DeepJet |
+| BTV_globalCalo_globalPF_DeepCSV | changed(newGlobalReco) |            changed(newGlobalCalo+oldPF)            | newGlobal | unchanged |   DeepCSV   | DeepCSV         |
+| BTV_globalCalo_globalPF_DeepJet | changed(newGlobalReco) | changed(newGlobalCalo+oldPF) + duplicated(DeepJet) | newGlobal | unchanged |   DeepCSV   | DeepCSV+DeepJet |
 
-More info can be found in the google doc of the POG developments https://docs.google.com/spreadsheets/d/1nqd3qhFuM7TQgFRO_ZKNaGzCR0a21r4FLZQDC-JI-u0/edit#gid=0 
+More info can be found in the google doc of the POG developments https://docs.google.com/spreadsheets/d/1nqd3qhFuM7TQgFRO_ZKNaGzCR0a21r4FLZQDC-JI-u0/edit#gid=0
 
 
 
@@ -64,4 +74,3 @@ https://github.com/mmasciov/cmssw/defaultRun3Tracking_forJIRA
 https://github.com/annamasce/TauTriggerTools/triggerRnD_counter
 
 https://github.com/khaosmos93/MuonHLTForRun3
-
