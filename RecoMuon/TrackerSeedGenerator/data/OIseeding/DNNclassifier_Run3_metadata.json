@@ -1,0 +1,3364 @@
+{
+    "barrel": {
+        "dnnmodel_path": "RecoMuon/TrackerSeedGenerator/data/OIseeding/DNNclassifier_Run3_2x512_barrel.pb",
+        "n_features": 21,
+        "feature_names": [
+            "validHits",
+            "tsos_IP_eta",
+            "tsos_IP_phi",
+            "tsos_IP_pt",
+            "tsos_IP_pt_eta",
+            "tsos_IP_pt_phi",
+            "err0_IP",
+            "err1_IP",
+            "err2_IP",
+            "err3_IP",
+            "err4_IP",
+            "tsos_MuS_eta",
+            "tsos_MuS_phi",
+            "tsos_MuS_pt",
+            "tsos_MuS_pt_eta",
+            "tsos_MuS_pt_phi",
+            "err0_MuS",
+            "err1_MuS",
+            "err2_MuS",
+            "err3_MuS",
+            "err4_MuS"
+        ],
+        "output_labels": {
+            "label_0": {
+                "nHBd": 0,
+                "nHLIP": 0,
+                "nHLMuS": 5,
+                "SF": 1
+            },
+            "label_1": {
+                "nHBd": 0,
+                "nHLIP": 0,
+                "nHLMuS": 5,
+                "SF": 10
+            },
+            "label_2": {
+                "nHBd": 0,
+                "nHLIP": 0,
+                "nHLMuS": 5,
+                "SF": 2
+            },
+            "label_3": {
+                "nHBd": 0,
+                "nHLIP": 0,
+                "nHLMuS": 5,
+                "SF": 3
+            },
+            "label_4": {
+                "nHBd": 0,
+                "nHLIP": 0,
+                "nHLMuS": 5,
+                "SF": 4
+            },
+            "label_5": {
+                "nHBd": 0,
+                "nHLIP": 0,
+                "nHLMuS": 5,
+                "SF": 5
+            },
+            "label_6": {
+                "nHBd": 0,
+                "nHLIP": 0,
+                "nHLMuS": 5,
+                "SF": 6
+            },
+            "label_7": {
+                "nHBd": 0,
+                "nHLIP": 0,
+                "nHLMuS": 5,
+                "SF": 7
+            },
+            "label_8": {
+                "nHBd": 0,
+                "nHLIP": 0,
+                "nHLMuS": 5,
+                "SF": 8
+            },
+            "label_9": {
+                "nHBd": 0,
+                "nHLIP": 0,
+                "nHLMuS": 5,
+                "SF": 9
+            },
+            "label_10": {
+                "nHBd": 0,
+                "nHLIP": 1,
+                "nHLMuS": 4,
+                "SF": 1
+            },
+            "label_11": {
+                "nHBd": 0,
+                "nHLIP": 1,
+                "nHLMuS": 4,
+                "SF": 10
+            },
+            "label_12": {
+                "nHBd": 0,
+                "nHLIP": 1,
+                "nHLMuS": 4,
+                "SF": 2
+            },
+            "label_13": {
+                "nHBd": 0,
+                "nHLIP": 1,
+                "nHLMuS": 4,
+                "SF": 3
+            },
+            "label_14": {
+                "nHBd": 0,
+                "nHLIP": 1,
+                "nHLMuS": 4,
+                "SF": 4
+            },
+            "label_15": {
+                "nHBd": 0,
+                "nHLIP": 1,
+                "nHLMuS": 4,
+                "SF": 5
+            },
+            "label_16": {
+                "nHBd": 0,
+                "nHLIP": 1,
+                "nHLMuS": 4,
+                "SF": 6
+            },
+            "label_17": {
+                "nHBd": 0,
+                "nHLIP": 1,
+                "nHLMuS": 4,
+                "SF": 7
+            },
+            "label_18": {
+                "nHBd": 0,
+                "nHLIP": 1,
+                "nHLMuS": 4,
+                "SF": 8
+            },
+            "label_19": {
+                "nHBd": 0,
+                "nHLIP": 1,
+                "nHLMuS": 4,
+                "SF": 9
+            },
+            "label_20": {
+                "nHBd": 0,
+                "nHLIP": 2,
+                "nHLMuS": 3,
+                "SF": 1
+            },
+            "label_21": {
+                "nHBd": 0,
+                "nHLIP": 2,
+                "nHLMuS": 3,
+                "SF": 10
+            },
+            "label_22": {
+                "nHBd": 0,
+                "nHLIP": 2,
+                "nHLMuS": 3,
+                "SF": 2
+            },
+            "label_23": {
+                "nHBd": 0,
+                "nHLIP": 2,
+                "nHLMuS": 3,
+                "SF": 3
+            },
+            "label_24": {
+                "nHBd": 0,
+                "nHLIP": 2,
+                "nHLMuS": 3,
+                "SF": 4
+            },
+            "label_25": {
+                "nHBd": 0,
+                "nHLIP": 2,
+                "nHLMuS": 3,
+                "SF": 5
+            },
+            "label_26": {
+                "nHBd": 0,
+                "nHLIP": 2,
+                "nHLMuS": 3,
+                "SF": 6
+            },
+            "label_27": {
+                "nHBd": 0,
+                "nHLIP": 2,
+                "nHLMuS": 3,
+                "SF": 7
+            },
+            "label_28": {
+                "nHBd": 0,
+                "nHLIP": 2,
+                "nHLMuS": 3,
+                "SF": 8
+            },
+            "label_29": {
+                "nHBd": 0,
+                "nHLIP": 2,
+                "nHLMuS": 3,
+                "SF": 9
+            },
+            "label_30": {
+                "nHBd": 0,
+                "nHLIP": 3,
+                "nHLMuS": 2,
+                "SF": 1
+            },
+            "label_31": {
+                "nHBd": 0,
+                "nHLIP": 3,
+                "nHLMuS": 2,
+                "SF": 2
+            },
+            "label_32": {
+                "nHBd": 0,
+                "nHLIP": 3,
+                "nHLMuS": 2,
+                "SF": 3
+            },
+            "label_33": {
+                "nHBd": 0,
+                "nHLIP": 3,
+                "nHLMuS": 2,
+                "SF": 4
+            },
+            "label_34": {
+                "nHBd": 0,
+                "nHLIP": 3,
+                "nHLMuS": 2,
+                "SF": 6
+            },
+            "label_35": {
+                "nHBd": 0,
+                "nHLIP": 3,
+                "nHLMuS": 2,
+                "SF": 7
+            },
+            "label_36": {
+                "nHBd": 0,
+                "nHLIP": 3,
+                "nHLMuS": 2,
+                "SF": 8
+            },
+            "label_37": {
+                "nHBd": 0,
+                "nHLIP": 3,
+                "nHLMuS": 2,
+                "SF": 9
+            },
+            "label_38": {
+                "nHBd": 0,
+                "nHLIP": 4,
+                "nHLMuS": 1,
+                "SF": 1
+            },
+            "label_39": {
+                "nHBd": 0,
+                "nHLIP": 4,
+                "nHLMuS": 1,
+                "SF": 10
+            },
+            "label_40": {
+                "nHBd": 0,
+                "nHLIP": 4,
+                "nHLMuS": 1,
+                "SF": 2
+            },
+            "label_41": {
+                "nHBd": 0,
+                "nHLIP": 4,
+                "nHLMuS": 1,
+                "SF": 3
+            },
+            "label_42": {
+                "nHBd": 0,
+                "nHLIP": 4,
+                "nHLMuS": 1,
+                "SF": 4
+            },
+            "label_43": {
+                "nHBd": 0,
+                "nHLIP": 4,
+                "nHLMuS": 1,
+                "SF": 5
+            },
+            "label_44": {
+                "nHBd": 0,
+                "nHLIP": 4,
+                "nHLMuS": 1,
+                "SF": 6
+            },
+            "label_45": {
+                "nHBd": 0,
+                "nHLIP": 4,
+                "nHLMuS": 1,
+                "SF": 7
+            },
+            "label_46": {
+                "nHBd": 0,
+                "nHLIP": 4,
+                "nHLMuS": 1,
+                "SF": 8
+            },
+            "label_47": {
+                "nHBd": 0,
+                "nHLIP": 5,
+                "nHLMuS": 0,
+                "SF": 1
+            },
+            "label_48": {
+                "nHBd": 0,
+                "nHLIP": 5,
+                "nHLMuS": 0,
+                "SF": 10
+            },
+            "label_49": {
+                "nHBd": 0,
+                "nHLIP": 5,
+                "nHLMuS": 0,
+                "SF": 2
+            },
+            "label_50": {
+                "nHBd": 0,
+                "nHLIP": 5,
+                "nHLMuS": 0,
+                "SF": 3
+            },
+            "label_51": {
+                "nHBd": 0,
+                "nHLIP": 5,
+                "nHLMuS": 0,
+                "SF": 5
+            },
+            "label_52": {
+                "nHBd": 0,
+                "nHLIP": 5,
+                "nHLMuS": 0,
+                "SF": 6
+            },
+            "label_53": {
+                "nHBd": 0,
+                "nHLIP": 5,
+                "nHLMuS": 0,
+                "SF": 7
+            },
+            "label_54": {
+                "nHBd": 0,
+                "nHLIP": 5,
+                "nHLMuS": 0,
+                "SF": 8
+            },
+            "label_55": {
+                "nHBd": 0,
+                "nHLIP": 5,
+                "nHLMuS": 0,
+                "SF": 9
+            },
+            "label_56": {
+                "nHBd": 1,
+                "nHLIP": 0,
+                "nHLMuS": 4,
+                "SF": 1
+            },
+            "label_57": {
+                "nHBd": 1,
+                "nHLIP": 0,
+                "nHLMuS": 4,
+                "SF": 10
+            },
+            "label_58": {
+                "nHBd": 1,
+                "nHLIP": 0,
+                "nHLMuS": 4,
+                "SF": 2
+            },
+            "label_59": {
+                "nHBd": 1,
+                "nHLIP": 0,
+                "nHLMuS": 4,
+                "SF": 4
+            },
+            "label_60": {
+                "nHBd": 1,
+                "nHLIP": 0,
+                "nHLMuS": 4,
+                "SF": 5
+            },
+            "label_61": {
+                "nHBd": 1,
+                "nHLIP": 0,
+                "nHLMuS": 4,
+                "SF": 6
+            },
+            "label_62": {
+                "nHBd": 1,
+                "nHLIP": 0,
+                "nHLMuS": 4,
+                "SF": 7
+            },
+            "label_63": {
+                "nHBd": 1,
+                "nHLIP": 0,
+                "nHLMuS": 4,
+                "SF": 8
+            },
+            "label_64": {
+                "nHBd": 1,
+                "nHLIP": 0,
+                "nHLMuS": 4,
+                "SF": 9
+            },
+            "label_65": {
+                "nHBd": 1,
+                "nHLIP": 1,
+                "nHLMuS": 3,
+                "SF": 1
+            },
+            "label_66": {
+                "nHBd": 1,
+                "nHLIP": 1,
+                "nHLMuS": 3,
+                "SF": 10
+            },
+            "label_67": {
+                "nHBd": 1,
+                "nHLIP": 1,
+                "nHLMuS": 3,
+                "SF": 2
+            },
+            "label_68": {
+                "nHBd": 1,
+                "nHLIP": 1,
+                "nHLMuS": 3,
+                "SF": 5
+            },
+            "label_69": {
+                "nHBd": 1,
+                "nHLIP": 1,
+                "nHLMuS": 3,
+                "SF": 6
+            },
+            "label_70": {
+                "nHBd": 1,
+                "nHLIP": 1,
+                "nHLMuS": 3,
+                "SF": 7
+            },
+            "label_71": {
+                "nHBd": 1,
+                "nHLIP": 1,
+                "nHLMuS": 3,
+                "SF": 8
+            },
+            "label_72": {
+                "nHBd": 1,
+                "nHLIP": 1,
+                "nHLMuS": 3,
+                "SF": 9
+            },
+            "label_73": {
+                "nHBd": 1,
+                "nHLIP": 2,
+                "nHLMuS": 2,
+                "SF": 1
+            },
+            "label_74": {
+                "nHBd": 1,
+                "nHLIP": 2,
+                "nHLMuS": 2,
+                "SF": 10
+            },
+            "label_75": {
+                "nHBd": 1,
+                "nHLIP": 2,
+                "nHLMuS": 2,
+                "SF": 2
+            },
+            "label_76": {
+                "nHBd": 1,
+                "nHLIP": 2,
+                "nHLMuS": 2,
+                "SF": 4
+            },
+            "label_77": {
+                "nHBd": 1,
+                "nHLIP": 2,
+                "nHLMuS": 2,
+                "SF": 5
+            },
+            "label_78": {
+                "nHBd": 1,
+                "nHLIP": 2,
+                "nHLMuS": 2,
+                "SF": 6
+            },
+            "label_79": {
+                "nHBd": 1,
+                "nHLIP": 2,
+                "nHLMuS": 2,
+                "SF": 7
+            },
+            "label_80": {
+                "nHBd": 1,
+                "nHLIP": 2,
+                "nHLMuS": 2,
+                "SF": 8
+            },
+            "label_81": {
+                "nHBd": 1,
+                "nHLIP": 2,
+                "nHLMuS": 2,
+                "SF": 9
+            },
+            "label_82": {
+                "nHBd": 1,
+                "nHLIP": 3,
+                "nHLMuS": 1,
+                "SF": 1
+            },
+            "label_83": {
+                "nHBd": 1,
+                "nHLIP": 3,
+                "nHLMuS": 1,
+                "SF": 2
+            },
+            "label_84": {
+                "nHBd": 1,
+                "nHLIP": 3,
+                "nHLMuS": 1,
+                "SF": 3
+            },
+            "label_85": {
+                "nHBd": 1,
+                "nHLIP": 3,
+                "nHLMuS": 1,
+                "SF": 8
+            },
+            "label_86": {
+                "nHBd": 1,
+                "nHLIP": 3,
+                "nHLMuS": 1,
+                "SF": 9
+            },
+            "label_87": {
+                "nHBd": 1,
+                "nHLIP": 4,
+                "nHLMuS": 0,
+                "SF": 1
+            },
+            "label_88": {
+                "nHBd": 1,
+                "nHLIP": 4,
+                "nHLMuS": 0,
+                "SF": 10
+            },
+            "label_89": {
+                "nHBd": 1,
+                "nHLIP": 4,
+                "nHLMuS": 0,
+                "SF": 2
+            },
+            "label_90": {
+                "nHBd": 1,
+                "nHLIP": 4,
+                "nHLMuS": 0,
+                "SF": 3
+            },
+            "label_91": {
+                "nHBd": 1,
+                "nHLIP": 4,
+                "nHLMuS": 0,
+                "SF": 4
+            },
+            "label_92": {
+                "nHBd": 1,
+                "nHLIP": 4,
+                "nHLMuS": 0,
+                "SF": 5
+            },
+            "label_93": {
+                "nHBd": 1,
+                "nHLIP": 4,
+                "nHLMuS": 0,
+                "SF": 6
+            },
+            "label_94": {
+                "nHBd": 1,
+                "nHLIP": 4,
+                "nHLMuS": 0,
+                "SF": 7
+            },
+            "label_95": {
+                "nHBd": 1,
+                "nHLIP": 4,
+                "nHLMuS": 0,
+                "SF": 8
+            },
+            "label_96": {
+                "nHBd": 1,
+                "nHLIP": 4,
+                "nHLMuS": 0,
+                "SF": 9
+            },
+            "label_97": {
+                "nHBd": 2,
+                "nHLIP": 0,
+                "nHLMuS": 3,
+                "SF": 1
+            },
+            "label_98": {
+                "nHBd": 2,
+                "nHLIP": 0,
+                "nHLMuS": 3,
+                "SF": 10
+            },
+            "label_99": {
+                "nHBd": 2,
+                "nHLIP": 0,
+                "nHLMuS": 3,
+                "SF": 2
+            },
+            "label_100": {
+                "nHBd": 2,
+                "nHLIP": 0,
+                "nHLMuS": 3,
+                "SF": 3
+            },
+            "label_101": {
+                "nHBd": 2,
+                "nHLIP": 0,
+                "nHLMuS": 3,
+                "SF": 4
+            },
+            "label_102": {
+                "nHBd": 2,
+                "nHLIP": 0,
+                "nHLMuS": 3,
+                "SF": 5
+            },
+            "label_103": {
+                "nHBd": 2,
+                "nHLIP": 0,
+                "nHLMuS": 3,
+                "SF": 6
+            },
+            "label_104": {
+                "nHBd": 2,
+                "nHLIP": 0,
+                "nHLMuS": 3,
+                "SF": 7
+            },
+            "label_105": {
+                "nHBd": 2,
+                "nHLIP": 0,
+                "nHLMuS": 3,
+                "SF": 8
+            },
+            "label_106": {
+                "nHBd": 2,
+                "nHLIP": 1,
+                "nHLMuS": 2,
+                "SF": 1
+            },
+            "label_107": {
+                "nHBd": 2,
+                "nHLIP": 1,
+                "nHLMuS": 2,
+                "SF": 10
+            },
+            "label_108": {
+                "nHBd": 2,
+                "nHLIP": 1,
+                "nHLMuS": 2,
+                "SF": 2
+            },
+            "label_109": {
+                "nHBd": 2,
+                "nHLIP": 1,
+                "nHLMuS": 2,
+                "SF": 3
+            },
+            "label_110": {
+                "nHBd": 2,
+                "nHLIP": 1,
+                "nHLMuS": 2,
+                "SF": 4
+            },
+            "label_111": {
+                "nHBd": 2,
+                "nHLIP": 1,
+                "nHLMuS": 2,
+                "SF": 5
+            },
+            "label_112": {
+                "nHBd": 2,
+                "nHLIP": 1,
+                "nHLMuS": 2,
+                "SF": 6
+            },
+            "label_113": {
+                "nHBd": 2,
+                "nHLIP": 1,
+                "nHLMuS": 2,
+                "SF": 7
+            },
+            "label_114": {
+                "nHBd": 2,
+                "nHLIP": 1,
+                "nHLMuS": 2,
+                "SF": 8
+            },
+            "label_115": {
+                "nHBd": 2,
+                "nHLIP": 1,
+                "nHLMuS": 2,
+                "SF": 9
+            },
+            "label_116": {
+                "nHBd": 2,
+                "nHLIP": 2,
+                "nHLMuS": 1,
+                "SF": 1
+            },
+            "label_117": {
+                "nHBd": 2,
+                "nHLIP": 2,
+                "nHLMuS": 1,
+                "SF": 10
+            },
+            "label_118": {
+                "nHBd": 2,
+                "nHLIP": 2,
+                "nHLMuS": 1,
+                "SF": 2
+            },
+            "label_119": {
+                "nHBd": 2,
+                "nHLIP": 2,
+                "nHLMuS": 1,
+                "SF": 3
+            },
+            "label_120": {
+                "nHBd": 2,
+                "nHLIP": 2,
+                "nHLMuS": 1,
+                "SF": 4
+            },
+            "label_121": {
+                "nHBd": 2,
+                "nHLIP": 2,
+                "nHLMuS": 1,
+                "SF": 5
+            },
+            "label_122": {
+                "nHBd": 2,
+                "nHLIP": 2,
+                "nHLMuS": 1,
+                "SF": 6
+            },
+            "label_123": {
+                "nHBd": 2,
+                "nHLIP": 2,
+                "nHLMuS": 1,
+                "SF": 7
+            },
+            "label_124": {
+                "nHBd": 2,
+                "nHLIP": 2,
+                "nHLMuS": 1,
+                "SF": 8
+            },
+            "label_125": {
+                "nHBd": 2,
+                "nHLIP": 2,
+                "nHLMuS": 1,
+                "SF": 9
+            },
+            "label_126": {
+                "nHBd": 2,
+                "nHLIP": 3,
+                "nHLMuS": 0,
+                "SF": 1
+            },
+            "label_127": {
+                "nHBd": 2,
+                "nHLIP": 3,
+                "nHLMuS": 0,
+                "SF": 10
+            },
+            "label_128": {
+                "nHBd": 2,
+                "nHLIP": 3,
+                "nHLMuS": 0,
+                "SF": 2
+            },
+            "label_129": {
+                "nHBd": 2,
+                "nHLIP": 3,
+                "nHLMuS": 0,
+                "SF": 3
+            },
+            "label_130": {
+                "nHBd": 2,
+                "nHLIP": 3,
+                "nHLMuS": 0,
+                "SF": 4
+            },
+            "label_131": {
+                "nHBd": 2,
+                "nHLIP": 3,
+                "nHLMuS": 0,
+                "SF": 5
+            },
+            "label_132": {
+                "nHBd": 2,
+                "nHLIP": 3,
+                "nHLMuS": 0,
+                "SF": 6
+            },
+            "label_133": {
+                "nHBd": 2,
+                "nHLIP": 3,
+                "nHLMuS": 0,
+                "SF": 7
+            },
+            "label_134": {
+                "nHBd": 2,
+                "nHLIP": 3,
+                "nHLMuS": 0,
+                "SF": 9
+            },
+            "label_135": {
+                "nHBd": 3,
+                "nHLIP": 0,
+                "nHLMuS": 2,
+                "SF": 1
+            },
+            "label_136": {
+                "nHBd": 3,
+                "nHLIP": 0,
+                "nHLMuS": 2,
+                "SF": 10
+            },
+            "label_137": {
+                "nHBd": 3,
+                "nHLIP": 0,
+                "nHLMuS": 2,
+                "SF": 2
+            },
+            "label_138": {
+                "nHBd": 3,
+                "nHLIP": 0,
+                "nHLMuS": 2,
+                "SF": 3
+            },
+            "label_139": {
+                "nHBd": 3,
+                "nHLIP": 0,
+                "nHLMuS": 2,
+                "SF": 4
+            },
+            "label_140": {
+                "nHBd": 3,
+                "nHLIP": 0,
+                "nHLMuS": 2,
+                "SF": 5
+            },
+            "label_141": {
+                "nHBd": 3,
+                "nHLIP": 0,
+                "nHLMuS": 2,
+                "SF": 6
+            },
+            "label_142": {
+                "nHBd": 3,
+                "nHLIP": 0,
+                "nHLMuS": 2,
+                "SF": 7
+            },
+            "label_143": {
+                "nHBd": 3,
+                "nHLIP": 0,
+                "nHLMuS": 2,
+                "SF": 8
+            },
+            "label_144": {
+                "nHBd": 3,
+                "nHLIP": 0,
+                "nHLMuS": 2,
+                "SF": 9
+            },
+            "label_145": {
+                "nHBd": 3,
+                "nHLIP": 1,
+                "nHLMuS": 1,
+                "SF": 1
+            },
+            "label_146": {
+                "nHBd": 3,
+                "nHLIP": 1,
+                "nHLMuS": 1,
+                "SF": 10
+            },
+            "label_147": {
+                "nHBd": 3,
+                "nHLIP": 1,
+                "nHLMuS": 1,
+                "SF": 2
+            },
+            "label_148": {
+                "nHBd": 3,
+                "nHLIP": 1,
+                "nHLMuS": 1,
+                "SF": 3
+            },
+            "label_149": {
+                "nHBd": 3,
+                "nHLIP": 1,
+                "nHLMuS": 1,
+                "SF": 4
+            },
+            "label_150": {
+                "nHBd": 3,
+                "nHLIP": 1,
+                "nHLMuS": 1,
+                "SF": 5
+            },
+            "label_151": {
+                "nHBd": 3,
+                "nHLIP": 1,
+                "nHLMuS": 1,
+                "SF": 6
+            },
+            "label_152": {
+                "nHBd": 3,
+                "nHLIP": 1,
+                "nHLMuS": 1,
+                "SF": 7
+            },
+            "label_153": {
+                "nHBd": 3,
+                "nHLIP": 1,
+                "nHLMuS": 1,
+                "SF": 8
+            },
+            "label_154": {
+                "nHBd": 3,
+                "nHLIP": 1,
+                "nHLMuS": 1,
+                "SF": 9
+            },
+            "label_155": {
+                "nHBd": 3,
+                "nHLIP": 2,
+                "nHLMuS": 0,
+                "SF": 1
+            },
+            "label_156": {
+                "nHBd": 3,
+                "nHLIP": 2,
+                "nHLMuS": 0,
+                "SF": 10
+            },
+            "label_157": {
+                "nHBd": 3,
+                "nHLIP": 2,
+                "nHLMuS": 0,
+                "SF": 2
+            },
+            "label_158": {
+                "nHBd": 3,
+                "nHLIP": 2,
+                "nHLMuS": 0,
+                "SF": 3
+            },
+            "label_159": {
+                "nHBd": 3,
+                "nHLIP": 2,
+                "nHLMuS": 0,
+                "SF": 4
+            },
+            "label_160": {
+                "nHBd": 3,
+                "nHLIP": 2,
+                "nHLMuS": 0,
+                "SF": 5
+            },
+            "label_161": {
+                "nHBd": 3,
+                "nHLIP": 2,
+                "nHLMuS": 0,
+                "SF": 6
+            },
+            "label_162": {
+                "nHBd": 3,
+                "nHLIP": 2,
+                "nHLMuS": 0,
+                "SF": 7
+            },
+            "label_163": {
+                "nHBd": 3,
+                "nHLIP": 2,
+                "nHLMuS": 0,
+                "SF": 8
+            },
+            "label_164": {
+                "nHBd": 3,
+                "nHLIP": 2,
+                "nHLMuS": 0,
+                "SF": 9
+            },
+            "label_165": {
+                "nHBd": 4,
+                "nHLIP": 0,
+                "nHLMuS": 1,
+                "SF": 1
+            },
+            "label_166": {
+                "nHBd": 4,
+                "nHLIP": 0,
+                "nHLMuS": 1,
+                "SF": 10
+            },
+            "label_167": {
+                "nHBd": 4,
+                "nHLIP": 0,
+                "nHLMuS": 1,
+                "SF": 2
+            },
+            "label_168": {
+                "nHBd": 4,
+                "nHLIP": 0,
+                "nHLMuS": 1,
+                "SF": 3
+            },
+            "label_169": {
+                "nHBd": 4,
+                "nHLIP": 0,
+                "nHLMuS": 1,
+                "SF": 4
+            },
+            "label_170": {
+                "nHBd": 4,
+                "nHLIP": 0,
+                "nHLMuS": 1,
+                "SF": 5
+            },
+            "label_171": {
+                "nHBd": 4,
+                "nHLIP": 0,
+                "nHLMuS": 1,
+                "SF": 6
+            },
+            "label_172": {
+                "nHBd": 4,
+                "nHLIP": 0,
+                "nHLMuS": 1,
+                "SF": 7
+            },
+            "label_173": {
+                "nHBd": 4,
+                "nHLIP": 0,
+                "nHLMuS": 1,
+                "SF": 8
+            },
+            "label_174": {
+                "nHBd": 4,
+                "nHLIP": 0,
+                "nHLMuS": 1,
+                "SF": 9
+            },
+            "label_175": {
+                "nHBd": 4,
+                "nHLIP": 1,
+                "nHLMuS": 0,
+                "SF": 1
+            },
+            "label_176": {
+                "nHBd": 4,
+                "nHLIP": 1,
+                "nHLMuS": 0,
+                "SF": 10
+            },
+            "label_177": {
+                "nHBd": 4,
+                "nHLIP": 1,
+                "nHLMuS": 0,
+                "SF": 2
+            },
+            "label_178": {
+                "nHBd": 4,
+                "nHLIP": 1,
+                "nHLMuS": 0,
+                "SF": 3
+            },
+            "label_179": {
+                "nHBd": 4,
+                "nHLIP": 1,
+                "nHLMuS": 0,
+                "SF": 4
+            },
+            "label_180": {
+                "nHBd": 4,
+                "nHLIP": 1,
+                "nHLMuS": 0,
+                "SF": 5
+            },
+            "label_181": {
+                "nHBd": 4,
+                "nHLIP": 1,
+                "nHLMuS": 0,
+                "SF": 6
+            },
+            "label_182": {
+                "nHBd": 4,
+                "nHLIP": 1,
+                "nHLMuS": 0,
+                "SF": 7
+            },
+            "label_183": {
+                "nHBd": 4,
+                "nHLIP": 1,
+                "nHLMuS": 0,
+                "SF": 8
+            },
+            "label_184": {
+                "nHBd": 4,
+                "nHLIP": 1,
+                "nHLMuS": 0,
+                "SF": 9
+            },
+            "label_185": {
+                "nHBd": 5,
+                "nHLIP": 0,
+                "nHLMuS": 0,
+                "SF": 10
+            },
+            "label_186": {
+                "nHBd": 5,
+                "nHLIP": 0,
+                "nHLMuS": 0,
+                "SF": 2
+            },
+            "label_187": {
+                "nHBd": 5,
+                "nHLIP": 0,
+                "nHLMuS": 0,
+                "SF": 3
+            },
+            "label_188": {
+                "nHBd": 5,
+                "nHLIP": 0,
+                "nHLMuS": 0,
+                "SF": 4
+            },
+            "label_189": {
+                "nHBd": 5,
+                "nHLIP": 0,
+                "nHLMuS": 0,
+                "SF": 5
+            },
+            "label_190": {
+                "nHBd": 5,
+                "nHLIP": 0,
+                "nHLMuS": 0,
+                "SF": 6
+            },
+            "label_191": {
+                "nHBd": 5,
+                "nHLIP": 0,
+                "nHLMuS": 0,
+                "SF": 7
+            },
+            "label_192": {
+                "nHBd": 5,
+                "nHLIP": 0,
+                "nHLMuS": 0,
+                "SF": 8
+            },
+            "label_193": {
+                "nHBd": 5,
+                "nHLIP": 0,
+                "nHLMuS": 0,
+                "SF": 9
+            }
+        },
+        "input_layer": "dnn_training_jun27_2x512_barrel_input",
+        "output_layer": "model/dnn_training_jun27_2x512_barrel_output/Sigmoid"
+    },
+    "endcap": {
+        "dnnmodel_path": "RecoMuon/TrackerSeedGenerator/data/OIseeding/DNNclassifier_Run3_2x512_endcap.pb",
+        "n_features": 21,
+        "feature_names": [
+            "validHits",
+            "tsos_IP_eta",
+            "tsos_IP_phi",
+            "tsos_IP_pt",
+            "tsos_IP_pt_eta",
+            "tsos_IP_pt_phi",
+            "err0_IP",
+            "err1_IP",
+            "err2_IP",
+            "err3_IP",
+            "err4_IP",
+            "tsos_MuS_eta",
+            "tsos_MuS_phi",
+            "tsos_MuS_pt",
+            "tsos_MuS_pt_eta",
+            "tsos_MuS_pt_phi",
+            "err0_MuS",
+            "err1_MuS",
+            "err2_MuS",
+            "err3_MuS",
+            "err4_MuS"
+        ],
+        "output_labels": {
+            "label_0": {
+                "nHBd": 0,
+                "nHLIP": 0,
+                "nHLMuS": 7,
+                "SF": 1
+            },
+            "label_1": {
+                "nHBd": 0,
+                "nHLIP": 0,
+                "nHLMuS": 7,
+                "SF": 10
+            },
+            "label_2": {
+                "nHBd": 0,
+                "nHLIP": 0,
+                "nHLMuS": 7,
+                "SF": 2
+            },
+            "label_3": {
+                "nHBd": 0,
+                "nHLIP": 0,
+                "nHLMuS": 7,
+                "SF": 3
+            },
+            "label_4": {
+                "nHBd": 0,
+                "nHLIP": 0,
+                "nHLMuS": 7,
+                "SF": 4
+            },
+            "label_5": {
+                "nHBd": 0,
+                "nHLIP": 0,
+                "nHLMuS": 7,
+                "SF": 5
+            },
+            "label_6": {
+                "nHBd": 0,
+                "nHLIP": 0,
+                "nHLMuS": 7,
+                "SF": 7
+            },
+            "label_7": {
+                "nHBd": 0,
+                "nHLIP": 0,
+                "nHLMuS": 7,
+                "SF": 8
+            },
+            "label_8": {
+                "nHBd": 0,
+                "nHLIP": 0,
+                "nHLMuS": 7,
+                "SF": 9
+            },
+            "label_9": {
+                "nHBd": 0,
+                "nHLIP": 1,
+                "nHLMuS": 6,
+                "SF": 1
+            },
+            "label_10": {
+                "nHBd": 0,
+                "nHLIP": 1,
+                "nHLMuS": 6,
+                "SF": 10
+            },
+            "label_11": {
+                "nHBd": 0,
+                "nHLIP": 1,
+                "nHLMuS": 6,
+                "SF": 2
+            },
+            "label_12": {
+                "nHBd": 0,
+                "nHLIP": 1,
+                "nHLMuS": 6,
+                "SF": 3
+            },
+            "label_13": {
+                "nHBd": 0,
+                "nHLIP": 1,
+                "nHLMuS": 6,
+                "SF": 4
+            },
+            "label_14": {
+                "nHBd": 0,
+                "nHLIP": 1,
+                "nHLMuS": 6,
+                "SF": 5
+            },
+            "label_15": {
+                "nHBd": 0,
+                "nHLIP": 1,
+                "nHLMuS": 6,
+                "SF": 6
+            },
+            "label_16": {
+                "nHBd": 0,
+                "nHLIP": 1,
+                "nHLMuS": 6,
+                "SF": 7
+            },
+            "label_17": {
+                "nHBd": 0,
+                "nHLIP": 1,
+                "nHLMuS": 6,
+                "SF": 8
+            },
+            "label_18": {
+                "nHBd": 0,
+                "nHLIP": 1,
+                "nHLMuS": 6,
+                "SF": 9
+            },
+            "label_19": {
+                "nHBd": 0,
+                "nHLIP": 2,
+                "nHLMuS": 5,
+                "SF": 1
+            },
+            "label_20": {
+                "nHBd": 0,
+                "nHLIP": 2,
+                "nHLMuS": 5,
+                "SF": 10
+            },
+            "label_21": {
+                "nHBd": 0,
+                "nHLIP": 2,
+                "nHLMuS": 5,
+                "SF": 2
+            },
+            "label_22": {
+                "nHBd": 0,
+                "nHLIP": 2,
+                "nHLMuS": 5,
+                "SF": 3
+            },
+            "label_23": {
+                "nHBd": 0,
+                "nHLIP": 2,
+                "nHLMuS": 5,
+                "SF": 4
+            },
+            "label_24": {
+                "nHBd": 0,
+                "nHLIP": 2,
+                "nHLMuS": 5,
+                "SF": 5
+            },
+            "label_25": {
+                "nHBd": 0,
+                "nHLIP": 2,
+                "nHLMuS": 5,
+                "SF": 6
+            },
+            "label_26": {
+                "nHBd": 0,
+                "nHLIP": 2,
+                "nHLMuS": 5,
+                "SF": 7
+            },
+            "label_27": {
+                "nHBd": 0,
+                "nHLIP": 2,
+                "nHLMuS": 5,
+                "SF": 8
+            },
+            "label_28": {
+                "nHBd": 0,
+                "nHLIP": 2,
+                "nHLMuS": 5,
+                "SF": 9
+            },
+            "label_29": {
+                "nHBd": 0,
+                "nHLIP": 3,
+                "nHLMuS": 4,
+                "SF": 1
+            },
+            "label_30": {
+                "nHBd": 0,
+                "nHLIP": 3,
+                "nHLMuS": 4,
+                "SF": 10
+            },
+            "label_31": {
+                "nHBd": 0,
+                "nHLIP": 3,
+                "nHLMuS": 4,
+                "SF": 2
+            },
+            "label_32": {
+                "nHBd": 0,
+                "nHLIP": 3,
+                "nHLMuS": 4,
+                "SF": 3
+            },
+            "label_33": {
+                "nHBd": 0,
+                "nHLIP": 3,
+                "nHLMuS": 4,
+                "SF": 4
+            },
+            "label_34": {
+                "nHBd": 0,
+                "nHLIP": 3,
+                "nHLMuS": 4,
+                "SF": 5
+            },
+            "label_35": {
+                "nHBd": 0,
+                "nHLIP": 3,
+                "nHLMuS": 4,
+                "SF": 6
+            },
+            "label_36": {
+                "nHBd": 0,
+                "nHLIP": 3,
+                "nHLMuS": 4,
+                "SF": 7
+            },
+            "label_37": {
+                "nHBd": 0,
+                "nHLIP": 3,
+                "nHLMuS": 4,
+                "SF": 8
+            },
+            "label_38": {
+                "nHBd": 0,
+                "nHLIP": 3,
+                "nHLMuS": 4,
+                "SF": 9
+            },
+            "label_39": {
+                "nHBd": 0,
+                "nHLIP": 4,
+                "nHLMuS": 3,
+                "SF": 1
+            },
+            "label_40": {
+                "nHBd": 0,
+                "nHLIP": 4,
+                "nHLMuS": 3,
+                "SF": 10
+            },
+            "label_41": {
+                "nHBd": 0,
+                "nHLIP": 4,
+                "nHLMuS": 3,
+                "SF": 2
+            },
+            "label_42": {
+                "nHBd": 0,
+                "nHLIP": 4,
+                "nHLMuS": 3,
+                "SF": 3
+            },
+            "label_43": {
+                "nHBd": 0,
+                "nHLIP": 4,
+                "nHLMuS": 3,
+                "SF": 4
+            },
+            "label_44": {
+                "nHBd": 0,
+                "nHLIP": 4,
+                "nHLMuS": 3,
+                "SF": 5
+            },
+            "label_45": {
+                "nHBd": 0,
+                "nHLIP": 4,
+                "nHLMuS": 3,
+                "SF": 6
+            },
+            "label_46": {
+                "nHBd": 0,
+                "nHLIP": 4,
+                "nHLMuS": 3,
+                "SF": 7
+            },
+            "label_47": {
+                "nHBd": 0,
+                "nHLIP": 4,
+                "nHLMuS": 3,
+                "SF": 8
+            },
+            "label_48": {
+                "nHBd": 0,
+                "nHLIP": 4,
+                "nHLMuS": 3,
+                "SF": 9
+            },
+            "label_49": {
+                "nHBd": 0,
+                "nHLIP": 5,
+                "nHLMuS": 2,
+                "SF": 1
+            },
+            "label_50": {
+                "nHBd": 0,
+                "nHLIP": 5,
+                "nHLMuS": 2,
+                "SF": 10
+            },
+            "label_51": {
+                "nHBd": 0,
+                "nHLIP": 5,
+                "nHLMuS": 2,
+                "SF": 2
+            },
+            "label_52": {
+                "nHBd": 0,
+                "nHLIP": 5,
+                "nHLMuS": 2,
+                "SF": 3
+            },
+            "label_53": {
+                "nHBd": 0,
+                "nHLIP": 5,
+                "nHLMuS": 2,
+                "SF": 4
+            },
+            "label_54": {
+                "nHBd": 0,
+                "nHLIP": 5,
+                "nHLMuS": 2,
+                "SF": 5
+            },
+            "label_55": {
+                "nHBd": 0,
+                "nHLIP": 5,
+                "nHLMuS": 2,
+                "SF": 6
+            },
+            "label_56": {
+                "nHBd": 0,
+                "nHLIP": 5,
+                "nHLMuS": 2,
+                "SF": 7
+            },
+            "label_57": {
+                "nHBd": 0,
+                "nHLIP": 5,
+                "nHLMuS": 2,
+                "SF": 8
+            },
+            "label_58": {
+                "nHBd": 0,
+                "nHLIP": 5,
+                "nHLMuS": 2,
+                "SF": 9
+            },
+            "label_59": {
+                "nHBd": 0,
+                "nHLIP": 6,
+                "nHLMuS": 1,
+                "SF": 1
+            },
+            "label_60": {
+                "nHBd": 0,
+                "nHLIP": 6,
+                "nHLMuS": 1,
+                "SF": 10
+            },
+            "label_61": {
+                "nHBd": 0,
+                "nHLIP": 6,
+                "nHLMuS": 1,
+                "SF": 2
+            },
+            "label_62": {
+                "nHBd": 0,
+                "nHLIP": 6,
+                "nHLMuS": 1,
+                "SF": 3
+            },
+            "label_63": {
+                "nHBd": 0,
+                "nHLIP": 6,
+                "nHLMuS": 1,
+                "SF": 4
+            },
+            "label_64": {
+                "nHBd": 0,
+                "nHLIP": 6,
+                "nHLMuS": 1,
+                "SF": 5
+            },
+            "label_65": {
+                "nHBd": 0,
+                "nHLIP": 6,
+                "nHLMuS": 1,
+                "SF": 6
+            },
+            "label_66": {
+                "nHBd": 0,
+                "nHLIP": 6,
+                "nHLMuS": 1,
+                "SF": 7
+            },
+            "label_67": {
+                "nHBd": 0,
+                "nHLIP": 6,
+                "nHLMuS": 1,
+                "SF": 8
+            },
+            "label_68": {
+                "nHBd": 0,
+                "nHLIP": 6,
+                "nHLMuS": 1,
+                "SF": 9
+            },
+            "label_69": {
+                "nHBd": 0,
+                "nHLIP": 7,
+                "nHLMuS": 0,
+                "SF": 1
+            },
+            "label_70": {
+                "nHBd": 0,
+                "nHLIP": 7,
+                "nHLMuS": 0,
+                "SF": 10
+            },
+            "label_71": {
+                "nHBd": 0,
+                "nHLIP": 7,
+                "nHLMuS": 0,
+                "SF": 2
+            },
+            "label_72": {
+                "nHBd": 0,
+                "nHLIP": 7,
+                "nHLMuS": 0,
+                "SF": 3
+            },
+            "label_73": {
+                "nHBd": 0,
+                "nHLIP": 7,
+                "nHLMuS": 0,
+                "SF": 4
+            },
+            "label_74": {
+                "nHBd": 0,
+                "nHLIP": 7,
+                "nHLMuS": 0,
+                "SF": 5
+            },
+            "label_75": {
+                "nHBd": 0,
+                "nHLIP": 7,
+                "nHLMuS": 0,
+                "SF": 6
+            },
+            "label_76": {
+                "nHBd": 0,
+                "nHLIP": 7,
+                "nHLMuS": 0,
+                "SF": 7
+            },
+            "label_77": {
+                "nHBd": 0,
+                "nHLIP": 7,
+                "nHLMuS": 0,
+                "SF": 8
+            },
+            "label_78": {
+                "nHBd": 0,
+                "nHLIP": 7,
+                "nHLMuS": 0,
+                "SF": 9
+            },
+            "label_79": {
+                "nHBd": 1,
+                "nHLIP": 0,
+                "nHLMuS": 6,
+                "SF": 1
+            },
+            "label_80": {
+                "nHBd": 1,
+                "nHLIP": 0,
+                "nHLMuS": 6,
+                "SF": 10
+            },
+            "label_81": {
+                "nHBd": 1,
+                "nHLIP": 0,
+                "nHLMuS": 6,
+                "SF": 2
+            },
+            "label_82": {
+                "nHBd": 1,
+                "nHLIP": 0,
+                "nHLMuS": 6,
+                "SF": 3
+            },
+            "label_83": {
+                "nHBd": 1,
+                "nHLIP": 0,
+                "nHLMuS": 6,
+                "SF": 4
+            },
+            "label_84": {
+                "nHBd": 1,
+                "nHLIP": 0,
+                "nHLMuS": 6,
+                "SF": 5
+            },
+            "label_85": {
+                "nHBd": 1,
+                "nHLIP": 0,
+                "nHLMuS": 6,
+                "SF": 6
+            },
+            "label_86": {
+                "nHBd": 1,
+                "nHLIP": 0,
+                "nHLMuS": 6,
+                "SF": 7
+            },
+            "label_87": {
+                "nHBd": 1,
+                "nHLIP": 0,
+                "nHLMuS": 6,
+                "SF": 8
+            },
+            "label_88": {
+                "nHBd": 1,
+                "nHLIP": 0,
+                "nHLMuS": 6,
+                "SF": 9
+            },
+            "label_89": {
+                "nHBd": 1,
+                "nHLIP": 1,
+                "nHLMuS": 5,
+                "SF": 1
+            },
+            "label_90": {
+                "nHBd": 1,
+                "nHLIP": 1,
+                "nHLMuS": 5,
+                "SF": 10
+            },
+            "label_91": {
+                "nHBd": 1,
+                "nHLIP": 1,
+                "nHLMuS": 5,
+                "SF": 2
+            },
+            "label_92": {
+                "nHBd": 1,
+                "nHLIP": 1,
+                "nHLMuS": 5,
+                "SF": 3
+            },
+            "label_93": {
+                "nHBd": 1,
+                "nHLIP": 1,
+                "nHLMuS": 5,
+                "SF": 4
+            },
+            "label_94": {
+                "nHBd": 1,
+                "nHLIP": 1,
+                "nHLMuS": 5,
+                "SF": 5
+            },
+            "label_95": {
+                "nHBd": 1,
+                "nHLIP": 1,
+                "nHLMuS": 5,
+                "SF": 6
+            },
+            "label_96": {
+                "nHBd": 1,
+                "nHLIP": 1,
+                "nHLMuS": 5,
+                "SF": 7
+            },
+            "label_97": {
+                "nHBd": 1,
+                "nHLIP": 1,
+                "nHLMuS": 5,
+                "SF": 8
+            },
+            "label_98": {
+                "nHBd": 1,
+                "nHLIP": 1,
+                "nHLMuS": 5,
+                "SF": 9
+            },
+            "label_99": {
+                "nHBd": 1,
+                "nHLIP": 2,
+                "nHLMuS": 4,
+                "SF": 1
+            },
+            "label_100": {
+                "nHBd": 1,
+                "nHLIP": 2,
+                "nHLMuS": 4,
+                "SF": 10
+            },
+            "label_101": {
+                "nHBd": 1,
+                "nHLIP": 2,
+                "nHLMuS": 4,
+                "SF": 2
+            },
+            "label_102": {
+                "nHBd": 1,
+                "nHLIP": 2,
+                "nHLMuS": 4,
+                "SF": 3
+            },
+            "label_103": {
+                "nHBd": 1,
+                "nHLIP": 2,
+                "nHLMuS": 4,
+                "SF": 4
+            },
+            "label_104": {
+                "nHBd": 1,
+                "nHLIP": 2,
+                "nHLMuS": 4,
+                "SF": 5
+            },
+            "label_105": {
+                "nHBd": 1,
+                "nHLIP": 2,
+                "nHLMuS": 4,
+                "SF": 6
+            },
+            "label_106": {
+                "nHBd": 1,
+                "nHLIP": 2,
+                "nHLMuS": 4,
+                "SF": 7
+            },
+            "label_107": {
+                "nHBd": 1,
+                "nHLIP": 2,
+                "nHLMuS": 4,
+                "SF": 8
+            },
+            "label_108": {
+                "nHBd": 1,
+                "nHLIP": 2,
+                "nHLMuS": 4,
+                "SF": 9
+            },
+            "label_109": {
+                "nHBd": 1,
+                "nHLIP": 3,
+                "nHLMuS": 3,
+                "SF": 1
+            },
+            "label_110": {
+                "nHBd": 1,
+                "nHLIP": 3,
+                "nHLMuS": 3,
+                "SF": 10
+            },
+            "label_111": {
+                "nHBd": 1,
+                "nHLIP": 3,
+                "nHLMuS": 3,
+                "SF": 2
+            },
+            "label_112": {
+                "nHBd": 1,
+                "nHLIP": 3,
+                "nHLMuS": 3,
+                "SF": 3
+            },
+            "label_113": {
+                "nHBd": 1,
+                "nHLIP": 3,
+                "nHLMuS": 3,
+                "SF": 4
+            },
+            "label_114": {
+                "nHBd": 1,
+                "nHLIP": 3,
+                "nHLMuS": 3,
+                "SF": 5
+            },
+            "label_115": {
+                "nHBd": 1,
+                "nHLIP": 3,
+                "nHLMuS": 3,
+                "SF": 6
+            },
+            "label_116": {
+                "nHBd": 1,
+                "nHLIP": 3,
+                "nHLMuS": 3,
+                "SF": 7
+            },
+            "label_117": {
+                "nHBd": 1,
+                "nHLIP": 3,
+                "nHLMuS": 3,
+                "SF": 8
+            },
+            "label_118": {
+                "nHBd": 1,
+                "nHLIP": 3,
+                "nHLMuS": 3,
+                "SF": 9
+            },
+            "label_119": {
+                "nHBd": 1,
+                "nHLIP": 4,
+                "nHLMuS": 2,
+                "SF": 1
+            },
+            "label_120": {
+                "nHBd": 1,
+                "nHLIP": 4,
+                "nHLMuS": 2,
+                "SF": 10
+            },
+            "label_121": {
+                "nHBd": 1,
+                "nHLIP": 4,
+                "nHLMuS": 2,
+                "SF": 2
+            },
+            "label_122": {
+                "nHBd": 1,
+                "nHLIP": 4,
+                "nHLMuS": 2,
+                "SF": 3
+            },
+            "label_123": {
+                "nHBd": 1,
+                "nHLIP": 4,
+                "nHLMuS": 2,
+                "SF": 4
+            },
+            "label_124": {
+                "nHBd": 1,
+                "nHLIP": 4,
+                "nHLMuS": 2,
+                "SF": 5
+            },
+            "label_125": {
+                "nHBd": 1,
+                "nHLIP": 4,
+                "nHLMuS": 2,
+                "SF": 6
+            },
+            "label_126": {
+                "nHBd": 1,
+                "nHLIP": 4,
+                "nHLMuS": 2,
+                "SF": 7
+            },
+            "label_127": {
+                "nHBd": 1,
+                "nHLIP": 4,
+                "nHLMuS": 2,
+                "SF": 8
+            },
+            "label_128": {
+                "nHBd": 1,
+                "nHLIP": 4,
+                "nHLMuS": 2,
+                "SF": 9
+            },
+            "label_129": {
+                "nHBd": 1,
+                "nHLIP": 5,
+                "nHLMuS": 1,
+                "SF": 1
+            },
+            "label_130": {
+                "nHBd": 1,
+                "nHLIP": 5,
+                "nHLMuS": 1,
+                "SF": 10
+            },
+            "label_131": {
+                "nHBd": 1,
+                "nHLIP": 5,
+                "nHLMuS": 1,
+                "SF": 2
+            },
+            "label_132": {
+                "nHBd": 1,
+                "nHLIP": 5,
+                "nHLMuS": 1,
+                "SF": 4
+            },
+            "label_133": {
+                "nHBd": 1,
+                "nHLIP": 5,
+                "nHLMuS": 1,
+                "SF": 5
+            },
+            "label_134": {
+                "nHBd": 1,
+                "nHLIP": 5,
+                "nHLMuS": 1,
+                "SF": 8
+            },
+            "label_135": {
+                "nHBd": 1,
+                "nHLIP": 5,
+                "nHLMuS": 1,
+                "SF": 9
+            },
+            "label_136": {
+                "nHBd": 1,
+                "nHLIP": 6,
+                "nHLMuS": 0,
+                "SF": 1
+            },
+            "label_137": {
+                "nHBd": 1,
+                "nHLIP": 6,
+                "nHLMuS": 0,
+                "SF": 10
+            },
+            "label_138": {
+                "nHBd": 1,
+                "nHLIP": 6,
+                "nHLMuS": 0,
+                "SF": 2
+            },
+            "label_139": {
+                "nHBd": 1,
+                "nHLIP": 6,
+                "nHLMuS": 0,
+                "SF": 3
+            },
+            "label_140": {
+                "nHBd": 1,
+                "nHLIP": 6,
+                "nHLMuS": 0,
+                "SF": 4
+            },
+            "label_141": {
+                "nHBd": 1,
+                "nHLIP": 6,
+                "nHLMuS": 0,
+                "SF": 5
+            },
+            "label_142": {
+                "nHBd": 1,
+                "nHLIP": 6,
+                "nHLMuS": 0,
+                "SF": 6
+            },
+            "label_143": {
+                "nHBd": 1,
+                "nHLIP": 6,
+                "nHLMuS": 0,
+                "SF": 7
+            },
+            "label_144": {
+                "nHBd": 1,
+                "nHLIP": 6,
+                "nHLMuS": 0,
+                "SF": 8
+            },
+            "label_145": {
+                "nHBd": 1,
+                "nHLIP": 6,
+                "nHLMuS": 0,
+                "SF": 9
+            },
+            "label_146": {
+                "nHBd": 2,
+                "nHLIP": 0,
+                "nHLMuS": 5,
+                "SF": 1
+            },
+            "label_147": {
+                "nHBd": 2,
+                "nHLIP": 0,
+                "nHLMuS": 5,
+                "SF": 10
+            },
+            "label_148": {
+                "nHBd": 2,
+                "nHLIP": 0,
+                "nHLMuS": 5,
+                "SF": 2
+            },
+            "label_149": {
+                "nHBd": 2,
+                "nHLIP": 0,
+                "nHLMuS": 5,
+                "SF": 3
+            },
+            "label_150": {
+                "nHBd": 2,
+                "nHLIP": 0,
+                "nHLMuS": 5,
+                "SF": 4
+            },
+            "label_151": {
+                "nHBd": 2,
+                "nHLIP": 0,
+                "nHLMuS": 5,
+                "SF": 5
+            },
+            "label_152": {
+                "nHBd": 2,
+                "nHLIP": 0,
+                "nHLMuS": 5,
+                "SF": 6
+            },
+            "label_153": {
+                "nHBd": 2,
+                "nHLIP": 0,
+                "nHLMuS": 5,
+                "SF": 7
+            },
+            "label_154": {
+                "nHBd": 2,
+                "nHLIP": 0,
+                "nHLMuS": 5,
+                "SF": 8
+            },
+            "label_155": {
+                "nHBd": 2,
+                "nHLIP": 0,
+                "nHLMuS": 5,
+                "SF": 9
+            },
+            "label_156": {
+                "nHBd": 2,
+                "nHLIP": 1,
+                "nHLMuS": 4,
+                "SF": 1
+            },
+            "label_157": {
+                "nHBd": 2,
+                "nHLIP": 1,
+                "nHLMuS": 4,
+                "SF": 10
+            },
+            "label_158": {
+                "nHBd": 2,
+                "nHLIP": 1,
+                "nHLMuS": 4,
+                "SF": 2
+            },
+            "label_159": {
+                "nHBd": 2,
+                "nHLIP": 1,
+                "nHLMuS": 4,
+                "SF": 3
+            },
+            "label_160": {
+                "nHBd": 2,
+                "nHLIP": 1,
+                "nHLMuS": 4,
+                "SF": 4
+            },
+            "label_161": {
+                "nHBd": 2,
+                "nHLIP": 1,
+                "nHLMuS": 4,
+                "SF": 5
+            },
+            "label_162": {
+                "nHBd": 2,
+                "nHLIP": 1,
+                "nHLMuS": 4,
+                "SF": 6
+            },
+            "label_163": {
+                "nHBd": 2,
+                "nHLIP": 1,
+                "nHLMuS": 4,
+                "SF": 7
+            },
+            "label_164": {
+                "nHBd": 2,
+                "nHLIP": 1,
+                "nHLMuS": 4,
+                "SF": 8
+            },
+            "label_165": {
+                "nHBd": 2,
+                "nHLIP": 1,
+                "nHLMuS": 4,
+                "SF": 9
+            },
+            "label_166": {
+                "nHBd": 2,
+                "nHLIP": 2,
+                "nHLMuS": 3,
+                "SF": 1
+            },
+            "label_167": {
+                "nHBd": 2,
+                "nHLIP": 2,
+                "nHLMuS": 3,
+                "SF": 10
+            },
+            "label_168": {
+                "nHBd": 2,
+                "nHLIP": 2,
+                "nHLMuS": 3,
+                "SF": 2
+            },
+            "label_169": {
+                "nHBd": 2,
+                "nHLIP": 2,
+                "nHLMuS": 3,
+                "SF": 3
+            },
+            "label_170": {
+                "nHBd": 2,
+                "nHLIP": 2,
+                "nHLMuS": 3,
+                "SF": 4
+            },
+            "label_171": {
+                "nHBd": 2,
+                "nHLIP": 2,
+                "nHLMuS": 3,
+                "SF": 5
+            },
+            "label_172": {
+                "nHBd": 2,
+                "nHLIP": 2,
+                "nHLMuS": 3,
+                "SF": 6
+            },
+            "label_173": {
+                "nHBd": 2,
+                "nHLIP": 2,
+                "nHLMuS": 3,
+                "SF": 7
+            },
+            "label_174": {
+                "nHBd": 2,
+                "nHLIP": 2,
+                "nHLMuS": 3,
+                "SF": 8
+            },
+            "label_175": {
+                "nHBd": 2,
+                "nHLIP": 2,
+                "nHLMuS": 3,
+                "SF": 9
+            },
+            "label_176": {
+                "nHBd": 2,
+                "nHLIP": 3,
+                "nHLMuS": 2,
+                "SF": 1
+            },
+            "label_177": {
+                "nHBd": 2,
+                "nHLIP": 3,
+                "nHLMuS": 2,
+                "SF": 10
+            },
+            "label_178": {
+                "nHBd": 2,
+                "nHLIP": 3,
+                "nHLMuS": 2,
+                "SF": 2
+            },
+            "label_179": {
+                "nHBd": 2,
+                "nHLIP": 3,
+                "nHLMuS": 2,
+                "SF": 3
+            },
+            "label_180": {
+                "nHBd": 2,
+                "nHLIP": 3,
+                "nHLMuS": 2,
+                "SF": 4
+            },
+            "label_181": {
+                "nHBd": 2,
+                "nHLIP": 3,
+                "nHLMuS": 2,
+                "SF": 5
+            },
+            "label_182": {
+                "nHBd": 2,
+                "nHLIP": 3,
+                "nHLMuS": 2,
+                "SF": 6
+            },
+            "label_183": {
+                "nHBd": 2,
+                "nHLIP": 3,
+                "nHLMuS": 2,
+                "SF": 7
+            },
+            "label_184": {
+                "nHBd": 2,
+                "nHLIP": 3,
+                "nHLMuS": 2,
+                "SF": 8
+            },
+            "label_185": {
+                "nHBd": 2,
+                "nHLIP": 3,
+                "nHLMuS": 2,
+                "SF": 9
+            },
+            "label_186": {
+                "nHBd": 2,
+                "nHLIP": 4,
+                "nHLMuS": 1,
+                "SF": 1
+            },
+            "label_187": {
+                "nHBd": 2,
+                "nHLIP": 4,
+                "nHLMuS": 1,
+                "SF": 10
+            },
+            "label_188": {
+                "nHBd": 2,
+                "nHLIP": 4,
+                "nHLMuS": 1,
+                "SF": 2
+            },
+            "label_189": {
+                "nHBd": 2,
+                "nHLIP": 4,
+                "nHLMuS": 1,
+                "SF": 3
+            },
+            "label_190": {
+                "nHBd": 2,
+                "nHLIP": 4,
+                "nHLMuS": 1,
+                "SF": 4
+            },
+            "label_191": {
+                "nHBd": 2,
+                "nHLIP": 4,
+                "nHLMuS": 1,
+                "SF": 5
+            },
+            "label_192": {
+                "nHBd": 2,
+                "nHLIP": 4,
+                "nHLMuS": 1,
+                "SF": 6
+            },
+            "label_193": {
+                "nHBd": 2,
+                "nHLIP": 4,
+                "nHLMuS": 1,
+                "SF": 7
+            },
+            "label_194": {
+                "nHBd": 2,
+                "nHLIP": 4,
+                "nHLMuS": 1,
+                "SF": 8
+            },
+            "label_195": {
+                "nHBd": 2,
+                "nHLIP": 4,
+                "nHLMuS": 1,
+                "SF": 9
+            },
+            "label_196": {
+                "nHBd": 2,
+                "nHLIP": 5,
+                "nHLMuS": 0,
+                "SF": 1
+            },
+            "label_197": {
+                "nHBd": 2,
+                "nHLIP": 5,
+                "nHLMuS": 0,
+                "SF": 10
+            },
+            "label_198": {
+                "nHBd": 2,
+                "nHLIP": 5,
+                "nHLMuS": 0,
+                "SF": 2
+            },
+            "label_199": {
+                "nHBd": 2,
+                "nHLIP": 5,
+                "nHLMuS": 0,
+                "SF": 3
+            },
+            "label_200": {
+                "nHBd": 2,
+                "nHLIP": 5,
+                "nHLMuS": 0,
+                "SF": 4
+            },
+            "label_201": {
+                "nHBd": 2,
+                "nHLIP": 5,
+                "nHLMuS": 0,
+                "SF": 5
+            },
+            "label_202": {
+                "nHBd": 2,
+                "nHLIP": 5,
+                "nHLMuS": 0,
+                "SF": 6
+            },
+            "label_203": {
+                "nHBd": 2,
+                "nHLIP": 5,
+                "nHLMuS": 0,
+                "SF": 7
+            },
+            "label_204": {
+                "nHBd": 2,
+                "nHLIP": 5,
+                "nHLMuS": 0,
+                "SF": 8
+            },
+            "label_205": {
+                "nHBd": 2,
+                "nHLIP": 5,
+                "nHLMuS": 0,
+                "SF": 9
+            },
+            "label_206": {
+                "nHBd": 3,
+                "nHLIP": 0,
+                "nHLMuS": 4,
+                "SF": 1
+            },
+            "label_207": {
+                "nHBd": 3,
+                "nHLIP": 0,
+                "nHLMuS": 4,
+                "SF": 10
+            },
+            "label_208": {
+                "nHBd": 3,
+                "nHLIP": 0,
+                "nHLMuS": 4,
+                "SF": 2
+            },
+            "label_209": {
+                "nHBd": 3,
+                "nHLIP": 0,
+                "nHLMuS": 4,
+                "SF": 3
+            },
+            "label_210": {
+                "nHBd": 3,
+                "nHLIP": 0,
+                "nHLMuS": 4,
+                "SF": 4
+            },
+            "label_211": {
+                "nHBd": 3,
+                "nHLIP": 0,
+                "nHLMuS": 4,
+                "SF": 5
+            },
+            "label_212": {
+                "nHBd": 3,
+                "nHLIP": 0,
+                "nHLMuS": 4,
+                "SF": 6
+            },
+            "label_213": {
+                "nHBd": 3,
+                "nHLIP": 0,
+                "nHLMuS": 4,
+                "SF": 7
+            },
+            "label_214": {
+                "nHBd": 3,
+                "nHLIP": 0,
+                "nHLMuS": 4,
+                "SF": 8
+            },
+            "label_215": {
+                "nHBd": 3,
+                "nHLIP": 0,
+                "nHLMuS": 4,
+                "SF": 9
+            },
+            "label_216": {
+                "nHBd": 3,
+                "nHLIP": 1,
+                "nHLMuS": 3,
+                "SF": 1
+            },
+            "label_217": {
+                "nHBd": 3,
+                "nHLIP": 1,
+                "nHLMuS": 3,
+                "SF": 10
+            },
+            "label_218": {
+                "nHBd": 3,
+                "nHLIP": 1,
+                "nHLMuS": 3,
+                "SF": 2
+            },
+            "label_219": {
+                "nHBd": 3,
+                "nHLIP": 1,
+                "nHLMuS": 3,
+                "SF": 3
+            },
+            "label_220": {
+                "nHBd": 3,
+                "nHLIP": 1,
+                "nHLMuS": 3,
+                "SF": 4
+            },
+            "label_221": {
+                "nHBd": 3,
+                "nHLIP": 1,
+                "nHLMuS": 3,
+                "SF": 5
+            },
+            "label_222": {
+                "nHBd": 3,
+                "nHLIP": 1,
+                "nHLMuS": 3,
+                "SF": 6
+            },
+            "label_223": {
+                "nHBd": 3,
+                "nHLIP": 1,
+                "nHLMuS": 3,
+                "SF": 7
+            },
+            "label_224": {
+                "nHBd": 3,
+                "nHLIP": 1,
+                "nHLMuS": 3,
+                "SF": 8
+            },
+            "label_225": {
+                "nHBd": 3,
+                "nHLIP": 1,
+                "nHLMuS": 3,
+                "SF": 9
+            },
+            "label_226": {
+                "nHBd": 3,
+                "nHLIP": 2,
+                "nHLMuS": 2,
+                "SF": 1
+            },
+            "label_227": {
+                "nHBd": 3,
+                "nHLIP": 2,
+                "nHLMuS": 2,
+                "SF": 10
+            },
+            "label_228": {
+                "nHBd": 3,
+                "nHLIP": 2,
+                "nHLMuS": 2,
+                "SF": 2
+            },
+            "label_229": {
+                "nHBd": 3,
+                "nHLIP": 2,
+                "nHLMuS": 2,
+                "SF": 3
+            },
+            "label_230": {
+                "nHBd": 3,
+                "nHLIP": 2,
+                "nHLMuS": 2,
+                "SF": 4
+            },
+            "label_231": {
+                "nHBd": 3,
+                "nHLIP": 2,
+                "nHLMuS": 2,
+                "SF": 5
+            },
+            "label_232": {
+                "nHBd": 3,
+                "nHLIP": 2,
+                "nHLMuS": 2,
+                "SF": 6
+            },
+            "label_233": {
+                "nHBd": 3,
+                "nHLIP": 2,
+                "nHLMuS": 2,
+                "SF": 7
+            },
+            "label_234": {
+                "nHBd": 3,
+                "nHLIP": 2,
+                "nHLMuS": 2,
+                "SF": 8
+            },
+            "label_235": {
+                "nHBd": 3,
+                "nHLIP": 2,
+                "nHLMuS": 2,
+                "SF": 9
+            },
+            "label_236": {
+                "nHBd": 3,
+                "nHLIP": 3,
+                "nHLMuS": 1,
+                "SF": 1
+            },
+            "label_237": {
+                "nHBd": 3,
+                "nHLIP": 3,
+                "nHLMuS": 1,
+                "SF": 10
+            },
+            "label_238": {
+                "nHBd": 3,
+                "nHLIP": 3,
+                "nHLMuS": 1,
+                "SF": 2
+            },
+            "label_239": {
+                "nHBd": 3,
+                "nHLIP": 3,
+                "nHLMuS": 1,
+                "SF": 3
+            },
+            "label_240": {
+                "nHBd": 3,
+                "nHLIP": 3,
+                "nHLMuS": 1,
+                "SF": 4
+            },
+            "label_241": {
+                "nHBd": 3,
+                "nHLIP": 3,
+                "nHLMuS": 1,
+                "SF": 5
+            },
+            "label_242": {
+                "nHBd": 3,
+                "nHLIP": 3,
+                "nHLMuS": 1,
+                "SF": 6
+            },
+            "label_243": {
+                "nHBd": 3,
+                "nHLIP": 3,
+                "nHLMuS": 1,
+                "SF": 7
+            },
+            "label_244": {
+                "nHBd": 3,
+                "nHLIP": 3,
+                "nHLMuS": 1,
+                "SF": 8
+            },
+            "label_245": {
+                "nHBd": 3,
+                "nHLIP": 3,
+                "nHLMuS": 1,
+                "SF": 9
+            },
+            "label_246": {
+                "nHBd": 3,
+                "nHLIP": 4,
+                "nHLMuS": 0,
+                "SF": 1
+            },
+            "label_247": {
+                "nHBd": 3,
+                "nHLIP": 4,
+                "nHLMuS": 0,
+                "SF": 10
+            },
+            "label_248": {
+                "nHBd": 3,
+                "nHLIP": 4,
+                "nHLMuS": 0,
+                "SF": 2
+            },
+            "label_249": {
+                "nHBd": 3,
+                "nHLIP": 4,
+                "nHLMuS": 0,
+                "SF": 3
+            },
+            "label_250": {
+                "nHBd": 3,
+                "nHLIP": 4,
+                "nHLMuS": 0,
+                "SF": 4
+            },
+            "label_251": {
+                "nHBd": 3,
+                "nHLIP": 4,
+                "nHLMuS": 0,
+                "SF": 5
+            },
+            "label_252": {
+                "nHBd": 3,
+                "nHLIP": 4,
+                "nHLMuS": 0,
+                "SF": 6
+            },
+            "label_253": {
+                "nHBd": 3,
+                "nHLIP": 4,
+                "nHLMuS": 0,
+                "SF": 7
+            },
+            "label_254": {
+                "nHBd": 3,
+                "nHLIP": 4,
+                "nHLMuS": 0,
+                "SF": 8
+            },
+            "label_255": {
+                "nHBd": 3,
+                "nHLIP": 4,
+                "nHLMuS": 0,
+                "SF": 9
+            },
+            "label_256": {
+                "nHBd": 4,
+                "nHLIP": 0,
+                "nHLMuS": 3,
+                "SF": 1
+            },
+            "label_257": {
+                "nHBd": 4,
+                "nHLIP": 0,
+                "nHLMuS": 3,
+                "SF": 10
+            },
+            "label_258": {
+                "nHBd": 4,
+                "nHLIP": 0,
+                "nHLMuS": 3,
+                "SF": 2
+            },
+            "label_259": {
+                "nHBd": 4,
+                "nHLIP": 0,
+                "nHLMuS": 3,
+                "SF": 3
+            },
+            "label_260": {
+                "nHBd": 4,
+                "nHLIP": 0,
+                "nHLMuS": 3,
+                "SF": 4
+            },
+            "label_261": {
+                "nHBd": 4,
+                "nHLIP": 0,
+                "nHLMuS": 3,
+                "SF": 5
+            },
+            "label_262": {
+                "nHBd": 4,
+                "nHLIP": 0,
+                "nHLMuS": 3,
+                "SF": 6
+            },
+            "label_263": {
+                "nHBd": 4,
+                "nHLIP": 0,
+                "nHLMuS": 3,
+                "SF": 7
+            },
+            "label_264": {
+                "nHBd": 4,
+                "nHLIP": 0,
+                "nHLMuS": 3,
+                "SF": 8
+            },
+            "label_265": {
+                "nHBd": 4,
+                "nHLIP": 0,
+                "nHLMuS": 3,
+                "SF": 9
+            },
+            "label_266": {
+                "nHBd": 4,
+                "nHLIP": 1,
+                "nHLMuS": 2,
+                "SF": 1
+            },
+            "label_267": {
+                "nHBd": 4,
+                "nHLIP": 1,
+                "nHLMuS": 2,
+                "SF": 10
+            },
+            "label_268": {
+                "nHBd": 4,
+                "nHLIP": 1,
+                "nHLMuS": 2,
+                "SF": 2
+            },
+            "label_269": {
+                "nHBd": 4,
+                "nHLIP": 1,
+                "nHLMuS": 2,
+                "SF": 3
+            },
+            "label_270": {
+                "nHBd": 4,
+                "nHLIP": 1,
+                "nHLMuS": 2,
+                "SF": 4
+            },
+            "label_271": {
+                "nHBd": 4,
+                "nHLIP": 1,
+                "nHLMuS": 2,
+                "SF": 5
+            },
+            "label_272": {
+                "nHBd": 4,
+                "nHLIP": 1,
+                "nHLMuS": 2,
+                "SF": 6
+            },
+            "label_273": {
+                "nHBd": 4,
+                "nHLIP": 1,
+                "nHLMuS": 2,
+                "SF": 7
+            },
+            "label_274": {
+                "nHBd": 4,
+                "nHLIP": 1,
+                "nHLMuS": 2,
+                "SF": 8
+            },
+            "label_275": {
+                "nHBd": 4,
+                "nHLIP": 1,
+                "nHLMuS": 2,
+                "SF": 9
+            },
+            "label_276": {
+                "nHBd": 4,
+                "nHLIP": 2,
+                "nHLMuS": 1,
+                "SF": 1
+            },
+            "label_277": {
+                "nHBd": 4,
+                "nHLIP": 2,
+                "nHLMuS": 1,
+                "SF": 10
+            },
+            "label_278": {
+                "nHBd": 4,
+                "nHLIP": 2,
+                "nHLMuS": 1,
+                "SF": 2
+            },
+            "label_279": {
+                "nHBd": 4,
+                "nHLIP": 2,
+                "nHLMuS": 1,
+                "SF": 3
+            },
+            "label_280": {
+                "nHBd": 4,
+                "nHLIP": 2,
+                "nHLMuS": 1,
+                "SF": 4
+            },
+            "label_281": {
+                "nHBd": 4,
+                "nHLIP": 2,
+                "nHLMuS": 1,
+                "SF": 5
+            },
+            "label_282": {
+                "nHBd": 4,
+                "nHLIP": 2,
+                "nHLMuS": 1,
+                "SF": 6
+            },
+            "label_283": {
+                "nHBd": 4,
+                "nHLIP": 2,
+                "nHLMuS": 1,
+                "SF": 7
+            },
+            "label_284": {
+                "nHBd": 4,
+                "nHLIP": 2,
+                "nHLMuS": 1,
+                "SF": 8
+            },
+            "label_285": {
+                "nHBd": 4,
+                "nHLIP": 2,
+                "nHLMuS": 1,
+                "SF": 9
+            },
+            "label_286": {
+                "nHBd": 4,
+                "nHLIP": 3,
+                "nHLMuS": 0,
+                "SF": 1
+            },
+            "label_287": {
+                "nHBd": 4,
+                "nHLIP": 3,
+                "nHLMuS": 0,
+                "SF": 10
+            },
+            "label_288": {
+                "nHBd": 4,
+                "nHLIP": 3,
+                "nHLMuS": 0,
+                "SF": 2
+            },
+            "label_289": {
+                "nHBd": 4,
+                "nHLIP": 3,
+                "nHLMuS": 0,
+                "SF": 3
+            },
+            "label_290": {
+                "nHBd": 4,
+                "nHLIP": 3,
+                "nHLMuS": 0,
+                "SF": 4
+            },
+            "label_291": {
+                "nHBd": 4,
+                "nHLIP": 3,
+                "nHLMuS": 0,
+                "SF": 5
+            },
+            "label_292": {
+                "nHBd": 4,
+                "nHLIP": 3,
+                "nHLMuS": 0,
+                "SF": 6
+            },
+            "label_293": {
+                "nHBd": 4,
+                "nHLIP": 3,
+                "nHLMuS": 0,
+                "SF": 7
+            },
+            "label_294": {
+                "nHBd": 4,
+                "nHLIP": 3,
+                "nHLMuS": 0,
+                "SF": 8
+            },
+            "label_295": {
+                "nHBd": 4,
+                "nHLIP": 3,
+                "nHLMuS": 0,
+                "SF": 9
+            },
+            "label_296": {
+                "nHBd": 5,
+                "nHLIP": 0,
+                "nHLMuS": 2,
+                "SF": 1
+            },
+            "label_297": {
+                "nHBd": 5,
+                "nHLIP": 0,
+                "nHLMuS": 2,
+                "SF": 10
+            },
+            "label_298": {
+                "nHBd": 5,
+                "nHLIP": 0,
+                "nHLMuS": 2,
+                "SF": 2
+            },
+            "label_299": {
+                "nHBd": 5,
+                "nHLIP": 0,
+                "nHLMuS": 2,
+                "SF": 3
+            },
+            "label_300": {
+                "nHBd": 5,
+                "nHLIP": 0,
+                "nHLMuS": 2,
+                "SF": 4
+            },
+            "label_301": {
+                "nHBd": 5,
+                "nHLIP": 0,
+                "nHLMuS": 2,
+                "SF": 5
+            },
+            "label_302": {
+                "nHBd": 5,
+                "nHLIP": 0,
+                "nHLMuS": 2,
+                "SF": 6
+            },
+            "label_303": {
+                "nHBd": 5,
+                "nHLIP": 0,
+                "nHLMuS": 2,
+                "SF": 7
+            },
+            "label_304": {
+                "nHBd": 5,
+                "nHLIP": 0,
+                "nHLMuS": 2,
+                "SF": 8
+            },
+            "label_305": {
+                "nHBd": 5,
+                "nHLIP": 0,
+                "nHLMuS": 2,
+                "SF": 9
+            },
+            "label_306": {
+                "nHBd": 5,
+                "nHLIP": 1,
+                "nHLMuS": 1,
+                "SF": 1
+            },
+            "label_307": {
+                "nHBd": 5,
+                "nHLIP": 1,
+                "nHLMuS": 1,
+                "SF": 10
+            },
+            "label_308": {
+                "nHBd": 5,
+                "nHLIP": 1,
+                "nHLMuS": 1,
+                "SF": 2
+            },
+            "label_309": {
+                "nHBd": 5,
+                "nHLIP": 1,
+                "nHLMuS": 1,
+                "SF": 3
+            },
+            "label_310": {
+                "nHBd": 5,
+                "nHLIP": 1,
+                "nHLMuS": 1,
+                "SF": 4
+            },
+            "label_311": {
+                "nHBd": 5,
+                "nHLIP": 1,
+                "nHLMuS": 1,
+                "SF": 5
+            },
+            "label_312": {
+                "nHBd": 5,
+                "nHLIP": 1,
+                "nHLMuS": 1,
+                "SF": 6
+            },
+            "label_313": {
+                "nHBd": 5,
+                "nHLIP": 1,
+                "nHLMuS": 1,
+                "SF": 7
+            },
+            "label_314": {
+                "nHBd": 5,
+                "nHLIP": 1,
+                "nHLMuS": 1,
+                "SF": 8
+            },
+            "label_315": {
+                "nHBd": 5,
+                "nHLIP": 1,
+                "nHLMuS": 1,
+                "SF": 9
+            },
+            "label_316": {
+                "nHBd": 5,
+                "nHLIP": 2,
+                "nHLMuS": 0,
+                "SF": 1
+            },
+            "label_317": {
+                "nHBd": 5,
+                "nHLIP": 2,
+                "nHLMuS": 0,
+                "SF": 10
+            },
+            "label_318": {
+                "nHBd": 5,
+                "nHLIP": 2,
+                "nHLMuS": 0,
+                "SF": 2
+            },
+            "label_319": {
+                "nHBd": 5,
+                "nHLIP": 2,
+                "nHLMuS": 0,
+                "SF": 3
+            },
+            "label_320": {
+                "nHBd": 5,
+                "nHLIP": 2,
+                "nHLMuS": 0,
+                "SF": 4
+            },
+            "label_321": {
+                "nHBd": 5,
+                "nHLIP": 2,
+                "nHLMuS": 0,
+                "SF": 5
+            },
+            "label_322": {
+                "nHBd": 5,
+                "nHLIP": 2,
+                "nHLMuS": 0,
+                "SF": 6
+            },
+            "label_323": {
+                "nHBd": 5,
+                "nHLIP": 2,
+                "nHLMuS": 0,
+                "SF": 7
+            },
+            "label_324": {
+                "nHBd": 5,
+                "nHLIP": 2,
+                "nHLMuS": 0,
+                "SF": 8
+            },
+            "label_325": {
+                "nHBd": 5,
+                "nHLIP": 2,
+                "nHLMuS": 0,
+                "SF": 9
+            },
+            "label_326": {
+                "nHBd": 6,
+                "nHLIP": 0,
+                "nHLMuS": 1,
+                "SF": 1
+            },
+            "label_327": {
+                "nHBd": 6,
+                "nHLIP": 0,
+                "nHLMuS": 1,
+                "SF": 10
+            },
+            "label_328": {
+                "nHBd": 6,
+                "nHLIP": 0,
+                "nHLMuS": 1,
+                "SF": 2
+            },
+            "label_329": {
+                "nHBd": 6,
+                "nHLIP": 0,
+                "nHLMuS": 1,
+                "SF": 3
+            },
+            "label_330": {
+                "nHBd": 6,
+                "nHLIP": 0,
+                "nHLMuS": 1,
+                "SF": 4
+            },
+            "label_331": {
+                "nHBd": 6,
+                "nHLIP": 0,
+                "nHLMuS": 1,
+                "SF": 5
+            },
+            "label_332": {
+                "nHBd": 6,
+                "nHLIP": 0,
+                "nHLMuS": 1,
+                "SF": 6
+            },
+            "label_333": {
+                "nHBd": 6,
+                "nHLIP": 0,
+                "nHLMuS": 1,
+                "SF": 7
+            },
+            "label_334": {
+                "nHBd": 6,
+                "nHLIP": 0,
+                "nHLMuS": 1,
+                "SF": 8
+            },
+            "label_335": {
+                "nHBd": 6,
+                "nHLIP": 0,
+                "nHLMuS": 1,
+                "SF": 9
+            },
+            "label_336": {
+                "nHBd": 6,
+                "nHLIP": 1,
+                "nHLMuS": 0,
+                "SF": 1
+            },
+            "label_337": {
+                "nHBd": 6,
+                "nHLIP": 1,
+                "nHLMuS": 0,
+                "SF": 10
+            },
+            "label_338": {
+                "nHBd": 6,
+                "nHLIP": 1,
+                "nHLMuS": 0,
+                "SF": 2
+            },
+            "label_339": {
+                "nHBd": 6,
+                "nHLIP": 1,
+                "nHLMuS": 0,
+                "SF": 3
+            },
+            "label_340": {
+                "nHBd": 6,
+                "nHLIP": 1,
+                "nHLMuS": 0,
+                "SF": 4
+            },
+            "label_341": {
+                "nHBd": 6,
+                "nHLIP": 1,
+                "nHLMuS": 0,
+                "SF": 5
+            },
+            "label_342": {
+                "nHBd": 6,
+                "nHLIP": 1,
+                "nHLMuS": 0,
+                "SF": 6
+            },
+            "label_343": {
+                "nHBd": 6,
+                "nHLIP": 1,
+                "nHLMuS": 0,
+                "SF": 7
+            },
+            "label_344": {
+                "nHBd": 6,
+                "nHLIP": 1,
+                "nHLMuS": 0,
+                "SF": 8
+            },
+            "label_345": {
+                "nHBd": 6,
+                "nHLIP": 1,
+                "nHLMuS": 0,
+                "SF": 9
+            },
+            "label_346": {
+                "nHBd": 7,
+                "nHLIP": 0,
+                "nHLMuS": 0,
+                "SF": 1
+            },
+            "label_347": {
+                "nHBd": 7,
+                "nHLIP": 0,
+                "nHLMuS": 0,
+                "SF": 10
+            },
+            "label_348": {
+                "nHBd": 7,
+                "nHLIP": 0,
+                "nHLMuS": 0,
+                "SF": 2
+            },
+            "label_349": {
+                "nHBd": 7,
+                "nHLIP": 0,
+                "nHLMuS": 0,
+                "SF": 3
+            },
+            "label_350": {
+                "nHBd": 7,
+                "nHLIP": 0,
+                "nHLMuS": 0,
+                "SF": 4
+            },
+            "label_351": {
+                "nHBd": 7,
+                "nHLIP": 0,
+                "nHLMuS": 0,
+                "SF": 5
+            },
+            "label_352": {
+                "nHBd": 7,
+                "nHLIP": 0,
+                "nHLMuS": 0,
+                "SF": 6
+            },
+            "label_353": {
+                "nHBd": 7,
+                "nHLIP": 0,
+                "nHLMuS": 0,
+                "SF": 7
+            },
+            "label_354": {
+                "nHBd": 7,
+                "nHLIP": 0,
+                "nHLMuS": 0,
+                "SF": 8
+            },
+            "label_355": {
+                "nHBd": 7,
+                "nHLIP": 0,
+                "nHLMuS": 0,
+                "SF": 9
+            }
+        },
+        "input_layer": "dnn_training_jun27_2x512_endcap_input",
+        "output_layer": "model/dnn_training_jun27_2x512_endcap_output/Sigmoid"
+    }
+}
