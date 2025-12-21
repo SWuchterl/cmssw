@@ -13,6 +13,8 @@
 #include "SimDataFormats/GeneratorProducts/interface/GenLumiInfoHeader.h"
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
 #include "boost/algorithm/string.hpp"
+// for genparticles
+#include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 
 #include <array>
 #include <memory>
@@ -21,17 +23,27 @@
 #include <unordered_map>
 #include <iostream>
 #include <regex>
+#include <cstdlib>
 
 namespace {
   ///  ---- Cache object for running sums of weights ----
   struct Counter {
-    Counter() : num(0), sumw(0), sumw2(0), sumPDF(), sumScale(), sumRwgt(), sumNamed(), sumPS() {}
+    Counter() : num(0), sumw(0), sumw2(0), sumPDF(), sumScale(), sumRwgt(), sumNamed(), sumPS(), sumPS_by_tt() {}
 
     // the counters
     long long num;
     long double sumw;
     long double sumw2;
-    std::vector<long double> sumPDF, sumScale, sumRwgt, sumNamed, sumPS;
+    std::vector<long double> sumPDF, sumScale, sumRwgt, sumNamed, sumPS, sumTopPt;
+    std::map<int, std::vector<long double>> sumPS_by_tt;
+    std::map<int, long double> sumw_by_tt;
+    std::map<int, long double> sumw2_by_tt;
+    std::map<int, long long> num_by_tt;
+    std::map<int, std::vector<long double>> sumScale_by_tt;
+    std::map<int, std::vector<long double>> sumPDF_by_tt;
+    std::map<int, std::vector<long double>> sumRwgt_by_tt;
+    std::map<int, std::vector<long double>> sumNamed_by_tt;
+    std::map<int, std::vector<long double>> sumTopPt_by_tt;
 
     void clear() {
       num = 0;
@@ -40,22 +52,104 @@ namespace {
       sumPDF.clear();
       sumScale.clear();
       sumRwgt.clear();
-      sumNamed.clear(), sumPS.clear();
+      sumNamed.clear();
+      sumPS.clear();
+      sumPS_by_tt.clear();
+      sumw_by_tt.clear();
+      sumw2_by_tt.clear();
+      num_by_tt.clear();
+      sumScale_by_tt.clear();
+      sumPDF_by_tt.clear();
+      sumRwgt_by_tt.clear();
+      sumNamed_by_tt.clear();
+      sumTopPt_by_tt.clear();
     }
 
     // inc the counters
-    void incGenOnly(double w) {
+    void incGenOnly(double w, const int genTtbar, const std::vector<double>& topPtWeights) {
       num++;
       sumw += w;
       sumw2 += (w * w);
+      if (genTtbar != -999) {
+        int aid = std::abs(genTtbar);
+        int second = (aid / 10) % 10;
+        int third = aid % 10;
+        int cat = -1;
+        if (second == 0)
+          cat = 0;
+        else if (second == 4) {
+          if (third == 1)
+            cat = 41;
+          else if (third == 2)
+            cat = 42;
+          else if (third > 2)
+            cat = 43;
+        } else if (second == 5) {
+          if (third == 1)
+            cat = 51;
+          else if (third == 2)
+            cat = 52;
+          else if (third > 2)
+            cat = 53;
+        }
+        if (cat != -1) {
+          num_by_tt[cat]++;
+          sumw_by_tt[cat] += w;
+          sumw2_by_tt[cat] += (w * w);
+          // fill the vector with length 2 with the top pt weights
+          auto &vec = sumTopPt_by_tt[cat];
+          if (vec.empty())
+              vec.resize(topPtWeights.size(), 0);
+            for (unsigned int i = 0, n = topPtWeights.size(); i < n; ++i)
+              vec[i] += (w * topPtWeights[i]);
+        }
+      }
+      // and one inclusive for all events for top pt weights
+      if (sumTopPt.empty())
+          sumTopPt.resize(topPtWeights.size(), 0);
+      for (unsigned int i = 0, n = topPtWeights.size(); i < n; ++i)
+          sumTopPt[i] += (w * topPtWeights[i]);
     }
 
-    void incPSOnly(double w0, const std::vector<double>& wPS) {
+    void incPSOnly(double w0, const std::vector<double>& wPS, const int genTtbar, const std::vector<double>& wTopPtWeights) {
       if (!wPS.empty()) {
         if (sumPS.empty())
           sumPS.resize(wPS.size(), 0);
         for (unsigned int i = 0, n = wPS.size(); i < n; ++i)
           sumPS[i] += (w0 * wPS[i]);
+
+        if (genTtbar != -999) {
+          int aid = std::abs(genTtbar);
+          int second = (aid / 10) % 10;
+          int third = aid % 10;
+          int cat = -1;
+          if (second == 0) {
+            cat = 0;
+          } else if (second == 4) {
+            if (third == 1)
+              cat = 41;
+            else if (third == 2)
+              cat = 42;
+            else if (third > 2)
+              cat = 43;
+          } else if (second == 5) {
+            if (third == 1)
+              cat = 51;
+            else if (third == 2)
+              cat = 52;
+            else if (third > 2)
+              cat = 53;
+          }
+          if (cat != -1) {
+            auto &vec = sumPS_by_tt[cat];
+            if (vec.empty())
+              vec.resize(wPS.size(), 0);
+            for (unsigned int i = 0, n = wPS.size(); i < n; ++i)
+              vec[i] += (w0 * wPS[i]);
+            // sumw_by_tt[cat] += w0;
+            // sumw2_by_tt[cat] += (w0 * w0);
+          }
+        }
       }
     }
 
@@ -64,35 +158,187 @@ namespace {
                 const std::vector<double>& wPDF,
                 const std::vector<double>& wRwgt,
                 const std::vector<double>& wNamed,
-                const std::vector<double>& wPS) {
+                const std::vector<double>& wPS,
+                const int genTtbar,
+                const std::vector<double>& topPtWeights) {
       // add up weights
-      incGenOnly(w0);
+      incGenOnly(w0, genTtbar, topPtWeights);
+      // update per-ttbar nominal sum
+      // if (genTtbar != -999) {
+      //   int aid = std::abs(genTtbar);
+      //   int second = (aid / 10) % 10;
+      //   int third = aid % 10;
+      //   int cat = -1;
+      //   if (second == 0)
+      //     cat = 0;
+      //   else if (second == 4) {
+      //     if (third == 1)
+      //       cat = 41;
+      //     else if (third == 2)
+      //       cat = 42;
+      //     else if (third > 2)
+      //       cat = 43;
+      //   } else if (second == 5) {
+      //     if (third == 1)
+      //       cat = 51;
+      //     else if (third == 2)
+      //       cat = 52;
+      //     else if (third > 2)
+      //       cat = 53;
+      //   }
+      //   if (cat != -1)
+      //     sumw_by_tt[cat] += w0;
+      // }
       // then add up variations
       if (!wScale.empty()) {
         if (sumScale.empty())
           sumScale.resize(wScale.size(), 0);
         for (unsigned int i = 0, n = wScale.size(); i < n; ++i)
           sumScale[i] += (w0 * wScale[i]);
+        // per-ttbar
+        if (genTtbar != -999) {
+          int aid = std::abs(genTtbar);
+          int second = (aid / 10) % 10;
+          int third = aid % 10;
+          int cat = -1;
+          if (second == 0)
+            cat = 0;
+          else if (second == 4) {
+            if (third == 1)
+              cat = 41;
+            else if (third == 2)
+              cat = 42;
+            else if (third > 2)
+              cat = 43;
+          } else if (second == 5) {
+            if (third == 1)
+              cat = 51;
+            else if (third == 2)
+              cat = 52;
+            else if (third > 2)
+              cat = 53;
+          }
+          if (cat != -1) {
+            auto &vec = sumScale_by_tt[cat];
+            if (vec.empty())
+              vec.resize(wScale.size(), 0);
+            for (unsigned int i = 0, n = wScale.size(); i < n; ++i)
+              vec[i] += (w0 * wScale[i]);
+          }
+        }
       }
       if (!wPDF.empty()) {
         if (sumPDF.empty())
           sumPDF.resize(wPDF.size(), 0);
         for (unsigned int i = 0, n = wPDF.size(); i < n; ++i)
           sumPDF[i] += (w0 * wPDF[i]);
+        // per-ttbar
+        if (genTtbar != -999) {
+          int aid = std::abs(genTtbar);
+          int second = (aid / 10) % 10;
+          int third = aid % 10;
+          int cat = -1;
+          if (second == 0)
+            cat = 0;
+          else if (second == 4) {
+            if (third == 1)
+              cat = 41;
+            else if (third == 2)
+              cat = 42;
+            else if (third > 2)
+              cat = 43;
+          } else if (second == 5) {
+            if (third == 1)
+              cat = 51;
+            else if (third == 2)
+              cat = 52;
+            else if (third > 2)
+              cat = 53;
+          }
+          if (cat != -1) {
+            auto &vec = sumPDF_by_tt[cat];
+            if (vec.empty())
+              vec.resize(wPDF.size(), 0);
+            for (unsigned int i = 0, n = wPDF.size(); i < n; ++i)
+              vec[i] += (w0 * wPDF[i]);
+          }
+        }
       }
       if (!wRwgt.empty()) {
         if (sumRwgt.empty())
           sumRwgt.resize(wRwgt.size(), 0);
         for (unsigned int i = 0, n = wRwgt.size(); i < n; ++i)
           sumRwgt[i] += (w0 * wRwgt[i]);
+        // per-ttbar
+        if (genTtbar != -999) {
+          int aid = std::abs(genTtbar);
+          int second = (aid / 10) % 10;
+          int third = aid % 10;
+          int cat = -1;
+          if (second == 0)
+            cat = 0;
+          else if (second == 4) {
+            if (third == 1)
+              cat = 41;
+            else if (third == 2)
+              cat = 42;
+            else if (third > 2)
+              cat = 43;
+          } else if (second == 5) {
+            if (third == 1)
+              cat = 51;
+            else if (third == 2)
+              cat = 52;
+            else if (third > 2)
+              cat = 53;
+          }
+          if (cat != -1) {
+            auto &vec = sumRwgt_by_tt[cat];
+            if (vec.empty())
+              vec.resize(wRwgt.size(), 0);
+            for (unsigned int i = 0, n = wRwgt.size(); i < n; ++i)
+              vec[i] += (w0 * wRwgt[i]);
+          }
+        }
       }
       if (!wNamed.empty()) {
         if (sumNamed.empty())
           sumNamed.resize(wNamed.size(), 0);
         for (unsigned int i = 0, n = wNamed.size(); i < n; ++i)
           sumNamed[i] += (w0 * wNamed[i]);
+        // per-ttbar
+        if (genTtbar != -999) {
+          int aid = std::abs(genTtbar);
+          int second = (aid / 10) % 10;
+          int third = aid % 10;
+          int cat = -1;
+          if (second == 0)
+            cat = 0;
+          else if (second == 4) {
+            if (third == 1)
+              cat = 41;
+            else if (third == 2)
+              cat = 42;
+            else if (third > 2)
+              cat = 43;
+          } else if (second == 5) {
+            if (third == 1)
+              cat = 51;
+            else if (third == 2)
+              cat = 52;
+            else if (third > 2)
+              cat = 53;
+          }
+          if (cat != -1) {
+            auto &vec = sumNamed_by_tt[cat];
+            if (vec.empty())
+              vec.resize(wNamed.size(), 0);
+            for (unsigned int i = 0, n = wNamed.size(); i < n; ++i)
+              vec[i] += (w0 * wNamed[i]);
+          }
+        }
       }
-      incPSOnly(w0, wPS);
+      incPSOnly(w0, wPS, genTtbar, topPtWeights);
     }
 
     void merge(const Counter& other) {
@@ -109,6 +355,8 @@ namespace {
         sumNamed.resize(other.sumNamed.size(), 0);
       if (sumPS.empty() && !other.sumPS.empty())
         sumPS.resize(other.sumPS.size(), 0);
+      if (sumTopPt.empty() && !other.sumTopPt.empty())
+        sumTopPt.resize(other.sumTopPt.size(), 0);
       if (!other.sumScale.empty())
         for (unsigned int i = 0, n = sumScale.size(); i < n; ++i)
           sumScale[i] += other.sumScale[i];
@@ -124,6 +372,74 @@ namespace {
       if (!other.sumPS.empty())
         for (unsigned int i = 0, n = sumPS.size(); i < n; ++i)
           sumPS[i] += other.sumPS[i];
+      if (!other.sumTopPt.empty())
+        for (unsigned int i = 0, n = sumTopPt.size(); i < n; ++i)
+          sumTopPt[i] += other.sumTopPt[i];
+
+      // merge per-ttbar PS sums
+      for (const auto &kv : other.sumPS_by_tt) {
+        const int k = kv.first;
+        const auto &ovec = kv.second;
+        auto &mvec = sumPS_by_tt[k];
+        if (mvec.empty())
+          mvec.resize(ovec.size(), 0);
+        for (unsigned int i = 0, n = ovec.size(); i < n; ++i)
+          mvec[i] += ovec[i];
+      }
+      for (const auto &kv : other.sumScale_by_tt) {
+        const int k = kv.first;
+        const auto &ovec = kv.second;
+        auto &mvec = sumScale_by_tt[k];
+        if (mvec.empty())
+          mvec.resize(ovec.size(), 0);
+        for (unsigned int i = 0, n = ovec.size(); i < n; ++i)
+          mvec[i] += ovec[i];
+      }
+      for (const auto &kv : other.sumPDF_by_tt) {
+        const int k = kv.first;
+        const auto &ovec = kv.second;
+        auto &mvec = sumPDF_by_tt[k];
+        if (mvec.empty())
+          mvec.resize(ovec.size(), 0);
+        for (unsigned int i = 0, n = ovec.size(); i < n; ++i)
+          mvec[i] += ovec[i];
+      }
+      for (const auto &kv : other.sumRwgt_by_tt) {
+        const int k = kv.first;
+        const auto &ovec = kv.second;
+        auto &mvec = sumRwgt_by_tt[k];
+        if (mvec.empty())
+          mvec.resize(ovec.size(), 0);
+        for (unsigned int i = 0, n = ovec.size(); i < n; ++i)
+          mvec[i] += ovec[i];
+      }
+      for (const auto &kv : other.sumNamed_by_tt) {
+        const int k = kv.first;
+        const auto &ovec = kv.second;
+        auto &mvec = sumNamed_by_tt[k];
+        if (mvec.empty())
+          mvec.resize(ovec.size(), 0);
+        for (unsigned int i = 0, n = ovec.size(); i < n; ++i)
+          mvec[i] += ovec[i];
+      }
+      for (const auto &kv : other.sumw_by_tt) {
+        sumw_by_tt[kv.first] += kv.second;
+      }
+      for (const auto &kv : other.sumw2_by_tt) {
+        sumw2_by_tt[kv.first] += kv.second;
+      }
+      for (const auto &kv : other.num_by_tt) {
+        num_by_tt[kv.first] += kv.second;
+      }
+      for (const auto &kv : other.sumTopPt_by_tt) {
+        const int k = kv.first;
+        const auto &ovec = kv.second;
+        auto &mvec = sumTopPt_by_tt[k];
+        if (mvec.empty())
+          mvec.resize(ovec.size(), 0);
+        for (unsigned int i = 0, n = ovec.size(); i < n; ++i)
+          mvec[i] += ovec[i];
+      }
     }
   };
 
@@ -240,6 +556,46 @@ namespace {
       }
     }
   };
+
+  // function that takes the genparticles as input and returns two top pT weights, for 13 and 13p6 TeV
+  // the top is defined as pdgId == 6 and status isLastCopy()
+  std::vector<double> getTopPtWeight(const edm::View<reco::GenParticle>& genParticles) {
+    std::vector<double> outVector; // first entry for 13 TeV, second for 13.6 TeV
+    float topPt = -1.0;
+    float antiTopPt = -1.0;
+    for (const auto& p : genParticles) {
+      if (p.isLastCopy()) {
+        if (std::abs(p.pdgId()) == 6) {
+          if (p.pdgId() == 6) {
+            topPt = p.pt();
+          } else {
+            antiTopPt = p.pt();
+          }
+        }
+      }
+    }
+    if (topPt > 0 && antiTopPt > 0) {
+      // clip top pt between 0 and 2000
+      if (topPt > 2000.0)
+        topPt = 2000.0;
+      if (antiTopPt > 2000.0)
+        antiTopPt = 2000.0;
+      float wtop13 = 0.103 * std::exp(-0.0118 * topPt) - 0.000134 * topPt + 0.973;
+      float wantitop13 = 0.103 * std::exp(-0.0118 * antiTopPt) - 0.000134 * antiTopPt + 0.973;
+      float w_top_13_to_13p6 = 0.991 + 0.000075 * topPt; // Extrapolation of the number below (which was for CoM = 13 TeV) to CoM = 13.6 TeV
+      float w_antiTop_13_to_13p6 = 0.991 + 0.000075 * antiTopPt; // Extrapolation of the number below (which was for CoM = 13 TeV) to CoM = 13.6 TeV
+      // for 13.6 TeV, From pag 30 of AN v9 https://cms.cern.ch/iCMS/jsp/db_notes/noteInfo.jsp?cmsnoteid=CMS%20AN-2024/019
+      outVector.push_back(std::sqrt(wtop13 * wantitop13));
+      outVector.push_back(sqrt(w_top_13_to_13p6*wtop13 * w_antiTop_13_to_13p6*wantitop13));
+    } else {
+      outVector.push_back(1.0);
+      outVector.push_back(1.0);
+    }
+    return outVector;
+  }
+
+
+
 }  // namespace
 
 class GenWeightsTableProducer : public edm::global::EDProducer<edm::StreamCache<LumiCacheInfoHolder>,
@@ -263,6 +619,8 @@ public:
         maxPdfWeights_(params.getParameter<uint32_t>("maxPdfWeights")),
         keepAllPSWeights_(params.getParameter<bool>("keepAllPSWeights")),
         allowedNumScaleWeights_(params.getParameter<std::vector<uint32_t>>("allowedNumScaleWeights")),
+        genTtbarId_(consumes<int>(params.getParameter<edm::InputTag>("genTtbarId"))),
+        genparticles_(consumes<edm::View<reco::GenParticle>>(params.getParameter<edm::InputTag>("genParticles"))),
         debug_(params.getUntrackedParameter<bool>("debug", false)),
         debugRun_(debug_.load()),
         hasIssuedWarning_(false),
@@ -274,6 +632,8 @@ public:
     produces<nanoaod::FlatTable>("LHEReweighting");
     produces<nanoaod::FlatTable>("LHENamed");
     produces<nanoaod::FlatTable>("PS");
+    // top pt weight table
+    produces<nanoaod::FlatTable>("TopPtWeight");
     produces<nanoaod::MergeableCounterTable, edm::Transition::EndRun>();
     if (namedWeightIDs_.size() != namedWeightLabels_.size()) {
       throw cms::Exception("Configuration", "Size mismatch between namedWeightIDs & namedWeightLabels");
@@ -322,6 +682,24 @@ public:
     }
 
     const auto genWeightChoice = luminosityBlockCache(iEvent.getLuminosityBlock().index());
+    // get genTtbarId for categorisation if available
+    edm::Handle<int> genTtbarHandle;
+    int genTtbarVal = -999;
+    if (iEvent.getByToken(genTtbarId_, genTtbarHandle))
+      genTtbarVal = *genTtbarHandle;
+    // get genparticles
+    edm::Handle<edm::View<reco::GenParticle>> genParticles;
+    iEvent.getByToken(genparticles_, genParticles);
+
+    // fill the top pt table
+    auto topPtWeights = getTopPtWeight(*genParticles);
+    auto topPtWeightTable = std::make_unique<nanoaod::FlatTable>(topPtWeights.size(), "TopPtWeight", false);
+    topPtWeightTable->setDoc("Top quark pT reweighting factors");
+    topPtWeightTable->addColumn<float>("", topPtWeights, "Top pT reweighting factors: [0] for 13 TeV, [1] for 13.6 TeV", 14);
+
+    // outScale = std::make_unique<nanoaod::FlatTable>(wScale.size(), "LHEScaleWeight", false);
+    // outScale->addColumn<float>("", wScale, weightChoice->scaleWeightsDoc, lheWeightPrecision_);
+
     if (lheInfo.isValid()) {
       if (getLHEweightsFromGenInfo && !hasIssuedWarning_.exchange(true))
         edm::LogWarning("LHETablesProducer")
@@ -330,25 +708,27 @@ public:
       const DynamicWeightChoice* weightChoice = runCache(iEvent.getRun().index());
       // go fill tables
       fillLHEWeightTables(counter,
-                          weightChoice,
-                          genWeightChoice,
-                          weight,
-                          *lheInfo,
-                          *genInfo,
-                          lheScaleTab,
-                          lhePdfTab,
-                          lheRwgtTab,
-                          lheNamedTab,
-                          genPSTab);
+              weightChoice,
+              genWeightChoice,
+              weight,
+              *lheInfo,
+              *genInfo,
+              genTtbarVal,
+              topPtWeights,
+              lheScaleTab,
+              lhePdfTab,
+              lheRwgtTab,
+              lheNamedTab,
+              genPSTab);
     } else if (getLHEweightsFromGenInfo) {
-      fillLHEPdfWeightTablesFromGenInfo(
-          counter, genWeightChoice, weight, *genInfo, lheScaleTab, lhePdfTab, lheNamedTab, genPSTab);
+        fillLHEPdfWeightTablesFromGenInfo(
+          counter, genWeightChoice, weight, *genInfo, genTtbarVal, topPtWeights, lheScaleTab, lhePdfTab, lheNamedTab, genPSTab);
       lheRwgtTab = std::make_unique<nanoaod::FlatTable>(1, "LHEReweightingWeights", true);
       //lheNamedTab.reset(new nanoaod::FlatTable(1, "LHENamedWeights", true));
       //genPSTab.reset(new nanoaod::FlatTable(1, "PSWeight", true));
     } else {
       // Still try to add the PS weights
-      fillOnlyPSWeightTable(counter, genWeightChoice, weight, *genInfo, genPSTab);
+      fillOnlyPSWeightTable(counter, genWeightChoice, weight, *genInfo, genTtbarVal, topPtWeights, genPSTab);
       // make dummy values
       lheScaleTab = std::make_unique<nanoaod::FlatTable>(1, "LHEScaleWeights", true);
       lhePdfTab = std::make_unique<nanoaod::FlatTable>(1, "LHEPdfWeights", true);
@@ -359,6 +739,7 @@ public:
       }
     }
 
+    iEvent.put(std::move(topPtWeightTable), "TopPtWeight");
     iEvent.put(std::move(lheScaleTab), "LHEScale");
     iEvent.put(std::move(lhePdfTab), "LHEPdf");
     iEvent.put(std::move(lheRwgtTab), "LHEReweighting");
@@ -372,6 +753,8 @@ public:
                            double genWeight,
                            const LHEEventProduct& lheProd,
                            const GenEventInfoProduct& genProd,
+                           int genTtbarId,
+                           const std::vector<double>& topPtWeights,
                            std::unique_ptr<nanoaod::FlatTable>& outScale,
                            std::unique_ptr<nanoaod::FlatTable>& outPdf,
                            std::unique_ptr<nanoaod::FlatTable>& outRwgt,
@@ -434,13 +817,15 @@ public:
                                       lheWeightPrecision_);
     }
 
-    counter->incLHE(genWeight, wScale, wPDF, wRwgt, wNamed, wPS);
+    counter->incLHE(genWeight, wScale, wPDF, wRwgt, wNamed, wPS, genTtbarId, topPtWeights);
   }
 
   void fillLHEPdfWeightTablesFromGenInfo(Counter* counter,
                                          const DynamicWeightChoiceGenInfo* weightChoice,
                                          double genWeight,
                                          const GenEventInfoProduct& genProd,
+                                         int genTtbarId,
+                                         const std::vector<double>& topPtWeights,
                                          std::unique_ptr<nanoaod::FlatTable>& outScale,
                                          std::unique_ptr<nanoaod::FlatTable>& outPdf,
                                          std::unique_ptr<nanoaod::FlatTable>& outNamed,
@@ -477,13 +862,15 @@ public:
       outNamed->addColumnValue<float>(namedWeightLabels_[i], wNamed[i], "LHE weight for id "+namedWeightIDs_[i]+", relative to nominal", lheWeightPrecision_);
       }*/
 
-    counter->incLHE(genWeight, wScale, wPDF, std::vector<double>(), std::vector<double>(), wPS);
+    counter->incLHE(genWeight, wScale, wPDF, std::vector<double>(), std::vector<double>(), wPS, genTtbarId, topPtWeights);
   }
 
   void fillOnlyPSWeightTable(Counter* counter,
                              const DynamicWeightChoiceGenInfo* genWeightChoice,
                              double genWeight,
                              const GenEventInfoProduct& genProd,
+                             int genTtbarId,
+                             const std::vector<double>& topPtWeights,
                              std::unique_ptr<nanoaod::FlatTable>& outPS) const {
     std::vector<double> wPS;
     std::string psWeightDocStr;
@@ -491,8 +878,8 @@ public:
     outPS = std::make_unique<nanoaod::FlatTable>(wPS.size(), "PSWeight", false);
     outPS->addColumn<float>("", wPS, psWeightDocStr, lheWeightPrecision_);
 
-    counter->incGenOnly(genWeight);
-    counter->incPSOnly(genWeight, wPS);
+    counter->incGenOnly(genWeight, genTtbarId, topPtWeights);
+    counter->incPSOnly(genWeight, wPS, genTtbarId, topPtWeights);
   }
 
   void setPSWeightInfo(const std::vector<double>& genWeights,
@@ -1160,6 +1547,162 @@ public:
                              "Sum of genEventWeight * PSWeight[i], divided by genEventSumw" + doclabel,
                              sumPS,
                              runCounter->sumw);
+      auto sumTopPtWeights = runCounter->sumTopPt;;
+      for (auto& val : sumTopPtWeights)
+        val *= norm;
+      out->addVFloatWithNorm("TopPtWeightSumw" + label,
+                             "Sum of genEventWeight * TopPtWeight_, divided by genEventSumw" + doclabel,
+                             sumTopPtWeights,
+                             runCounter->sumw);
+      if (!runCounter->sumPS_by_tt.empty()) {
+        for (const auto &kv : runCounter->sumPS_by_tt) {
+          auto sumPS_tt = kv.second;
+          // use per-category sumw as denominator
+          long double catSumw = 0;
+          auto itw = runCounter->sumw_by_tt.find(kv.first);
+          if (itw != runCounter->sumw_by_tt.end())
+            catSumw = itw->second;
+          double catnorm = catSumw ? 1.0 / catSumw : 1;
+          for (auto &val : sumPS_tt)
+            val *= catnorm;
+          // convert int key to string for output
+          std::stringstream keyss;
+          keyss << kv.first;
+          std::string keystr = keyss.str();
+            out->addVFloatWithNorm("PSSumw_" + keystr + label,
+                       "Sum of genEventWeight * PSWeight[i], divided by genEventSumw, for ttbar category " +
+                         keystr + doclabel,
+                       sumPS_tt,
+                       catSumw);
+        }
+      }
+      // per-category nominal counts and sumw/sumw2
+      if (!runCounter->num_by_tt.empty()) {
+        for (const auto &kv : runCounter->num_by_tt) {
+          const int cat = kv.first;
+          long long cnt = kv.second;
+          long double catSumw = 0;
+          long double catSumw2 = 0;
+          auto itw = runCounter->sumw_by_tt.find(cat);
+          if (itw != runCounter->sumw_by_tt.end())
+            catSumw = itw->second;
+          auto itw2 = runCounter->sumw2_by_tt.find(cat);
+          if (itw2 != runCounter->sumw2_by_tt.end())
+            catSumw2 = itw2->second;
+          std::stringstream keyss; keyss << cat; std::string keystr = keyss.str();
+          out->addInt("genEventCount_" + keystr + label,
+                      "event count, for ttbar category " + keystr + doclabel,
+                      cnt);
+          out->addFloat("genEventSumw_" + keystr + label,
+                        "sum of gen weights, for ttbar category " + keystr + doclabel,
+                        catSumw);
+          out->addFloat("genEventSumw2_" + keystr + label,
+                        "sum of gen weights squared, for ttbar category " + keystr + doclabel,
+                        catSumw2);
+        }
+      }
+
+      // now for the two top pt weights per tt category
+      if (!runCounter->sumTopPt_by_tt.empty()) {
+        for (const auto &kv : runCounter->sumTopPt_by_tt) {
+          // const int cat = kv.first;
+          auto sumTopPtWeights_tt = kv.second;
+          long double catSumw = 0;
+          auto itw = runCounter->sumw_by_tt.find(kv.first);
+          if (itw != runCounter->sumw_by_tt.end())
+            catSumw = itw->second;
+          double catnorm = catSumw ? 1.0 / catSumw : 1;
+          // for (unsigned int i = 0, n = sumTopPtWeights_tt.size(); i < n; ++i) {
+          //   double val = sumTopPtWeights_tt[i] * catnorm;
+          for (auto &val : sumTopPtWeights_tt)
+            val *= catnorm;
+          std::stringstream keyss; keyss << kv.first; std::string keystr = keyss.str();
+          out->addVFloatWithNorm("TopPtWeightSumw_" + keystr + label,
+                                  "Sum of genEventWeight * TopPtWeight_, divided by genEventSumw, for ttbar category " + keystr + doclabel,
+                                  sumTopPtWeights_tt,
+                                  catSumw);
+          // }
+        }
+      }
+      // now per-ttbar LHEScale/LHEPdf/LHEReweighting and named weights
+      // LHEScale
+      if (!runCounter->sumScale_by_tt.empty()) {
+        for (const auto &kv : runCounter->sumScale_by_tt) {
+          auto sum_tt = kv.second;
+          long double catSumw = 0;
+          auto itw = runCounter->sumw_by_tt.find(kv.first);
+          if (itw != runCounter->sumw_by_tt.end())
+            catSumw = itw->second;
+          double catnorm = catSumw ? 1.0 / catSumw : 1;
+          for (auto &val : sum_tt)
+            val *= catnorm;
+          std::stringstream keyss; keyss << kv.first; std::string keystr = keyss.str();
+          out->addVFloatWithNorm("LHEScaleSumw_" + keystr + label,
+                                 "Sum of genEventWeight * LHEScaleWeight[i], divided by genEventSumw, for ttbar category " +
+                                     keystr + doclabel,
+                                 sum_tt,
+                                 catSumw);
+        }
+      }
+      // LHEPdf
+      if (!runCounter->sumPDF_by_tt.empty()) {
+        for (const auto &kv : runCounter->sumPDF_by_tt) {
+          auto sum_tt = kv.second;
+          long double catSumw = 0;
+          auto itw = runCounter->sumw_by_tt.find(kv.first);
+          if (itw != runCounter->sumw_by_tt.end())
+            catSumw = itw->second;
+          double catnorm = catSumw ? 1.0 / catSumw : 1;
+          for (auto &val : sum_tt)
+            val *= catnorm;
+          std::stringstream keyss; keyss << kv.first; std::string keystr = keyss.str();
+          out->addVFloatWithNorm("LHEPdfSumw_" + keystr + label,
+                                 "Sum of genEventWeight * LHEPdfWeight[i], divided by genEventSumw, for ttbar category " +
+                                     keystr + doclabel,
+                                 sum_tt,
+                                 catSumw);
+        }
+      }
+      // LHEReweighting
+      if (!runCounter->sumRwgt_by_tt.empty()) {
+        for (const auto &kv : runCounter->sumRwgt_by_tt) {
+          auto sum_tt = kv.second;
+          long double catSumw = 0;
+          auto itw = runCounter->sumw_by_tt.find(kv.first);
+          if (itw != runCounter->sumw_by_tt.end())
+            catSumw = itw->second;
+          double catnorm = catSumw ? 1.0 / catSumw : 1;
+          for (auto &val : sum_tt)
+            val *= catnorm;
+          std::stringstream keyss; keyss << kv.first; std::string keystr = keyss.str();
+          out->addVFloatWithNorm("LHEReweightingSumw_" + keystr + label,
+                                 "Sum of genEventWeight * LHEReweightingWeight[i], divided by genEventSumw, for ttbar category " +
+                                     keystr + doclabel,
+                                 sum_tt,
+                                 catSumw);
+        }
+      }
+      // Named (LHESumw_<label>) per-ttbar
+      if (!runCounter->sumNamed_by_tt.empty()) {
+        for (const auto &kv : runCounter->sumNamed_by_tt) {
+          const int cat = kv.first;
+          const auto sum_tt = kv.second;
+          long double catSumw = 0;
+          auto itw = runCounter->sumw_by_tt.find(cat);
+          if (itw != runCounter->sumw_by_tt.end())
+            catSumw = itw->second;
+          double catnorm = catSumw ? 1.0 / catSumw : 1;
+          for (unsigned int i = 0, n = sum_tt.size(); i < n; ++i) {
+            double val = sum_tt[i] * catnorm;
+            std::stringstream keyss; keyss << cat; std::string keystr = keyss.str();
+            out->addFloatWithNorm("LHESumw_" + namedWeightLabels_[i] + "_" + keystr + label,
+                                  "Sum of genEventWeight * LHEWeight_" + namedWeightLabels_[i] +
+                                      ", divided by genEventSumw, for ttbar category " + keystr + doclabel,
+                                  val,
+                                  catSumw);
+          }
+        }
+      }
       if (!runCounter->sumRwgt.empty()) {
         auto sumRwgts = runCounter->sumRwgt;
         for (auto& val : sumRwgts)
@@ -1208,6 +1751,11 @@ public:
     desc.add<std::vector<uint32_t>>("allowedNumScaleWeights")
         ->setComment(
             "Allowed numbers of scale weights parsed from the header. Empty list means any number is allowed.");
+    desc.add<edm::InputTag>("genTtbarId", edm::InputTag("genTtbarIdentifier"))
+        ->setComment("tag for the GenTtbarIdentifier, to get the ttbar event classification");
+    // genparticles
+    desc.add<edm::InputTag>("genParticles", edm::InputTag("genParticles"))
+        ->setComment("tag for the GenParticle collection");
     desc.addOptionalUntracked<bool>("debug")->setComment("dump out all LHE information for one event");
     descriptions.add("genWeightsTable", desc);
   }
@@ -1227,6 +1775,8 @@ protected:
   unsigned int maxPdfWeights_;
   bool keepAllPSWeights_;
   std::vector<uint32_t> allowedNumScaleWeights_;
+  const edm::EDGetTokenT<int> genTtbarId_;
+  const edm::EDGetTokenT<edm::View<reco::GenParticle>> genparticles_;
 
   mutable std::atomic<bool> debug_, debugRun_, hasIssuedWarning_, psWeightWarning_;
 };
