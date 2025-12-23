@@ -453,7 +453,7 @@ namespace {
       active_el = nullptr;
     }
     void clear() {
-      for (auto x : countermap)
+      for (auto &x : countermap)
         x.second.clear();
       active_el = nullptr;
       active_label = "";
