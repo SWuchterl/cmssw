@@ -286,13 +286,6 @@ void LeptonTagInfoCollectionProducer<LeptonType>::fill_sv_features(const LeptonT
   }
 }
 
-typedef LeptonTagInfoCollectionProducer<pat::Muon> MuonTagInfoCollectionProducer;
-typedef LeptonTagInfoCollectionProducer<pat::Electron> ElectronTagInfoCollectionProducer;
-
-DEFINE_FWK_MODULE(MuonTagInfoCollectionProducer);
-DEFINE_FWK_MODULE(ElectronTagInfoCollectionProducer);
-
-
 
 #include"PhysicsTools/PatAlgos/interface/LeptonTagInfoCollectionProducer.h"
 #include "DataFormats/PatCandidates/interface/Electron.h"
