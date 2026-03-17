@@ -24,7 +24,7 @@ packedPFCandidates = cms.EDProducer("Run3ScoutingParticleToPackedCandidateProduc
 # Note: From 2024, there are two muon collections (with/without vertex)
 # Default uses hltScoutingMuonPacker, 2024+ uses hltScoutingMuonPackerVtx
 slimmedMuons = cms.EDProducer("PatFromScoutingMuonProducer",
-    src=cms.InputTag("hltScoutingMuonPacker")
+    src=cms.InputTag("hltScoutingMuonPackerVtx")
 )
 # For 2024 data, use hltScoutingMuonPackerVtx which includes vertex information
 run3_scouting_2024.toModify(slimmedMuons, src="hltScoutingMuonPackerVtx")
@@ -39,23 +39,23 @@ slimmedMuonsNoVtx = cms.EDProducer("PatFromScoutingMuonProducer",
 # with CandidatePtr daughters pointing into the corresponding muon collection.
 # The muon-vertex link is derived from Run3ScoutingMuon::vtxIndx().
 # Default (pre-2024): single muon collection → single dimuon vertex collection
-scoutingDimuonVertices = cms.EDProducer("ScoutingDimuonVtxProducer",
-    scoutingMuons=cms.InputTag("hltScoutingMuonPacker"),
-    scoutingVertices=cms.InputTag("hltScoutingMuonPacker", "displacedVtx"),
-    patMuons=cms.InputTag("slimmedMuons")
-)
+#scoutingDimuonVertices = cms.EDProducer("ScoutingDimuonVtxProducer",
+#    scoutingMuons=cms.InputTag("hltScoutingMuonPacker"),
+#    scoutingVertices=cms.InputTag("hltScoutingMuonPacker", "displacedVtx"),
+#    patMuons=cms.InputTag("slimmedMuons")
+#)
 # For 2024+, Vtx muons have their own displaced vertices
-run3_scouting_2024.toModify(scoutingDimuonVertices,
-    scoutingMuons="hltScoutingMuonPackerVtx",
-    scoutingVertices=cms.InputTag("hltScoutingMuonPackerVtx", "displacedVtx")
-)
+#run3_scouting_2024.toModify(scoutingDimuonVertices,
+#    scoutingMuons="hltScoutingMuonPackerVtx",
+#    scoutingVertices=cms.InputTag("hltScoutingMuonPackerVtx", "displacedVtx")
+#)
 
 # Dimuon vertices for NoVtx muons - only available from 2024+
-scoutingDimuonVerticesNoVtx = cms.EDProducer("ScoutingDimuonVtxProducer",
-    scoutingMuons=cms.InputTag("hltScoutingMuonPackerNoVtx"),
-    scoutingVertices=cms.InputTag("hltScoutingMuonPackerNoVtx", "displacedVtx"),
-    patMuons=cms.InputTag("slimmedMuonsNoVtx")
-)
+#scoutingDimuonVerticesNoVtx = cms.EDProducer("ScoutingDimuonVtxProducer",
+#    scoutingMuons=cms.InputTag("hltScoutingMuonPackerNoVtx"),
+#    scoutingVertices=cms.InputTag("hltScoutingMuonPackerNoVtx", "displacedVtx"),
+#    patMuons=cms.InputTag("slimmedMuonsNoVtx")
+#)
 
 # Electrons - standard MiniAOD name
 slimmedElectrons = cms.EDProducer("PatFromScoutingElectronProducer",
@@ -115,13 +115,14 @@ caloStage2Digis = cms.EDProducer("Run3ScoutingL1CaloProducer",
     etsumSource = cms.InputTag("gtStage2Digis", "EtSum")
 )
 
+
 # Task containing all producers
 scoutingToMiniAODTask = cms.Task(
     packedPFCandidates,
     offlineSlimmedPrimaryVertices,
     offlineBeamSpot,
     slimmedMuons,
-    scoutingDimuonVertices,
+    #scoutingDimuonVertices,
     slimmedElectrons,
     slimmedPhotons,
     slimmedJets,
@@ -134,10 +135,10 @@ scoutingToMiniAODTask = cms.Task(
 )
 
 # For 2024+, add NoVtx muon collection and its dimuon vertices
-_scoutingToMiniAODTask_2024 = scoutingToMiniAODTask.copy()
-_scoutingToMiniAODTask_2024.add(slimmedMuonsNoVtx)
-_scoutingToMiniAODTask_2024.add(scoutingDimuonVerticesNoVtx)
-run3_scouting_2024.toReplaceWith(scoutingToMiniAODTask, _scoutingToMiniAODTask_2024)
+#_scoutingToMiniAODTask_2024 = scoutingToMiniAODTask.copy()
+#_scoutingToMiniAODTask_2024.add(slimmedMuonsNoVtx)
+#_scoutingToMiniAODTask_2024.add(scoutingDimuonVerticesNoVtx)
+#run3_scouting_2024.toReplaceWith(scoutingToMiniAODTask, _scoutingToMiniAODTask_2024)
 
 # Sequence for backward compatibility
 scoutingToMiniAODSequence = cms.Sequence(scoutingToMiniAODTask)
@@ -146,6 +147,8 @@ scoutingToMiniAODSequence = cms.Sequence(scoutingToMiniAODTask)
 # ============================================================
 # Customization function for cmsDriver
 # ============================================================
+
+
 
 def customiseScoutingToMiniAOD(process):
     """

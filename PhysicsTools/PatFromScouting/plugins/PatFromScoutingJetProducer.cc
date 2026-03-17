@@ -76,7 +76,7 @@ void PatFromScoutingJetProducer::produce(edm::Event& iEvent, const edm::EventSet
 
     patJets->push_back(jet);
   }
-
+  std::cout << "produced the jets" << std::endl;
   iEvent.put(std::move(patJets));
 }
 

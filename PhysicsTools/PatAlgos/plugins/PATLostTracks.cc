@@ -90,7 +90,7 @@ pat::PATLostTracks::PATLostTracks(const edm::ParameterSet& iConfig)
       minPtToStoreLowQualityProps_(iConfig.getParameter<double>("minPtToStoreLowQualityProps")),
       covarianceVersion_(iConfig.getParameter<int>("covarianceVersion")),
       covariancePackingSchemas_(iConfig.getParameter<std::vector<int>>("covariancePackingSchemas")),
-      muons_(consumes<reco::MuonCollection>(iConfig.getParameter<edm::InputTag>("muons"))),
+      muons_(mayConsume<reco::MuonCollection>(iConfig.getParameter<edm::InputTag>("muons"))),
       passThroughCut_(iConfig.getParameter<std::string>("passThroughCut")),
       maxDzForPrimaryAssignment_(
           iConfig.getParameter<edm::ParameterSet>("pvAssignment").getParameter<double>("maxDzForPrimaryAssignment")),
@@ -140,8 +140,11 @@ void pat::PATLostTracks::produce(edm::StreamID, edm::Event& iEvent, const edm::E
   edm::Handle<reco::VertexCollection> vertices;
   iEvent.getByToken(vertices_, vertices);
 
+
   edm::Handle<reco::MuonCollection> muons;
-  iEvent.getByToken(muons_, muons);
+  if (false){
+  	iEvent.getByToken(muons_, muons);
+  }
 
   edm::Handle<reco::VertexCompositeCandidateCollection> kshorts;
   iEvent.getByToken(kshorts_, kshorts);
@@ -286,14 +289,15 @@ void pat::PATLostTracks::addPackedCandidate(std::vector<pat::PackedCandidate>& c
 
   // assign the proper pdgId for tracks that are reconstructed as a muon
   const reco::Muon* muon(nullptr);
-  for (auto& mu : *muons) {
-    if (reco::TrackRef(mu.innerTrack()) == trk) {
-      id = -13 * trk->charge();
-      muon = &mu;
-      break;
-    }
+  if (muons.isValid()){
+	  for (auto& mu : *muons) {
+	    if (reco::TrackRef(mu.innerTrack()) == trk) {
+	      id = -13 * trk->charge();
+	      muon = &mu;
+	      break;
+	    }
+	  }
   }
-
   pat::PackedCandidate::LostInnerHits lostHits = pat::PackedCandidate::noLostInnerHits;
   int nlost = trk->hitPattern().numberOfLostHits(reco::HitPattern::MISSING_INNER_HITS);
   if (nlost == 0) {
