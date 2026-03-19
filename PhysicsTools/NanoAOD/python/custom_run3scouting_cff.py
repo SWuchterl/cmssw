@@ -3,6 +3,7 @@ from PhysicsTools.NanoAOD.run3scouting_cff import *
 from EventFilter.L1TRawToDigi.gtStage2Digis_cfi import gtStage2Digis
 from PhysicsTools.NanoAOD.triggerObjects_cff import l1bits
 from PhysicsTools.NanoAOD.globals_cff import puTable
+from PhysicsTools.NanoAOD.genWeightsTable_cfi import genWeightsTable
 
 ############################
 ### Sub Task Definitions ###
@@ -123,6 +124,7 @@ def prepareScoutingNanoTaskMC():
     scoutingNanoTaskMC.add(scoutingFatPFJetReclusterMatchGenExtensionTask)
 
     scoutingNanoTaskMC.add(puTable)
+    scoutingNanoTaskMC.add(genWeightsTable)
     return scoutingNanoTaskMC
 
 # Common tasks added to main scoutingNanoSequence

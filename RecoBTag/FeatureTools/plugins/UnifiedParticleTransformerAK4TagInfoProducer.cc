@@ -84,7 +84,7 @@ private:
 
   const edm::EDGetTokenT<edm::View<reco::Jet>> jet_token_;
   const edm::EDGetTokenT<VertexCollection> vtx_token_;
-  const edm::EDGetTokenT<edm::View<reco::Candidate>> lt_token_;
+  edm::EDGetTokenT<edm::View<reco::Candidate>> lt_token_;
   const edm::EDGetTokenT<SVCollection> sv_token_;
   edm::EDGetTokenT<JetMatchMap> unsubjet_map_token_;
   edm::EDGetTokenT<edm::ValueMap<float>> puppi_value_map_token_;
@@ -93,6 +93,7 @@ private:
   const edm::EDGetTokenT<edm::View<reco::Candidate>> candidateToken_;
   const edm::ESGetToken<TransientTrackBuilder, TransientTrackRecord> track_builder_token_;
   bool use_puppi_value_map_;
+  bool use_losttracks_;
   bool use_pvasq_value_map_;
   bool use_unsubjet_map_;
 
@@ -114,12 +115,13 @@ UnifiedParticleTransformerAK4TagInfoProducer::UnifiedParticleTransformerAK4TagIn
       fix_lt_sorting_(iConfig.getParameter<bool>("fix_lt_sorting")),
       jet_token_(consumes<edm::View<reco::Jet>>(iConfig.getParameter<edm::InputTag>("jets"))),
       vtx_token_(consumes<VertexCollection>(iConfig.getParameter<edm::InputTag>("vertices"))),
-      lt_token_(consumes<edm::View<reco::Candidate>>(iConfig.getParameter<edm::InputTag>("losttracks"))),
+      //lt_token_(consumes<edm::View<reco::Candidate>>(iConfig.getParameter<edm::InputTag>("losttracks"))),
       sv_token_(consumes<SVCollection>(iConfig.getParameter<edm::InputTag>("secondary_vertices"))),
       candidateToken_(consumes<edm::View<reco::Candidate>>(iConfig.getParameter<edm::InputTag>("candidates"))),
       track_builder_token_(
           esConsumes<TransientTrackBuilder, TransientTrackRecord>(edm::ESInputTag("", "TransientTrackBuilder"))),
       use_puppi_value_map_(false),
+      use_losttracks_(false),
       use_pvasq_value_map_(false),
       use_unsubjet_map_(false),
       fallback_puppi_weight_(iConfig.getParameter<bool>("fallback_puppi_weight")),
@@ -136,6 +138,12 @@ UnifiedParticleTransformerAK4TagInfoProducer::UnifiedParticleTransformerAK4TagIn
   } else if (is_weighted_jet_) {
     throw edm::Exception(edm::errors::Configuration,
                          "puppi_value_map is not set but jet is weighted. Must set puppi_value_map.");
+  }
+
+  const auto& lt_tag = iConfig.getParameter<edm::InputTag>("losttracks");
+  if (!lt_tag.label().empty()) {
+    lt_token_ = consumes<edm::View<reco::Candidate>>(lt_tag);
+    use_losttracks_ = true;
   }
 
   const auto& pvas_tag = iConfig.getParameter<edm::InputTag>("vertex_associator");
@@ -177,6 +185,8 @@ void UnifiedParticleTransformerAK4TagInfoProducer::fillDescriptions(edm::Configu
 }
 
 void UnifiedParticleTransformerAK4TagInfoProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
+
+
   auto output_tag_infos = std::make_unique<UnifiedParticleTransformerAK4TagInfoCollection>();
   edm::Handle<edm::View<reco::Jet>> jets;
   iEvent.getByToken(jet_token_, jets);
@@ -194,8 +204,9 @@ void UnifiedParticleTransformerAK4TagInfoProducer::produce(edm::Event& iEvent, c
   }
 
   edm::Handle<edm::View<reco::Candidate>> LTs;
-  iEvent.getByToken(lt_token_, LTs);
-
+  if (use_losttracks_){
+      iEvent.getByToken(lt_token_, LTs);
+  }
   // reference to primary vertex
   const auto& pv = vtxs->at(0);
 
@@ -271,88 +282,90 @@ void UnifiedParticleTransformerAK4TagInfoProducer::produce(edm::Event& iEvent, c
       static constexpr size_t max_lt_ = 5;
 
       //Adding the lost tracks associated with the jets
-      for (size_t i = 0; i < LTs->size(); ++i) {
-        auto cand = LTs->ptrAt(i);
-        if ((reco::deltaR(*cand, jet) < 0.2)) {
-          const auto* PackedCandidate_ = dynamic_cast<const pat::PackedCandidate*>(&(*cand));
-          if (PackedCandidate_) {
-            if (PackedCandidate_->pt() < 1.0)
-              continue;
-            auto& trackinfo = lt_trackinfos.emplace(i, track_builder).first->second;
-            trackinfo.buildTrackInfo(PackedCandidate_, jet_dir, jet_ref_track_dir, pv);
+      if (use_losttracks_){
+	      for (size_t i = 0; i < LTs->size(); ++i) {
+		auto cand = LTs->ptrAt(i);
+		if ((reco::deltaR(*cand, jet) < 0.2)) {
+		  const auto* PackedCandidate_ = dynamic_cast<const pat::PackedCandidate*>(&(*cand));
+		  if (PackedCandidate_) {
+		    if (PackedCandidate_->pt() < 1.0)
+		      continue;
+		    auto& trackinfo = lt_trackinfos.emplace(i, track_builder).first->second;
+		    trackinfo.buildTrackInfo(PackedCandidate_, jet_dir, jet_ref_track_dir, pv);
 
-            if (sort_cand_by_pt_)
-              lt_sorted.emplace_back(i,
-                                     PackedCandidate_->pt() / jet.pt(),
-                                     trackinfo.getTrackSip2dSig(),
-                                     -btagbtvdeep::mindrsvpfcand(svs_unsorted, PackedCandidate_));
-            else
-              lt_sorted.emplace_back(i,
-                                     trackinfo.getTrackSip2dSig(),
-                                     -btagbtvdeep::mindrsvpfcand(svs_unsorted, PackedCandidate_),
-                                     PackedCandidate_->pt() / jet.pt());
+		    if (sort_cand_by_pt_)
+		      lt_sorted.emplace_back(i,
+					     PackedCandidate_->pt() / jet.pt(),
+					     trackinfo.getTrackSip2dSig(),
+					     -btagbtvdeep::mindrsvpfcand(svs_unsorted, PackedCandidate_));
+		    else
+		      lt_sorted.emplace_back(i,
+					     trackinfo.getTrackSip2dSig(),
+					     -btagbtvdeep::mindrsvpfcand(svs_unsorted, PackedCandidate_),
+					     PackedCandidate_->pt() / jet.pt());
 
-            ltPtrs.push_back(cand);
-          }
-        }
+		    ltPtrs.push_back(cand);
+		  }
+		}
+	      }
+	      
+
+	      // sort lt collection
+	      std::sort(lt_sorted.begin(), lt_sorted.end(), btagbtvdeep::SortingClass<std::size_t>::compareByABCInv);
+	      int n_ltcand_ = std::min(lt_sorted.size(), max_lt_);
+
+	      std::vector<size_t> lt_sortedindices;
+	      lt_sortedindices = btagbtvdeep::invertSortingVector(lt_sorted);
+
+	      // set right size to vectors
+	      features.lt_features.clear();
+	      features.lt_features.resize(lt_sorted.size());
+
+	      for (unsigned int i = 0; i < (unsigned int)n_ltcand_; i++) {
+		//auto cand = LTs->ptrAt(i);
+		//const auto *PackedCandidate_ = dynamic_cast<const pat::PackedCandidate*>(&(*cand));
+		const auto* PackedCandidate_ = dynamic_cast<const pat::PackedCandidate*>(&(*ltPtrs.at(i)));
+		if (!PackedCandidate_)
+		  continue;
+		if (PackedCandidate_->pt() < min_candidate_pt_)
+		  continue;
+
+		if (PackedCandidate_->charge() != 0) {
+		  //auto reco_cand = dynamic_cast<const reco::PFCandidate*>(cand);
+		  float puppiw = PackedCandidate_->puppiWeight();
+
+		  float drminpfcandsv = btagbtvdeep::mindrsvpfcand(svs_unsorted, PackedCandidate_);
+		  float distminpfcandsv = 0;
+
+		  size_t entry = lt_sortedindices.at(fix_lt_sorting_ ? lt_sorted[i].get() : i);
+		  // get cached track info
+		  auto& trackinfo = lt_trackinfos.emplace(i, track_builder).first->second;
+		  trackinfo.buildTrackInfo(PackedCandidate_, jet_dir, jet_ref_track_dir, pv);
+		  // get_ref to vector element
+		  auto& lt_features = features.lt_features.at(entry);
+
+		  if (PackedCandidate_) {
+		    if (PackedCandidate_->hasTrackDetails()) {
+		      const reco::Track& PseudoTrack = PackedCandidate_->pseudoTrack();
+		      reco::TransientTrack transientTrack;
+		      transientTrack = track_builder->build(PseudoTrack);
+		      distminpfcandsv = btagbtvdeep::mindistsvpfcand(svs_unsorted, transientTrack);
+		    }
+
+		    btagbtvdeep::packedCandidateToFeatures(PackedCandidate_,
+							   jet,
+							   trackinfo,
+							   is_weighted_jet_,
+							   drminpfcandsv,
+							   static_cast<float>(jet_radius_),
+							   puppiw,
+							   lt_features,
+							   flip_,
+							   distminpfcandsv);
+		  }
+		}
+	      }
       }
-
-      // sort lt collection
-      std::sort(lt_sorted.begin(), lt_sorted.end(), btagbtvdeep::SortingClass<std::size_t>::compareByABCInv);
-      int n_ltcand_ = std::min(lt_sorted.size(), max_lt_);
-
-      std::vector<size_t> lt_sortedindices;
-      lt_sortedindices = btagbtvdeep::invertSortingVector(lt_sorted);
-
-      // set right size to vectors
-      features.lt_features.clear();
-      features.lt_features.resize(lt_sorted.size());
-
-      for (unsigned int i = 0; i < (unsigned int)n_ltcand_; i++) {
-        //auto cand = LTs->ptrAt(i);
-        //const auto *PackedCandidate_ = dynamic_cast<const pat::PackedCandidate*>(&(*cand));
-        const auto* PackedCandidate_ = dynamic_cast<const pat::PackedCandidate*>(&(*ltPtrs.at(i)));
-        if (!PackedCandidate_)
-          continue;
-        if (PackedCandidate_->pt() < min_candidate_pt_)
-          continue;
-
-        if (PackedCandidate_->charge() != 0) {
-          //auto reco_cand = dynamic_cast<const reco::PFCandidate*>(cand);
-          float puppiw = PackedCandidate_->puppiWeight();
-
-          float drminpfcandsv = btagbtvdeep::mindrsvpfcand(svs_unsorted, PackedCandidate_);
-          float distminpfcandsv = 0;
-
-          size_t entry = lt_sortedindices.at(fix_lt_sorting_ ? lt_sorted[i].get() : i);
-          // get cached track info
-          auto& trackinfo = lt_trackinfos.emplace(i, track_builder).first->second;
-          trackinfo.buildTrackInfo(PackedCandidate_, jet_dir, jet_ref_track_dir, pv);
-          // get_ref to vector element
-          auto& lt_features = features.lt_features.at(entry);
-
-          if (PackedCandidate_) {
-            if (PackedCandidate_->hasTrackDetails()) {
-              const reco::Track& PseudoTrack = PackedCandidate_->pseudoTrack();
-              reco::TransientTrack transientTrack;
-              transientTrack = track_builder->build(PseudoTrack);
-              distminpfcandsv = btagbtvdeep::mindistsvpfcand(svs_unsorted, transientTrack);
-            }
-
-            btagbtvdeep::packedCandidateToFeatures(PackedCandidate_,
-                                                   jet,
-                                                   trackinfo,
-                                                   is_weighted_jet_,
-                                                   drminpfcandsv,
-                                                   static_cast<float>(jet_radius_),
-                                                   puppiw,
-                                                   lt_features,
-                                                   flip_,
-                                                   distminpfcandsv);
-          }
-        }
-      }
-
       // fill collection, from DeepTNtuples plus some styling
       for (unsigned int i = 0; i < unsubJet.numberOfDaughters(); i++) {
         auto cand = unsubJet.daughter(i);

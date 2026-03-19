@@ -498,6 +498,52 @@ def customizeForScoutingAK4ReclusteredJets(process, pName):
     )
 
 
+    process.scoutingPFJetReclusterPFUnifiedParticleTransformerAK4TagInfos = cms.EDProducer('UnifiedParticleTransformerAK4TagInfoProducer',
+        jet_radius = cms.double(0.4),
+        min_candidate_pt = cms.double(0.1),
+        flip = cms.bool(False),
+        sort_cand_by_pt = cms.bool(False),
+        fix_lt_sorting = cms.bool(True),
+        vertices = cms.InputTag("offlineSlimmedPrimaryVertices", "", pName),
+        losttracks = cms.InputTag(''),
+        puppi_value_map = cms.InputTag(''),
+        secondary_vertices = cms.InputTag('inclusiveCandidateSecondaryVertices'),
+        jets = cms.InputTag('recoScoutingPFJetRecluster'),
+        unsubjet_map = cms.InputTag(''),
+        candidates = cms.InputTag("packedPFCandidates", "recoCands", pName),
+        vertex_associator = cms.InputTag(''),
+        fallback_puppi_weight = cms.bool(True),
+        fallback_vertex_association = cms.bool(True),
+        is_weighted_jet = cms.bool(False),
+        min_jet_pt = cms.double(0),
+        max_jet_eta = cms.double(2.5),
+        mightGet = cms.optional.untracked.vstring
+      )
+
+    process.scoutingPFJetReclusterPFUnifiedParticleTransformerAK4Tags = cms.EDProducer('UnifiedParticleTransformerAK4ONNXJetTagsScoutingProducer',
+        src = cms.InputTag('scoutingPFJetReclusterPFUnifiedParticleTransformerAK4TagInfos'),
+        input_names = cms.vstring(
+          'input_1',
+          'input_2',
+          'input_3',
+          'input_4',
+          'input_5',
+          'input_6',
+        ),
+        model_path = cms.FileInPath('RecoBTag/CombinedScouting/data/model.onnx'),
+        output_names = cms.vstring('ID_pred'),
+        flav_names = cms.vstring(
+        'probb',
+        'probc',
+        'probs',
+        'probu',
+        'probd',
+        'probg',            
+        ),
+        mightGet = cms.optional.untracked.vstring
+    )
+
+
     # convert to PAT
     from PhysicsTools.PatAlgos.producersLayer1.jetProducer_cfi import _patJets
     process.patScoutingPFJetRecluster = _patJets.clone(
@@ -515,6 +561,12 @@ def customizeForScoutingAK4ReclusteredJets(process, pName):
             "scoutingPFJetReclusterHLTParticleNetONNXJetTags:probc",
             "scoutingPFJetReclusterHLTParticleNetONNXJetTags:probuds",
             "scoutingPFJetReclusterHLTParticleNetONNXJetTags:probg",
+            'scoutingPFJetReclusterPFUnifiedParticleTransformerAK4Tags:probb',
+            'scoutingPFJetReclusterPFUnifiedParticleTransformerAK4Tags:probc',
+            'scoutingPFJetReclusterPFUnifiedParticleTransformerAK4Tags:probs',
+            'scoutingPFJetReclusterPFUnifiedParticleTransformerAK4Tags:probu',
+            'scoutingPFJetReclusterPFUnifiedParticleTransformerAK4Tags:probd',
+            'scoutingPFJetReclusterPFUnifiedParticleTransformerAK4Tags:probg',            
            
             ],
         addAssociatedTracks = False,
@@ -579,15 +631,12 @@ def customizeForScoutingAK4ReclusteredJets(process, pName):
             process.scoutingPFJetReclusterTracksAssociatorAtVertex, process.scoutingPFJetReclusterCharge, # jet charge
             process.scoutingPFJetReclusterPrimaryVertexAssociation, # pv association
             process.scoutingPFJetReclusterHLTParticleNetJetTagInfos, process.scoutingPFJetReclusterHLTParticleNetONNXJetTags, # HLTPNet tagging,
-            #process.scoutingPFJetReclusterPFUnifiedParticleTransformerAK4TagInfos, process.scoutingPFJetReclusterPFUnifiedParticleTransformerAK4Tags,
-            #process.scoutingPFJetReclusterGenJetMatch,
-            #process.scoutingPFJetReclusterFlavourAssociation,
-            #process.scoutingPFJetReclusterGenPartonMatch,
+            process.scoutingPFJetReclusterPFUnifiedParticleTransformerAK4TagInfos, process.scoutingPFJetReclusterPFUnifiedParticleTransformerAK4Tags,
             process.patScoutingPFJetRecluster, # pat-ify
             process.slimmedJets
             )
 
-    scoutingPFJetRecluster2MCTask = cms.Task(
+    process.scoutingPFJetRecluster2MCTask = cms.Task(
             process.patJetPartonsNano,
             process.scoutingPFJetReclusterGenJetMatch,
             process.scoutingPFJetReclusterGenPartonMatch,
@@ -598,6 +647,9 @@ def customizeForScoutingAK4ReclusteredJets(process, pName):
 
 
 def customiseScoutingForStandalone(process):
+
+    process.load("PhysicsTools.PatFromScouting.scoutingToMiniAOD_cff")
+
     """
     Minimal customization for scouting for scouting outside of CMSSW data formats.
 
@@ -623,8 +675,87 @@ def customiseScoutingForStandalone(process):
             TryToContinue = cms.untracked.vstring('ProductNotFound')
         )
 
-    process.associate(scoutingToMiniAODSequence)
+    process.scoutingNanoSequence += process.scoutingToMiniAODSequence
 
     return process
 
+def customiseForUParTInference(process, pName):
+
+    process = customiseScoutingForStandalone(process)
+    process = customiseForScoutingSecondaryCandidateVertices(process, pName)
+
+    process = customizeForScoutingAK4ReclusteredJets(process, pName)
+
+    return process
+
+
+
+def customiseScoutingNanoDerived(process, pName):
+
+    process = customiseScoutingForStandalone(process)
+    process = customiseForScoutingSecondaryCandidateVertices(process, pName)
+    process.scoutingNanoSequence.associate(process.scoutingTransientTrackBuilderTask)
+    process.scoutingNanoSequence.associate(process.scoutingSecondaryVertexTask)
+
+    process = customizeForScoutingAK4ReclusteredJets(process, pName)
+
+    from PhysicsTools.NanoAOD.common_cff import Var, P4Vars
+    PFJetVariables = cms.PSet(
+        P4Vars,
+        area = Var("jetArea()", float, doc="jet catchment area, for JECs",precision=10),
+        chHEF = Var("chargedHadronEnergyFraction()", float, doc="charged Hadron Energy Fraction", precision=10),
+        neHEF = Var("neutralHadronEnergyFraction()", float, doc="neutral Hadron Energy Fraction", precision=10),
+        chEmEF = Var("chargedEmEnergyFraction()", float, doc="charged Electromagnetic Energy Fraction", precision=10),
+        neEmEF = Var("neutralEmEnergyFraction()", float, doc="neutral Electromagnetic Energy Fraction", precision=10),
+        hfHEF = Var("HFHadronEnergyFraction()",float,doc="hadronic Energy Fraction in HF",precision=10),
+        hfEmEF = Var("HFEMEnergyFraction()",float,doc="electromagnetic Energy Fraction in HF",precision=10),
+        muEF = Var("muonEnergyFraction()", float, doc="muon Energy Fraction", precision=10),
+        chHadMultiplicity = Var("chargedHadronMultiplicity()", "int16", doc="number of charged hadrons in the jet"),
+        neHadMultiplicity = Var("neutralHadronMultiplicity()", int, doc="number of neutral hadrons in the jet"),
+        hfHadMultiplicity = Var("HFHadronMultiplicity()", int, doc="number of HF hadrons in the jet"),
+        hfEMMultiplicity = Var("HFEMMultiplicity()", int, doc="number of HF EMs in the jet"),
+        muMultiplicity = Var("muonMultiplicity()", int, doc="number of muons in the jet"),
+        elMultiplicity = Var("electronMultiplicity()", int, doc="number of electrons in the jet"),
+        phMultiplicity = Var("photonMultiplicity()", int, doc="number of photons in the jet"),
+        nConstituents = Var("numberOfDaughters()", int, doc="number of particles in the jet"),
+    )    
+
+    from PhysicsTools.NanoAOD.simplePATJetFlatTableProducer_cfi import simplePATJetFlatTableProducer
+    process.scoutingPFJetRecluster2Table = simplePATJetFlatTableProducer.clone(
+        src = cms.InputTag("patScoutingPFJetRecluster"),
+        name = cms.string("ScoutingPFJetRecluster2"),
+        doc = cms.string(""),
+        cut = cms.string(""),
+        variables = cms.PSet(
+            PFJetVariables,
+            rawFactor = Var("1.-jecFactor('Uncorrected')", float, doc="1 - Factor to get back to raw pT", precision=10),
+            charge = Var("jetCharge()", float, doc="charge", precision=10),
+            hltPNet_probtauhp = Var("?(pt>=5)&&(abs(eta)<=2.6)?bDiscriminator('scoutingPFJetReclusterHLTParticleNetONNXJetTags:probtauhp'):-1", float, doc="HLT PNet tagger tauhp raw score", precision=10),
+            hltPNet_probtauhm = Var("?(pt>=5)&&(abs(eta)<=2.6)?bDiscriminator('scoutingPFJetReclusterHLTParticleNetONNXJetTags:probtauhm'):-1", float, doc="HLT PNet tagger tauhm raw score", precision=10),
+            hltPNet_probb = Var("?(pt>=5)&&(abs(eta)<=2.6)?bDiscriminator('scoutingPFJetReclusterHLTParticleNetONNXJetTags:probb'):-1", float, doc="HLT PNet tagger b raw score", precision=10),
+            hltPNet_probc = Var("?(pt>=5)&&(abs(eta)<=2.6)?bDiscriminator('scoutingPFJetReclusterHLTParticleNetONNXJetTags:probc'):-1", float, doc="HLT PNet tagger c raw score", precision=10),
+            hltPNet_probuds = Var("?(pt>=5)&&(abs(eta)<=2.6)?bDiscriminator('scoutingPFJetReclusterHLTParticleNetONNXJetTags:probuds'):-1", float, doc="HLT PNet tagger uds raw score", precision=10),
+            hltPNet_probg = Var("?(pt>=5)&&(abs(eta)<=2.6)?bDiscriminator('scoutingPFJetReclusterHLTParticleNetONNXJetTags:probg'):-1", float, doc="HLT PNet tagger g raw score", precision=10),
+            scoutUParT_probb = Var("?(pt>=15)&&(abs(eta)<=2.5)?bDiscriminator('scoutingPFJetReclusterPFUnifiedParticleTransformerAK4Tags:probb'):-1", float, doc="scouting uParT tagger b raw score", precision=10),
+            scoutUParT_probc = Var("?(pt>=15)&&(abs(eta)<=2.5)?bDiscriminator('scoutingPFJetReclusterPFUnifiedParticleTransformerAK4Tags:probc'):-1", float, doc="scouting uParT tagger c raw score", precision=10),
+            scoutUParT_probs = Var("?(pt>=15)&&(abs(eta)<=2.5)?bDiscriminator('scoutingPFJetReclusterPFUnifiedParticleTransformerAK4Tags:probs'):-1", float, doc="scouting uParT tagger s raw score", precision=10),
+            scoutUParT_probu = Var("?(pt>=15)&&(abs(eta)<=2.5)?bDiscriminator('scoutingPFJetReclusterPFUnifiedParticleTransformerAK4Tags:probu'):-1", float, doc="scouting uParT tagger u raw score", precision=10),
+            scoutUParT_probd = Var("?(pt>=15)&&(abs(eta)<=2.5)?bDiscriminator('scoutingPFJetReclusterPFUnifiedParticleTransformerAK4Tags:probd'):-1", float, doc="scouting uParT tagger d raw score", precision=10),
+            scoutUParT_probg = Var("?(pt>=15)&&(abs(eta)<=2.5)?bDiscriminator('scoutingPFJetReclusterPFUnifiedParticleTransformerAK4Tags:probg'):-1", float, doc="scouting uParT tagger g raw score", precision=10),
+        ),
+    )
+
+    from PhysicsTools.NanoAOD.jetMC_cff import jetMCTable
+    process.scoutingPFJetRecluster2MCTable = jetMCTable.clone(
+        src = process.scoutingPFJetRecluster2Table.src,
+        name = process.scoutingPFJetRecluster2Table.name,
+        cut = process.scoutingPFJetRecluster2Table.cut,
+    )
+
+    process.scoutingPFJetRecluster2TableTask = cms.Task(process.scoutingPFJetRecluster2Task, process.scoutingPFJetRecluster2Table)
+    process.scoutingNanoSequence.associate(process.scoutingPFJetRecluster2TableTask)
+
+    process.scoutingPFJetRecluster2MCTableTask = cms.Task(process.scoutingPFJetRecluster2MCTask, process.scoutingPFJetRecluster2MCTable)
+    process.scoutingNanoSequence.associate(process.scoutingPFJetRecluster2MCTableTask)
+    return process
 

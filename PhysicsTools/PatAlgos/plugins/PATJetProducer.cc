@@ -467,7 +467,8 @@ void PATJetProducer::produce(edm::Event &iEvent, const edm::EventSetup &iSetup) 
     if (addBTagInfo_) {
       if (addDiscriminators_) {
         for (size_t k = 0; k < jetDiscriminators.size(); ++k) {
-          float value = (*jetDiscriminators[k])[jetRef];
+	  float value = -1.;
+	  if ((*jetDiscriminators[k]).size() > 0) value = (*jetDiscriminators[k])[jetRef];
           ajet.addBDiscriminatorPair(std::make_pair(discriminatorLabels_[k], value));
         }
       }
