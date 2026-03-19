@@ -212,6 +212,9 @@ muonPNetVariables = _muonTagInfos.clone(
         MuonSelected_LepGood_eta=cms.string("eta"),
         MuonSelected_LepGood_jetNDauChargedMVASel=cms.string(
             "?userCand('jetForLepJetVar').isNonnull()?userFloat('jetNDauChargedMVASel'):0"),
+        # for ntuplizer studies
+        MuonSelected_LepGood_pfRelIso03_all=cms.string(
+            "((pfIsolationR03().sumChargedHadronPt + max(pfIsolationR03().sumNeutralHadronEt + pfIsolationR03().sumPhotonEt - pfIsolationR03().sumPUPt/2,0.0))/pt)"),
         MuonSelected_LepGood_miniRelIsoCharged=cms.string(
             "userFloat('miniIsoChg')/pt"),
         MuonSelected_LepGood_miniRelIsoNeutral=cms.string(
@@ -220,6 +223,9 @@ muonPNetVariables = _muonTagInfos.clone(
             "?userCand('jetForLepJetVar').isNonnull()?userFloat('ptRel'):0"),
         MuonSelected_LepGood_jetDF=cms.string(
             "?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfDeepFlavourJetTags:probbb')+userCand('jetForLepJetVar').bDiscriminator('pfDeepFlavourJetTags:probb')+userCand('jetForLepJetVar').bDiscriminator('pfDeepFlavourJetTags:problepb'),0.0):0.0"),
+        # for ntuplizer studies
+        MuonSelected_LepGood_jetPNet=cms.string(
+            "?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4CHSCentralDiscriminatorsJetTags:BvsAll'),0.0):0.0"),
         MuonSelected_LepGood_jetPtRatio=cms.string(
             "?userCand('jetForLepJetVar').isNonnull()?min(userFloat('ptRatio'),1.5):1.0/(1.0+(pfIsolationR04().sumChargedHadronPt + max(pfIsolationR04().sumNeutralHadronEt + pfIsolationR04().sumPhotonEt - pfIsolationR04().sumPUPt/2,0.0))/pt)"),
         MuonSelected_dxy=cms.string("log(abs(dB('PV2D')))"),
@@ -353,10 +359,6 @@ muonParTVariables = cms.EDProducer(
         PF_fromPV=cms.string("fromPV"),
         PF_numberOfPixelHits=cms.string(
             "numberOfPixelHits"),
-        # PF_dzSig_log=cms.string(
-        #     "?hasTrackDetails?asinh(dz/max(dzError,1.e-6)):0"),
-        # PF_dxySig_log=cms.string(
-        #     "?hasTrackDetails?asinh(dxy/max(dxyError,1.e-6)):0"),
         PF_hcalFraction=cms.string(
             "hcalFraction"),
         PF_trackerLayersWithMeasurement=cms.string(
