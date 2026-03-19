@@ -169,8 +169,8 @@ void ParTLeptonProducer<LeptonType>::make_inputs(const DeepBoostedJetFeatures &t
       const auto &raw_value = taginfo.get(varname);
       const auto &info = prep_params.info(varname);
       int insize = btagbtvdeep::center_norm_pad(raw_value,
-                                                -info.center,
-                                                1/info.norm_factor,
+                                                info.center,
+                                                info.norm_factor,
                                                 prep_params.min_length,
                                                 prep_params.max_length,
                                                 group_values,
