@@ -300,9 +300,9 @@ muonParTVariables = cms.EDProducer(
         Lepton_pfRelIso03_all_log=cms.string(
             "log(((pfIsolationR03().sumChargedHadronPt + max(pfIsolationR03().sumNeutralHadronEt + pfIsolationR03().sumPhotonEt - pfIsolationR03().sumPUPt/2,0.0))/pt)+1.e-8)"),
         Lepton_jetPtRelv2_log=cms.string(
-            "?userCand('jetForLepJetVar').isNonnull()?log(userFloat('ptRel')):0"),
+            "log(abs(?userCand('jetForLepJetVar').isNonnull()?log(userFloat('ptRel')):0)+1.e-8)"),
         Lepton_jetPNet=cms.string(
-            "?userCand('jetForLepJetVar').isNonnull()?userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:BvsAll'):0.0"),
+            "?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4CHSCentralDiscriminatorsJetTags:BvsAll'),0.0):0.0"),
         Lepton_jetPtRatio=cms.string(
             "?userCand('jetForLepJetVar').isNonnull()?min(userFloat('ptRatio'),1.5):1.0/(1.0+(pfIsolationR04().sumChargedHadronPt + max(pfIsolationR04().sumNeutralHadronEt + pfIsolationR04().sumPhotonEt - pfIsolationR04().sumPUPt/2,0.0))/pt)"),
         Lepton_dxy=cms.string(
@@ -332,7 +332,7 @@ muonParTVariables = cms.EDProducer(
     ),
     pfVars=cms.PSet(
         PF_pt=cms.string("pt"),
-        PF_pt_log=cms.string("log(pt)"),
+        PF_pt_log=cms.string("log(pt+1.e-8)"),
         PF_px=cms.string("px"),
         PF_py=cms.string("py"),
         PF_pz=cms.string("pz"),
@@ -353,10 +353,10 @@ muonParTVariables = cms.EDProducer(
         PF_fromPV=cms.string("fromPV"),
         PF_numberOfPixelHits=cms.string(
             "numberOfPixelHits"),
-        PF_dzSig_log=cms.string(
-            "?hasTrackDetails?log(abs(dz/max(dzError,1.e-6))):0"),
-        PF_dxySig_log=cms.string(
-            "?hasTrackDetails?log(abs(dxy/max(dxyError,1.e-6))):0"),
+        # PF_dzSig_log=cms.string(
+        #     "?hasTrackDetails?asinh(dz/max(dzError,1.e-6)):0"),
+        # PF_dxySig_log=cms.string(
+        #     "?hasTrackDetails?asinh(dxy/max(dxyError,1.e-6)):0"),
         PF_hcalFraction=cms.string(
             "hcalFraction"),
         PF_trackerLayersWithMeasurement=cms.string(
@@ -371,13 +371,13 @@ muonParTVariables = cms.EDProducer(
         SV_py=cms.string("py"),
         SV_pz=cms.string("pz"),
         SV_energy=cms.string("energy"),
-        SV_pt_log=cms.string("log(pt)"),
+        SV_pt_log=cms.string("log(pt+1.e-8)"),
         SV_ndof=cms.string("vertexNdof"),
         SV_chi2=cms.string("vertexChi2"),
         SV_nTracks=cms.string(
             "numberOfDaughters"),
         SV_mass=cms.string("mass"),
-        SV_mass_log=cms.string("log(mass)"),
+        SV_mass_log=cms.string("log(mass+1.e-8)"),
         SV_mask=cms.string("1"),
     ),
 )
