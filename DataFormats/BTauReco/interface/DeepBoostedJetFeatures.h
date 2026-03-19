@@ -28,6 +28,8 @@ namespace btagbtvdeep {
       }
     }
 
+    const std::unordered_map<std::string, std::vector<float>>& get_all() const { return feature_map_;}
+
     void set(const std::string& name, const std::vector<float>& vec) { feature_map_[name] = vec; }
 
     void check_consistency(const std::vector<std::string>& names) const {
