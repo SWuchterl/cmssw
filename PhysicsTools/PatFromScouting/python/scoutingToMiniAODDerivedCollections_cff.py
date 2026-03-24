@@ -755,7 +755,10 @@ def customiseScoutingNanoDerived(process, pName):
     process.scoutingPFJetRecluster2TableTask = cms.Task(process.scoutingPFJetRecluster2Task, process.scoutingPFJetRecluster2Table)
     process.scoutingNanoSequence.associate(process.scoutingPFJetRecluster2TableTask)
 
-    process.scoutingPFJetRecluster2MCTableTask = cms.Task(process.scoutingPFJetRecluster2MCTask, process.scoutingPFJetRecluster2MCTable)
-    process.scoutingNanoSequence.associate(process.scoutingPFJetRecluster2MCTableTask)
+    runOnMC = hasattr(process,"NANOEDMAODSIMoutput") or hasattr(process,"NANOAODSIMoutput")
+    if runOnMC:
+        process.scoutingPFJetRecluster2MCTableTask = cms.Task(process.scoutingPFJetRecluster2MCTask, process.scoutingPFJetRecluster2MCTable)
+        process.scoutingNanoSequence.associate(process.scoutingPFJetRecluster2MCTableTask)
+
     return process
 
