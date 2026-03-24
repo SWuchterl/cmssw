@@ -226,14 +226,28 @@ void LeptonTagInfoCollectionProducer<LeptonType>::fill_pf_features(const LeptonT
   features.add("PF_dzSig_log");
   features.reserve("PF_dzSig_log", pfcands.size());
 
+  // relative px, py, pz and energy
+  features.add("PF_px");
+  features.reserve("PF_px", pfcands.size());
+  features.add("PF_py");
+  features.reserve("PF_py", pfcands.size());
+  features.add("PF_pz");
+  features.reserve("PF_pz", pfcands.size());
+  features.add("PF_energy");
+  features.reserve("PF_energy", pfcands.size());
+
   for (const auto& cand : pfcands) {
     features.fill("PF_phi_rel", reco::deltaPhi(lep.phi(), cand.phi()));
     features.fill("PF_eta_rel", lep.eta() - cand.eta());
     features.fill("PF_dR_lep", reco::deltaR(lep, cand));
     features.fill("PF_pt_rel_log", log(cand.pt() / lep.pt()));
+    features.fill("PF_px", (cand.pt() / lep.pt()) * cos(reco::deltaPhi(lep.phi(), cand.phi())));
+    features.fill("PF_py", (cand.pt() / lep.pt()) * sin(reco::deltaPhi(lep.phi(), cand.phi())));
+    features.fill("PF_pz", (cand.pt() / lep.pt()) * sinh(lep.eta() - cand.eta()));
+    features.fill("PF_energy", (cand.pt() / lep.pt()) * cosh(lep.eta() - cand.eta()));
     if (cand.hasTrackDetails()) {
-      features.fill("PF_dxySig_log", asinh(abs(cand.dxy() / cand.dxyError())));
-      features.fill("PF_dzSig_log", asinh(abs(cand.dz() / cand.dzError())));
+      features.fill("PF_dxySig_log", asinh(cand.dxy() / cand.dxyError()));
+      features.fill("PF_dzSig_log", asinh(cand.dz() / cand.dzError()));
     } else {
       features.fill("PF_dxySig_log", 0);
       features.fill("PF_dzSig_log", 0);
@@ -284,6 +298,16 @@ void LeptonTagInfoCollectionProducer<LeptonType>::fill_sv_features(const LeptonT
   features.add("SV_d3d");
   features.reserve("SV_d3d", selectedSVs.size());
 
+  // relative px, py, pz and energy
+  features.add("SV_px");
+  features.reserve("SV_px", selectedSVs.size());
+  features.add("SV_py");
+  features.reserve("SV_py", selectedSVs.size());
+  features.add("SV_pz");
+  features.reserve("SV_pz", selectedSVs.size());
+  features.add("SV_energy");
+  features.reserve("SV_energy", selectedSVs.size());
+
   for (auto& sv : selectedSVs) {
     Measurement1D dl =
         vdist.distance(PV0, VertexState(RecoVertex::convertPos(sv.position()), RecoVertex::convertError(sv.error())));
@@ -298,6 +322,10 @@ void LeptonTagInfoCollectionProducer<LeptonType>::fill_sv_features(const LeptonT
     features.fill("SV_eta_rel", lep.eta() - sv.eta());
     features.fill("SV_dR_lep", reco::deltaR(sv, lep));
     features.fill("SV_pt_rel", sv.pt() / lep.pt());
+    features.fill("SV_px", (sv.pt() / lep.pt()) * cos(reco::deltaPhi(lep.phi(), sv.phi())));
+    features.fill("SV_py", (sv.pt() / lep.pt()) * sin(reco::deltaPhi(lep.phi(), sv.phi())));
+    features.fill("SV_pz", (sv.pt() / lep.pt()) * sinh(lep.eta() - sv.eta()));
+    features.fill("SV_energy", (sv.pt() / lep.pt()) * cosh(lep.eta() - sv.eta()));
     double dx = (PV0.x() - sv.vx()), dy = (PV0.y() - sv.vy()), dz = (PV0.z() - sv.vz());
     double pdotv = (dx * sv.px() + dy * sv.py() + dz * sv.pz()) / sv.p() / sqrt(dx * dx + dy * dy + dz * dz);
     features.fill("SV_cospAngle", pdotv);

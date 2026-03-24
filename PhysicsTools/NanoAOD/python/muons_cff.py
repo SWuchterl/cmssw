@@ -225,7 +225,7 @@ muonPNetVariables = _muonTagInfos.clone(
             "?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfDeepFlavourJetTags:probbb')+userCand('jetForLepJetVar').bDiscriminator('pfDeepFlavourJetTags:probb')+userCand('jetForLepJetVar').bDiscriminator('pfDeepFlavourJetTags:problepb'),0.0):0.0"),
         # for ntuplizer studies
         MuonSelected_LepGood_jetPNet=cms.string(
-            "?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4CHSCentralDiscriminatorsJetTags:BvsAll'),0.0):0.0"),
+            "?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:BvsAll'),0.0):0.0"),
         MuonSelected_LepGood_jetPtRatio=cms.string(
             "?userCand('jetForLepJetVar').isNonnull()?min(userFloat('ptRatio'),1.5):1.0/(1.0+(pfIsolationR04().sumChargedHadronPt + max(pfIsolationR04().sumNeutralHadronEt + pfIsolationR04().sumPhotonEt - pfIsolationR04().sumPUPt/2,0.0))/pt)"),
         MuonSelected_dxy=cms.string("log(abs(dB('PV2D')))"),
@@ -306,9 +306,9 @@ muonParTVariables = cms.EDProducer(
         Lepton_pfRelIso03_all_log=cms.string(
             "log(((pfIsolationR03().sumChargedHadronPt + max(pfIsolationR03().sumNeutralHadronEt + pfIsolationR03().sumPhotonEt - pfIsolationR03().sumPUPt/2,0.0))/pt)+1.e-8)"),
         Lepton_jetPtRelv2_log=cms.string(
-            "log(abs(?userCand('jetForLepJetVar').isNonnull()?log(userFloat('ptRel')):0)+1.e-8)"),
+            "log((?userCand('jetForLepJetVar').isNonnull()?userFloat('ptRel'):0)+1.e-8)"),
         Lepton_jetPNet=cms.string(
-            "?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4CHSCentralDiscriminatorsJetTags:BvsAll'),0.0):0.0"),
+            "?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:BvsAll'),0.0):0.0"),
         Lepton_jetPtRatio=cms.string(
             "?userCand('jetForLepJetVar').isNonnull()?min(userFloat('ptRatio'),1.5):1.0/(1.0+(pfIsolationR04().sumChargedHadronPt + max(pfIsolationR04().sumNeutralHadronEt + pfIsolationR04().sumPhotonEt - pfIsolationR04().sumPUPt/2,0.0))/pt)"),
         Lepton_dxy=cms.string(
@@ -339,10 +339,11 @@ muonParTVariables = cms.EDProducer(
     pfVars=cms.PSet(
         PF_pt=cms.string("pt"),
         PF_pt_log=cms.string("log(pt+1.e-8)"),
-        PF_px=cms.string("px"),
-        PF_py=cms.string("py"),
-        PF_pz=cms.string("pz"),
-        PF_energy=cms.string("energy"),
+        # defined in MuonTagInfoCollectionProducer
+        # PF_px=cms.string("px"),
+        # PF_py=cms.string("py"),
+        # PF_pz=cms.string("pz"),
+        # PF_energy=cms.string("energy"),
         PF_charge=cms.string("charge"),
         PF_isElectron=cms.string(
             "?abs(pdgId)==11?1:0"),
@@ -366,14 +367,15 @@ muonParTVariables = cms.EDProducer(
         PF_mask=cms.string("1"),
     ),
     svVars=cms.PSet(
+        SV_pt_log=cms.string("log(pt+1.e-8)"),
         SV_eta=cms.string("eta"),
         SV_phi=cms.string("phi"),
-        SV_pt=cms.string("pt"),
-        SV_px=cms.string("px"),
-        SV_py=cms.string("py"),
-        SV_pz=cms.string("pz"),
-        SV_energy=cms.string("energy"),
-        SV_pt_log=cms.string("log(pt+1.e-8)"),
+        # defined in MuonTagInfoCollectionProducer
+        # SV_pt=cms.string("pt"),
+        # SV_px=cms.string("px"),
+        # SV_py=cms.string("py"),
+        # SV_pz=cms.string("pz"),
+        # SV_energy=cms.string("energy"),
         SV_ndof=cms.string("vertexNdof"),
         SV_chi2=cms.string("vertexChi2"),
         SV_nTracks=cms.string(
