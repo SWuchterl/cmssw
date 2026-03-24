@@ -50,6 +50,7 @@ private:
   void fill_lepton_features(const LeptonType&, DeepBoostedJetFeatures&);
   void fill_lepton_extfeatures(const edm::RefToBase<LeptonType>&, DeepBoostedJetFeatures&, edm::Event&);
   void fill_pf_features(const LeptonType&, DeepBoostedJetFeatures&);
+  void fill_lt_features(const LeptonType&, DeepBoostedJetFeatures&);
   void fill_lepton_info(const LeptonType&, DeepBoostedJetFeatures&);
   void fill_sv_features(const LeptonType&, DeepBoostedJetFeatures&);
 
@@ -76,19 +77,23 @@ private:
 
   edm::EDGetTokenT<edm::View<LeptonType>> src_token_;
   edm::EDGetTokenT<pat::PackedCandidateCollection> pf_token_;
+  edm::EDGetTokenT<pat::PackedCandidateCollection> lt_token_;
   edm::EDGetTokenT<reco::VertexCompositePtrCandidateCollection> sv_token_;
   edm::EDGetTokenT<std::vector<reco::Vertex>> pv_token_;
 
   edm::ParameterSet lepton_varsPSet_;
   edm::ParameterSet lepton_varsExtPSet_;
   edm::ParameterSet pf_varsPSet_;
+  edm::ParameterSet lt_varsPSet_;
   edm::ParameterSet sv_varsPSet_;
 
   std::vector<std::unique_ptr<VarWithName<LeptonType>>> lepton_vars_;
   std::vector<std::unique_ptr<VarWithName<pat::PackedCandidate>>> pf_vars_;
+  std::vector<std::unique_ptr<VarWithName<pat::PackedCandidate>>> lt_vars_;
   std::vector<std::unique_ptr<VarWithName<reco::VertexCompositePtrCandidate>>> sv_vars_;
   edm::Handle<reco::VertexCompositePtrCandidateCollection> svs_;
   edm::Handle<pat::PackedCandidateCollection> pfs_;
+  edm::Handle<pat::PackedCandidateCollection> lts_;
   edm::Handle<std::vector<reco::Vertex>> pvs_;
   std::vector<std::unique_ptr<ExtVarWithName<float>>> extLepton_vars_;
 };
@@ -97,15 +102,18 @@ template <typename LeptonType>
 LeptonTagInfoCollectionProducer<LeptonType>::LeptonTagInfoCollectionProducer(const edm::ParameterSet& iConfig)
     : src_token_(consumes<edm::View<LeptonType>>(iConfig.getParameter<edm::InputTag>("src"))),
       pf_token_(consumes<pat::PackedCandidateCollection>(iConfig.getParameter<edm::InputTag>("pfCandidates"))),
+      lt_token_(consumes<pat::PackedCandidateCollection>(iConfig.getParameter<edm::InputTag>("ltCandidates"))),
       sv_token_(consumes<reco::VertexCompositePtrCandidateCollection>(
           iConfig.getParameter<edm::InputTag>("secondary_vertices"))),
       pv_token_(consumes<std::vector<reco::Vertex>>(iConfig.getParameter<edm::InputTag>("pvSrc"))),
       lepton_varsPSet_(iConfig.getParameter<edm::ParameterSet>("leptonVars")),
       lepton_varsExtPSet_(iConfig.getParameter<edm::ParameterSet>("leptonVarsExt")),
       pf_varsPSet_(iConfig.getParameter<edm::ParameterSet>("pfVars")),
+      lt_varsPSet_(iConfig.getParameter<edm::ParameterSet>("ltVars")),
       sv_varsPSet_(iConfig.getParameter<edm::ParameterSet>("svVars")) {
   parse_vars_into(lepton_varsPSet_, lepton_vars_);
   parse_vars_into(pf_varsPSet_, pf_vars_);
+  parse_vars_into(lt_varsPSet_, lt_vars_);
   parse_vars_into(sv_varsPSet_, sv_vars_);
   parse_extvars_into(lepton_varsExtPSet_, extLepton_vars_);
 
@@ -118,10 +126,11 @@ void LeptonTagInfoCollectionProducer<LeptonType>::fillDescriptions(edm::Configur
 
   desc.add<edm::InputTag>("src", edm::InputTag("slimmedMuons"));
   desc.add<edm::InputTag>("pfCandidates", edm::InputTag("packedPFCandidates"));
+  desc.add<edm::InputTag>("ltCandidates", edm::InputTag("lostTracks"));
   desc.add<edm::InputTag>("secondary_vertices", edm::InputTag("slimmedSecondaryVertices"));
   desc.add<edm::InputTag>("pvSrc", edm::InputTag("offlineSlimmedPrimaryVertices"));
 
-  for (auto&& what : {"leptonVars", "pfVars", "svVars"}) {
+  for (auto&& what : {"leptonVars", "pfVars", "ltVars", "svVars"}) {
     edm::ParameterSetDescription descNested;
     descNested.addWildcard<std::string>("*");
     desc.add<edm::ParameterSetDescription>(what, descNested);
@@ -148,6 +157,7 @@ void LeptonTagInfoCollectionProducer<LeptonType>::produce(edm::Event& iEvent, co
   iEvent.getByToken(sv_token_, svs_);
   iEvent.getByToken(pv_token_, pvs_);
   iEvent.getByToken(pf_token_, pfs_);
+  iEvent.getByToken(lt_token_, lts_);
 
   auto output_info = std::make_unique<LeptonTagInfoCollection>();
 
@@ -164,6 +174,7 @@ void LeptonTagInfoCollectionProducer<LeptonType>::produce(edm::Event& iEvent, co
     fill_lepton_features(lep, features);
     fill_lepton_extfeatures(lep_ref, features, iEvent);  // fixme
     fill_pf_features(lep, features);
+    fill_lt_features(lep, features);
     fill_sv_features(lep, features);
 
     output_info->emplace_back(features);
@@ -219,17 +230,22 @@ void LeptonTagInfoCollectionProducer<LeptonType>::fill_pf_features(const LeptonT
   features.reserve("PF_eta_rel", pfcands.size());
   features.add("PF_dR_lep");
   features.reserve("PF_dR_lep", pfcands.size());
+  features.add("PF_pt_rel");
+  features.reserve("PF_pt_rel", pfcands.size());
   features.add("PF_pt_rel_log");
   features.reserve("PF_pt_rel_log", pfcands.size());
   features.add("PF_dxySig_log");
   features.reserve("PF_dxySig_log", pfcands.size());
   features.add("PF_dzSig_log");
   features.reserve("PF_dzSig_log", pfcands.size());
+  features.add("PF_quality");
+  features.reserve("PF_quality", pfcands.size());
 
   for (const auto& cand : pfcands) {
     features.fill("PF_phi_rel", reco::deltaPhi(lep.phi(), cand.phi()));
     features.fill("PF_eta_rel", lep.eta() - cand.eta());
     features.fill("PF_dR_lep", reco::deltaR(lep, cand));
+    features.fill("PF_pt_rel", cand.pt() / lep.pt());
     features.fill("PF_pt_rel_log", log(cand.pt() / lep.pt()));
     if (cand.hasTrackDetails()) {
       features.fill("PF_dxySig_log", asinh(abs(cand.dxy() / cand.dxyError())));
@@ -238,7 +254,62 @@ void LeptonTagInfoCollectionProducer<LeptonType>::fill_pf_features(const LeptonT
       features.fill("PF_dxySig_log", 0);
       features.fill("PF_dzSig_log", 0);
     }
+
+    features.fill("PF_quality", cand.hasTrackDetails() ? cand.pseudoTrack().qualityMask() : (1 << reco::TrackBase::loose));
   }
+}
+
+template <typename LeptonType>
+void LeptonTagInfoCollectionProducer<LeptonType>::fill_lt_features(const LeptonType& lep,
+                                                                   DeepBoostedJetFeatures& features) {
+  pat::PackedCandidateCollection ltcands;
+  for (size_t ilt = 0; ilt < lts_->size(); ++ilt) {
+    if (reco::deltaR(lts_->at(ilt), lep) < 0.4)
+      ltcands.push_back(lts_->at(ilt));
+  }
+
+  for (auto& var : lt_vars_) {
+    features.add(var->first);
+    features.reserve(var->first, ltcands.size());
+    for (const auto& cand : ltcands) {
+      features.fill(var->first, var->second(cand));
+    }
+  }
+
+  // afaik these need to be hardcoded because I cannot put userFloats to pat::packedCandidates
+  features.add("LT_phi_rel");
+  features.reserve("LT_phi_rel", ltcands.size());
+  features.add("LT_eta_rel");
+  features.reserve("LT_eta_rel", ltcands.size());
+  features.add("LT_dR_lep");
+  features.reserve("LT_dR_lep", ltcands.size());
+  features.add("LT_pt_rel");
+  features.reserve("LT_pt_rel", ltcands.size());
+  features.add("LT_pt_rel_log");
+  features.reserve("LT_pt_rel_log", ltcands.size());
+  features.add("LT_dxySig_log");
+  features.reserve("LT_dxySig_log", ltcands.size());
+  features.add("LT_dzSig_log");
+  features.reserve("LT_dzSig_log", ltcands.size());
+  features.add("LT_quality");
+  features.reserve("LT_quality", ltcands.size());
+
+  for (const auto& cand : ltcands) {
+    features.fill("LT_phi_rel", reco::deltaPhi(lep.phi(), cand.phi()));
+    features.fill("LT_eta_rel", lep.eta() - cand.eta());
+    features.fill("LT_dR_lep", reco::deltaR(lep, cand));
+    features.fill("LT_pt_rel", cand.pt() / lep.pt());
+    features.fill("LT_pt_rel_log", log(cand.pt() / lep.pt()));
+    if (cand.hasTrackDetails()) {
+      features.fill("LT_dxySig_log", asinh(abs(cand.dxy() / cand.dxyError())));
+      features.fill("LT_dzSig_log", asinh(abs(cand.dz() / cand.dzError())));
+    } else {
+      features.fill("LT_dxySig_log", 0);
+      features.fill("LT_dzSig_log", 0);
+    }
+    features.fill("LT_quality", cand.hasTrackDetails() ? cand.pseudoTrack().qualityMask() : (1 << reco::TrackBase::loose));
+  }
+
 }
 
 template <typename LeptonType>
@@ -271,6 +342,8 @@ void LeptonTagInfoCollectionProducer<LeptonType>::fill_sv_features(const LeptonT
   features.reserve("SV_dxy", selectedSVs.size());
   features.add("SV_dxy_log");
   features.reserve("SV_dxy_log", selectedSVs.size());
+  features.add("SV_dxysig");
+  features.reserve("SV_dxysig", selectedSVs.size());
   features.add("SV_eta_rel");
   features.reserve("SV_eta_rel", selectedSVs.size());
   features.add("SV_phi_rel");
@@ -283,6 +356,10 @@ void LeptonTagInfoCollectionProducer<LeptonType>::fill_sv_features(const LeptonT
   features.reserve("SV_cospAngle", selectedSVs.size());
   features.add("SV_d3d");
   features.reserve("SV_d3d", selectedSVs.size());
+  features.add("SV_deltaR");
+  features.reserve("SV_deltaR", selectedSVs.size());
+  features.add("SV_enratio");
+  features.reserve("SV_enratio", selectedSVs.size());
 
   for (auto& sv : selectedSVs) {
     Measurement1D dl =
@@ -294,6 +371,7 @@ void LeptonTagInfoCollectionProducer<LeptonType>::fill_sv_features(const LeptonT
         vdistXY.distance(PV0, VertexState(RecoVertex::convertPos(sv.position()), RecoVertex::convertError(sv.error())));
     features.fill("SV_dxy", d2d.value());
     features.fill("SV_dxy_log", log(abs(d2d.value()) + 1e-8));
+    features.fill("SV_dxysig", d2d.significance());
     features.fill("SV_phi_rel", reco::deltaPhi(lep.phi(), sv.phi()));
     features.fill("SV_eta_rel", lep.eta() - sv.eta());
     features.fill("SV_dR_lep", reco::deltaR(sv, lep));
@@ -301,6 +379,10 @@ void LeptonTagInfoCollectionProducer<LeptonType>::fill_sv_features(const LeptonT
     double dx = (PV0.x() - sv.vx()), dy = (PV0.y() - sv.vy()), dz = (PV0.z() - sv.vz());
     double pdotv = (dx * sv.px() + dy * sv.py() + dz * sv.pz()) / sv.p() / sqrt(dx * dx + dy * dy + dz * dz);
     features.fill("SV_cospAngle", pdotv);
+
+    // new stuff
+    features.fill("SV_deltaR", reco::deltaR(sv, lep));
+    features.fill("SV_enratio", sv.energy() / lep.energy());
   }
 }
 

@@ -9,7 +9,8 @@ MvaNtuplizer<T>::MvaNtuplizer(const edm::ParameterSet& iConfig) :
   cut_(iConfig.getParameter<std::string>("leptonSelection")),
   selector_(cut_)
 {
-  outtree = fs->make<TTree>( "Events"  , "Events");
+  outtree = fs->make<TTree>( "Events", "Events");
+  outtree->SetAutoFlush(-30000000);
 
 }
 
@@ -41,6 +42,8 @@ void MvaNtuplizer<T>::analyze(const edm::Event& iEvent, const edm::EventSetup& i
     for (auto& var : taginfo.get_all()){
       output_vars[var.first]=std::vector<float>();
       outtree->Branch(var.first.c_str(), &output_vars[var.first]);
+      // set the basket size for this branch for efficient python read
+      outtree->GetBranch(var.first.c_str())->SetBasketSize(1000000);
     }
     outtree->Branch("genPartFlav", &genPartFlav);
     outtree->Branch("event", &event);
@@ -63,8 +66,7 @@ void MvaNtuplizer<T>::analyze(const edm::Event& iEvent, const edm::EventSetup& i
     }
     for (auto ivar=0u; ivar<mcTable->nColumns(); ++ivar){
       if (mcTable->columnName(ivar).compare("genPartFlav") == 0){
-	genPartFlav = mcTable->columnData<uint8_t>(ivar)[ilep];
-
+	      genPartFlav = mcTable->columnData<uint8_t>(ivar)[ilep];
       }
     }
     outtree->Fill();    
@@ -75,7 +77,13 @@ void MvaNtuplizer<T>::analyze(const edm::Event& iEvent, const edm::EventSetup& i
 
 
 template <typename T>
-void MvaNtuplizer<T>::beginJob(){}
+void MvaNtuplizer<T>::beginJob(){
+  edm::Service<TFileService> fs;
+  if (!fs) return;
+  // set compression settings for the output file, optimized for speed and reasonable compression
+  fs->file().SetCompressionAlgorithm(ROOT::kLZ4);
+  fs->file().SetCompressionLevel(4);
+}
 
 template <typename T>
 void MvaNtuplizer<T>::endJob(){}

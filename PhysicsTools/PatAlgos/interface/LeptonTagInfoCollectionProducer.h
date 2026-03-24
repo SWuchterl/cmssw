@@ -91,6 +91,7 @@ private:
     void fill_lepton_features(const T&, btagbtvdeep::DeepBoostedJetFeatures &);
     void fill_lepton_extfeatures(const edm::RefToBase<T>&, btagbtvdeep::DeepBoostedJetFeatures&, edm::Event&);
     void fill_pf_features(const T&, btagbtvdeep::DeepBoostedJetFeatures &);
+    void fill_lt_features(const T&, btagbtvdeep::DeepBoostedJetFeatures &);
     void fill_sv_features(const T&, btagbtvdeep::DeepBoostedJetFeatures &);
 
     edm::EDGetTokenT<edm::View<T>> src_token_;
@@ -101,15 +102,18 @@ private:
     edm::ParameterSet lepton_varsPSet_;
     edm::ParameterSet lepton_varsExtPSet_;
     edm::ParameterSet pf_varsPSet_;
+    edm::ParameterSet lt_varsPSet_;
     edm::ParameterSet sv_varsPSet_;
 
 
     std::vector<std::unique_ptr<varWithName<T>>> lepton_vars_;
     std::vector<std::unique_ptr<varWithName<pat::PackedCandidate>>> pf_vars_;
+    std::vector<std::unique_ptr<varWithName<pat::PackedCandidate>>> lt_vars_;
     std::vector<std::unique_ptr<varWithName<reco::VertexCompositePtrCandidate>>> sv_vars_;
     edm::Handle<reco::VertexCompositePtrCandidateCollection> svs_;
     edm::Handle<std::vector<reco::Vertex>> pvs_;
     edm::Handle<pat::PackedCandidateCollection> pfs_;
+    edm::Handle<pat::PackedCandidateCollection> lts_;
     std::vector<std::unique_ptr<ExtVarWithName<float>>> extLepton_vars_;
 
   };
