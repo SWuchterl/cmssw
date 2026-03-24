@@ -397,6 +397,12 @@ muonParTTrainVariables = cms.EDProducer(
         Lepton_pt=cms.string("pt"),
         Lepton_pt_log=cms.string("log(pt+1.e-8)"),
         Lepton_eta=cms.string("eta"),
+        Lepton_phi=cms.string("phi"),
+        Lepton_px=cms.string("px"),
+        Lepton_py=cms.string("py"),
+        Lepton_pz=cms.string("pz"),
+        Lepton_energy=cms.string("energy"),
+        Lepton_energy_log=cms.string("log(energy+1.e-8)"),
         Lepton_jetNDauChargedMVASel=cms.string(
             "?userCand('jetForLepJetVar').isNonnull()?userFloat('jetNDauChargedMVASel'):0"),
         Lepton_miniRelIsoCharged_log=cms.string(
@@ -408,7 +414,15 @@ muonParTTrainVariables = cms.EDProducer(
         Lepton_jetPtRelv2_log=cms.string(
             "log(abs(?userCand('jetForLepJetVar').isNonnull()?log(userFloat('ptRel')):0)+1.e-8)"),
         Lepton_jetPNet=cms.string(
-            "?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4PUPPICentralDiscriminatorsJetTags:BvsAll'),0.0):0.0"),
+            "?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:BvsAll'),0.0):0.0"),
+        Lepton_jetPNet_TauVsJet=cms.string(
+            "?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:TauVsJet'),0.0):0.0"),
+        Lepton_jetPNet_CvsL=cms.string(
+            "?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:CvsL'),0.0):0.0"),
+        Lepton_jetPNet_CvsB=cms.string(
+            "?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:CvsB'),0.0):0.0"),
+        Lepton_jetPNet_QvsG=cms.string(
+            "?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:QvsG'),0.0):0.0"),
         Lepton_jetPtRatio=cms.string(
             "?userCand('jetForLepJetVar').isNonnull()?min(userFloat('ptRatio'),1.5):1.0/(1.0+(pfIsolationR04().sumChargedHadronPt + max(pfIsolationR04().sumNeutralHadronEt + pfIsolationR04().sumPhotonEt - pfIsolationR04().sumPUPt/2,0.0))/pt)"),
         Lepton_dxy=cms.string(
@@ -422,7 +436,7 @@ muonParTTrainVariables = cms.EDProducer(
         Lepton_global_muon=cms.string(
             "isGlobalMuon"),
         Lepton_validFraction=cms.string(
-            "?innerTrack.isNonnull?innerTrack().validFraction:-99"),
+            "?innerTrack.isNonnull?innerTrack().validFraction:-1"),
         Lepton_local_chi2=cms.string(
             "combinedQuality().chi2LocalPosition"),
         Lepton_kink=cms.string(
@@ -430,19 +444,32 @@ muonParTTrainVariables = cms.EDProducer(
         Lepton_n_MatchedStations=cms.string(
             "numberOfMatchedStations()"),
         Lepton_Valid_pixel=cms.string(
-            "?innerTrack.isNonnull()?innerTrack().hitPattern().numberOfValidPixelHits():-99"),
+            "?innerTrack.isNonnull()?innerTrack().hitPattern().numberOfValidPixelHits():-1"),
         Lepton_tracker_layers=cms.string(
-            "?innerTrack.isNonnull()?innerTrack().hitPattern().trackerLayersWithMeasurement():-99"),
+            "?innerTrack.isNonnull()?innerTrack().hitPattern().trackerLayersWithMeasurement():-1"),
         Lepton_mvaId=cms.string(
             "userFloat('mvaIDMuon')"),
+    ),
+    leptonVarsExt=cms.PSet(
+        Lepton_promptMVA=cms.InputTag("muonPROMPTMVA"),
+        Lepton_PNET_prompt=cms.InputTag("muonPNetScores:prompt"),
+        Lepton_PNET_heavy=cms.InputTag("muonPNetScores:heavy"),
+        Lepton_PNET_light=cms.InputTag("muonPNetScores:light"),
+        Lepton_PNET_tau=cms.InputTag("muonPNetScores:tau"),
+        Lepton_ParT_prompt=cms.InputTag("muonParTScores:prompt"),
+        Lepton_ParT_heavy=cms.InputTag("muonParTScores:heavy"),
+        Lepton_ParT_light=cms.InputTag("muonParTScores:light"),
+        Lepton_ParT_tau=cms.InputTag("muonParTScores:tau"),
+        Lepton_ParT_fake=cms.InputTag("muonParTScores:fake"),
     ),
     pfVars=cms.PSet(
         PF_pt=cms.string("pt"),
         PF_pt_log=cms.string("log(pt+1.e-8)"),
-        PF_px=cms.string("px"),
-        PF_py=cms.string("py"),
-        PF_pz=cms.string("pz"),
-        PF_energy=cms.string("energy"),
+        PF_px_glob=cms.string("px"),
+        PF_py_glob=cms.string("py"),
+        PF_pz_glob=cms.string("pz"),
+        PF_energy_glob=cms.string("energy"),
+        PF_energy_glob_log=cms.string("log(energy+1.e-8)"),
         PF_charge=cms.string("charge"),
         PF_isElectron=cms.string(
             "?abs(pdgId)==11?1:0"),
@@ -469,7 +496,6 @@ muonParTTrainVariables = cms.EDProducer(
         PF_qdotp=cms.string("?hasTrackDetails?charge()*pt():0"),
         PF_ass=cms.string("?hasTrackDetails?pvAssociationQuality():0"),
         PF_chi2=cms.string("?hasTrackDetails?bestTrack().chi2():0"),
-        # PF_quality=cms.string("?hasTrackDetails?bestTrack().quality():0"),
         PF_dxy=cms.string("?hasTrackDetails?bestTrack().dxy():0"),
         PF_dxy_log=cms.string("?hasTrackDetails?log(bestTrack().dxy()+1.e-8):0"),
         PF_dz=cms.string("?hasTrackDetails?bestTrack().dz():0"),
@@ -481,10 +507,10 @@ muonParTTrainVariables = cms.EDProducer(
     ltVars=cms.PSet(
         LT_pt=cms.string("pt"),
         LT_pt_log=cms.string("log(pt+1.e-8)"),
-        LT_px=cms.string("px"),
-        LT_py=cms.string("py"),
-        LT_pz=cms.string("pz"),
-        LT_energy=cms.string("energy"),
+        LT_px_glob=cms.string("px"),
+        LT_py_glob=cms.string("py"),
+        LT_pz_glob=cms.string("pz"),
+        LT_energy_glob=cms.string("energy"),
         LT_charge=cms.string("charge"),
         LT_isElectron=cms.string(
             "?abs(pdgId)==11?1:0"),
@@ -511,7 +537,6 @@ muonParTTrainVariables = cms.EDProducer(
         LT_qdotp=cms.string("?hasTrackDetails?charge()*pt():0"),
         LT_ass=cms.string("?hasTrackDetails?pvAssociationQuality():0"),
         LT_chi2=cms.string("?hasTrackDetails?bestTrack().chi2():0"),
-        # LT_quality=cms.string("?hasTrackDetails?bestTrack().qualityMask():0"),
         LT_dxy=cms.string("?hasTrackDetails?bestTrack().dxy():0"),
         LT_dxy_log=cms.string("?hasTrackDetails?log(bestTrack().dxy()+1.e-8):0"),
         LT_dz=cms.string("?hasTrackDetails?bestTrack().dz():0"),
@@ -524,10 +549,11 @@ muonParTTrainVariables = cms.EDProducer(
         SV_eta=cms.string("eta"),
         SV_phi=cms.string("phi"),
         SV_pt=cms.string("pt"),
-        SV_px=cms.string("px"),
-        SV_py=cms.string("py"),
-        SV_pz=cms.string("pz"),
-        SV_energy=cms.string("energy"),
+        SV_px_glob=cms.string("px"),
+        SV_py_glob=cms.string("py"),
+        SV_pz_glob=cms.string("pz"),
+        SV_energy_glob=cms.string("energy"),
+        SV_energy_glob_log=cms.string("log(energy+1.e-8)"),
         SV_pt_log=cms.string("log(pt+1.e-8)"),
         SV_ndof=cms.string("vertexNdof"),
         SV_chi2=cms.string("vertexChi2"),
@@ -537,8 +563,6 @@ muonParTTrainVariables = cms.EDProducer(
         SV_mass=cms.string("mass"),
         SV_mass_log=cms.string("log(mass+1.e-8)"),
         SV_mask=cms.string("1"),
-        # new stuff
-        SV_ntracks=cms.string("numberOfDaughters"),
     ),
 )
 
@@ -754,5 +778,5 @@ muonMCTask = cms.Task(muonsMCMatchForTable, muonMCTable)
 muonTablesTask = cms.Task(
     muonPROMPTMVA, muonMVALowPt, muonBSConstrain,
     muonTable, muonMVAID, muonPNetVariables,
-    muonPNetScores, muonParTVariables, muonParTTrainVariables, muonParTScores,
+    muonPNetScores, muonParTVariables, muonParTScores, muonParTTrainVariables,
 )
