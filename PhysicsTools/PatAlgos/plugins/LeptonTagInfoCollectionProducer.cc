@@ -178,7 +178,16 @@ void LeptonTagInfoCollectionProducer<LeptonType>::fill_lepton_features(const Lep
     features.add(var->first);
     features.reserve(var->first, 1);
     features.fill(var->first, var->second(lep));
+    
+    // afaik these need to be hardcoded because I cannot put userFloats to pat::Leptons
+    if (var->first == "Lepton_fbrem"){
+      features.add("Lepton_fbrem_log");
+      features.reserve("Lepton_fbrem_log", 1);
+      features.fill("Lepton_fbrem_log",asinh(var->second(lep)));
+    }
   }
+
+
 }
 
 template <typename LeptonType>
