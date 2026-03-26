@@ -189,7 +189,16 @@ void LeptonTagInfoCollectionProducer<LeptonType>::fill_lepton_features(const Lep
     features.add(var->first);
     features.reserve(var->first, 1);
     features.fill(var->first, var->second(lep));
+    
+    // afaik these need to be hardcoded because I cannot put userFloats to pat::Leptons
+    if (var->first == "Lepton_fbrem"){
+      features.add("Lepton_fbrem_log");
+      features.reserve("Lepton_fbrem_log", 1);
+      features.fill("Lepton_fbrem_log",asinh(var->second(lep)));
+    }
   }
+
+
 }
 
 template <typename LeptonType>
@@ -356,8 +365,12 @@ void LeptonTagInfoCollectionProducer<LeptonType>::fill_sv_features(const LeptonT
   features.reserve("SV_dxy", selectedSVs.size());
   features.add("SV_dxy_log");
   features.reserve("SV_dxy_log", selectedSVs.size());
+  features.add("SV_dxy_asinh");
+  features.reserve("SV_dxy_asinh", selectedSVs.size());
   features.add("SV_dxysig");
   features.reserve("SV_dxysig", selectedSVs.size());
+  features.add("SV_dxysig_asinh");
+  features.reserve("SV_dxysig_asinh", selectedSVs.size());
   features.add("SV_eta_rel");
   features.reserve("SV_eta_rel", selectedSVs.size());
   features.add("SV_phi_rel");
@@ -370,6 +383,12 @@ void LeptonTagInfoCollectionProducer<LeptonType>::fill_sv_features(const LeptonT
   features.reserve("SV_cospAngle", selectedSVs.size());
   features.add("SV_d3d");
   features.reserve("SV_d3d", selectedSVs.size());
+  features.add("SV_d3d_asinh");
+  features.reserve("SV_d3d_asinh", selectedSVs.size());
+  features.add("SV_d3dsig");
+  features.reserve("SV_d3dsig", selectedSVs.size());
+  features.add("SV_d3dsig_asinh");
+  features.reserve("SV_d3dsig_asinh", selectedSVs.size());
   features.add("SV_deltaR");
   features.reserve("SV_deltaR", selectedSVs.size());
   features.add("SV_enratio");
@@ -389,13 +408,18 @@ void LeptonTagInfoCollectionProducer<LeptonType>::fill_sv_features(const LeptonT
     Measurement1D dl =
         vdist.distance(PV0, VertexState(RecoVertex::convertPos(sv.position()), RecoVertex::convertError(sv.error())));
     features.fill("SV_d3d", dl.value());
+    features.fill("SV_d3d_asinh", asinh(dl.value()));
+    features.fill("SV_d3dsig", dl.significance());
+    features.fill("SV_d3dsig_asinh", asinh(dl.significance()));
     features.fill("SV_dlenSig", dl.significance());
     features.fill("SV_dlenSig_log", log(abs(dl.significance()) + 1e-8));
     Measurement1D d2d =
         vdistXY.distance(PV0, VertexState(RecoVertex::convertPos(sv.position()), RecoVertex::convertError(sv.error())));
     features.fill("SV_dxy", d2d.value());
+    features.fill("SV_dxy_asinh", asinh(d2d.value()));
     features.fill("SV_dxy_log", log(abs(d2d.value()) + 1e-8));
     features.fill("SV_dxysig", d2d.significance());
+    features.fill("SV_dxysig_asinh", asinh(d2d.significance()));
     features.fill("SV_phi_rel", reco::deltaPhi(lep.phi(), sv.phi()));
     features.fill("SV_eta_rel", lep.eta() - sv.eta());
     features.fill("SV_dR_lep", reco::deltaR(sv, lep));

@@ -35,6 +35,10 @@ class MvaNtuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources> {
   TTree* outtree;
   edm::Service<TFileService> fs;  
   std::map<std::string, std::vector<float>> output_vars;
+  // per-category sizes (e.g. nPF, nLT, nSV)
+  std::map<std::string, unsigned> output_cat_sizes;
+  // scalar storage for Lepton_* features (fixed length 1)
+  std::map<std::string, float> output_scalar_vars;
   uint8_t genPartFlav;
   long int event;
   int luminosityBlock;
