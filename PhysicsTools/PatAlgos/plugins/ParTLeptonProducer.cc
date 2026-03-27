@@ -184,6 +184,10 @@ void ParTLeptonProducer<LeptonType>::make_inputs(const DeepBoostedJetFeatures &t
         input_shapes_[igroup][2] = insize;
       }
     }
+    // at least 1 pf candidate is required for evaluation of the model
+    if (group_name == "pf_mask") {
+      group_values[0] = 1;
+    }
     group_values.resize(curr_pos);
   }
 }
