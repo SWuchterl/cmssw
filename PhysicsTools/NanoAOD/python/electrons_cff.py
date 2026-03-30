@@ -449,7 +449,7 @@ electronPNetVariables = _electronTagInfos.clone(
         ElectronSelected_dEtaInSeed=cms.string(
             "deltaEtaSuperClusterTrackAtVtx()-superCluster().eta()+superCluster().seed().eta()"),
         ElectronSelected_dr03TkSumPtHEEP_Rel=cms.string(
-            "?(pt>35.)?(dr03TkSumPtHEEP*1./pt):-100"),
+            "?(pt>0.)?(dr03TkSumPtHEEP*1./pt):-100"),
         ElectronSelected_hcaloverecal=cms.string("full5x5_hcalOverEcal()"),
         ElectronSelected_numberOfValidPixelHits=cms.string(
             "?(gsfTrack.isNonnull())?(gsfTrack.hitPattern.numberOfValidPixelHits()):-100"),
@@ -465,7 +465,7 @@ electronPNetVariables = _electronTagInfos.clone(
         ElectronSelected_supcl_preshvsrawe=cms.string(
             "superCluster().preshowerEnergy()/superCluster().rawEnergy()"),
         ElectronSelected_dr03HcalDepth1TowerSumEt_Rel=cms.string(
-            "?(pt()>35.)?(dr03HcalTowerSumEt(1)*1./pt()):-100"),
+            "?(pt()>0.)?(dr03HcalTowerSumEt(1)*1./pt()):-100"),
         ElectronSelected_fbrem=cms.string("fbrem()"),
         ElectronSelected_eoverp=cms.string("eSuperClusterOverP()"),
         ElectronSelected_ecloverpout=cms.string("eEleClusterOverPout()"),
@@ -583,7 +583,7 @@ electronParTVariables = cms.EDProducer(
         Lepton_eoverp_log=cms.string("log(eSuperClusterOverP()+1.e-8)"),
         Lepton_passConversionVeto=cms.string("passConversionVeto()"),
         Lepton_dr03HcalDepth1TowerSumEt_Rel=cms.string(
-            "?(pt()>35.)?(dr03HcalTowerSumEt(1)*1./pt()):-100"),
+            "?(pt()>0.)?(dr03HcalTowerSumEt(1)*1./pt()):-100"),
         Lepton_jetNDauChargedMVASel=cms.string(
             "?userCand('jetForLepJetVar').isNonnull()?userFloat('jetNDauChargedMVASel'):0"),
         Lepton_miniRelIsoCharged_log=cms.string(
@@ -591,7 +591,7 @@ electronParTVariables = cms.EDProducer(
         Lepton_miniRelIsoNeutral_log=cms.string(
             "log(((userFloat('miniIsoAll')-userFloat('miniIsoChg'))/pt)+1.e-8)"),
         Lepton_pfRelIso03_all_log=cms.string(
-            "log((userFloat('PFIsoAll_Fall17V2')/pt)+1.e-8)"),
+            "log((userFloat('PFIsoAll')/pt)+1.e-8)"),
         Lepton_jetPNet=cms.string(
             "?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:BvsAll'),0.0):0.0"),
         Lepton_jetPtRelv2_log=cms.string(
@@ -599,7 +599,7 @@ electronParTVariables = cms.EDProducer(
         Lepton_jetPtRatio=cms.string(
             "?userCand('jetForLepJetVar').isNonnull()?min(userFloat('ptRatio'),1.5):1.0/(1.0+(pfIsolationVariables().sumChargedHadronPt + max(pfIsolationVariables().sumNeutralHadronEt + pfIsolationVariables().sumPhotonEt - pfIsolationVariables().sumPUPt/2,0.0))/pt)"),
         Lepton_mvaId=cms.string(
-            "userFloat('mvaNoIso_Fall17V2')")
+            "userFloat('mvaNoIso')")
     ),
     leptonVarsExt=cms.PSet(
         lepton_mvaFall17V2noIso=cms.InputTag("electronPROMPTMVA")
