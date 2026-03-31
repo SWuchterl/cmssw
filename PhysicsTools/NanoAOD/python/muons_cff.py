@@ -313,6 +313,7 @@ muonParTVariables = cms.EDProducer(
     ),
 )
 
+from PhysicsTools.PatAlgos.muonParTTags_cfi import muonParTTags as _muonParTTags
 muonParTScores = _muonParTTags.clone(
     src=cms.InputTag("muonParTVariables"),
     srcLeps=cms.InputTag("linkedObjects", "muons"),

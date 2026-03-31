@@ -307,6 +307,7 @@ run2_egamma_2016.toModify(
 
 ################################################electronParticleNet #####################
 
+from PhysicsTools.PatAlgos.electronTagInfos_cfi import electronTagInfos as _electronTagInfos
 electronPNetVariables = _electronTagInfos.clone(
     src=cms.InputTag("linkedObjects", "electrons"),
     secondary_vertices=cms.InputTag("slimmedSecondaryVertices"),
@@ -427,7 +428,7 @@ electronPNetVariables = _electronTagInfos.clone(
     ),
 )
 
-# electronPN = cms.EDProducer('ElectronPNETProducer',
+from PhysicsTools.PatAlgos.electronPNetTags_cfi import electronPNetTags as _electronPNetTags
 electronPNetScores = _electronPNetTags.clone(
     src=cms.InputTag("electronPNetVariables"),
     srcLeps=cms.InputTag("linkedObjects", "electrons"),
@@ -576,7 +577,7 @@ electronParTVariables = cms.EDProducer(
     leptonVars = _legacy_ParTVariables_LeptonPSet
 )
 
-
+from PhysicsTools.PatAlgos.electronParTTags_cfi import electronParTTags as _electronParTTags
 electronParTScores = _electronParTTags.clone(
     src=cms.InputTag("electronParTVariables"),
     srcLeps=cms.InputTag("linkedObjects", "electrons"),
