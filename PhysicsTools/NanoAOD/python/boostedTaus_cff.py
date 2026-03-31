@@ -10,7 +10,7 @@ from PhysicsTools.NanoAOD.taus_cff import _tauIdWPMask, tausMCMatchLepTauForTabl
 
 finalBoostedTaus = cms.EDFilter("PATTauRefSelector",
     src = cms.InputTag("slimmedTausBoosted"),
-    cut = cms.string("pt > 25 && tauID('decayModeFindingNewDMs') && (tauID('byVVLooseIsolationMVArun2DBoldDMwLT') || tauID('byVVLooseIsolationMVArun2DBnewDMwLT') || tauID('byBoostedDeepTau20161718v2p0VSjetraw') > {})".format(0.82))
+    cut = cms.string("pt > 25 && tauID('decayModeFindingNewDMs') && (tauID('byVVLooseIsolationMVArun2DBoldDMwLT') || tauID('byVVLooseIsolationMVArun2DBnewDMwLT'))")
 )
 
 boostedTauTable = simplePATTauFlatTableProducer.clone(
@@ -55,17 +55,17 @@ _boostedTauVarsAntiEleMVA = cms.PSet(
 )
 
 #DeepBoostedTau ID raw score branches 
-_boostedDeepTauRunIIv2p0Vars = cms.PSet(
-    rawBoostedDeepTauRunIIv2p0VSe = Var("tauID('byBoostedDeepTau20161718v2p0VSeraw')", float, doc="BoostedDeepTau(v2p0) tagger for boostedTaus raw scores Vs e", precision=10),
-    rawBoostedDeepTauRunIIv2p0VSmu = Var("tauID('byBoostedDeepTau20161718v2p0VSmuraw')", float, doc="BoostedDeepTau(v2p0) tagger for boostedTaus raw scores Vs mu", precision=10),
-    rawBoostedDeepTauRunIIv2p0VSjet = Var("tauID('byBoostedDeepTau20161718v2p0VSjetraw')", float, doc="BoostedDeepTau(v2p0) tagger for boostedTaus raw scores Vs jet", precision=10)
-)
+# _boostedDeepTauRunIIv2p0Vars = cms.PSet(
+#     rawBoostedDeepTauRunIIv2p0VSe = Var("tauID('byBoostedDeepTau20161718v2p0VSeraw')", float, doc="BoostedDeepTau(v2p0) tagger for boostedTaus raw scores Vs e", precision=10),
+#     rawBoostedDeepTauRunIIv2p0VSmu = Var("tauID('byBoostedDeepTau20161718v2p0VSmuraw')", float, doc="BoostedDeepTau(v2p0) tagger for boostedTaus raw scores Vs mu", precision=10),
+#     rawBoostedDeepTauRunIIv2p0VSjet = Var("tauID('byBoostedDeepTau20161718v2p0VSjetraw')", float, doc="BoostedDeepTau(v2p0) tagger for boostedTaus raw scores Vs jet", precision=10)
+# )
 
 boostedTauTable.variables = cms.PSet(
     _boostedTauVarsBase,
     _boostedTauVarsMVAIso,
     _boostedTauVarsAntiEleMVA,
-    _boostedDeepTauRunIIv2p0Vars
+    # _boostedDeepTauRunIIv2p0Vars
 )
 
 boostedTausMCMatchLepTauForTable = tausMCMatchLepTauForTable.clone(
