@@ -29,13 +29,13 @@
 namespace {
   ///  ---- Cache object for running sums of weights ----
   struct Counter {
-    Counter() : num(0), sumw(0), sumw2(0), sumPDF(), sumScale(), sumRwgt(), sumNamed(), sumPS(), sumTopPt(), sumBFragAndDecay(), sumTOPML(), sumPS_by_tt(), sumw_by_tt(), sumw2_by_tt(), num_by_tt(), sumScale_by_tt(),sumPDF_by_tt(), sumRwgt_by_tt(), sumNamed_by_tt(), sumTopPt_by_tt(), sumBFragAndDecay_by_tt(), sumTOPML_by_tt() {}
+    Counter() : num(0), sumw(0), sumw2(0), sumPDF(), sumScale(), sumRwgt(), sumNamed(), sumPS(), sumTopPt(), sumBFragAndDecay(), sumCFragAndDecay(), sumTOPML(), sumPS_by_tt(), sumw_by_tt(), sumw2_by_tt(), num_by_tt(), sumScale_by_tt(),sumPDF_by_tt(), sumRwgt_by_tt(), sumNamed_by_tt(), sumTopPt_by_tt(), sumBFragAndDecay_by_tt(), sumCFragAndDecay_by_tt(), sumTOPML_by_tt() {}
 
     // the counters
     long long num;
     long double sumw;
     long double sumw2;
-    std::vector<long double> sumPDF, sumScale, sumRwgt, sumNamed, sumPS, sumTopPt, sumBFragAndDecay, sumTOPML;
+    std::vector<long double> sumPDF, sumScale, sumRwgt, sumNamed, sumPS, sumTopPt, sumBFragAndDecay, sumCFragAndDecay, sumTOPML;
     std::map<int, std::vector<long double>> sumPS_by_tt;
     std::map<int, long double> sumw_by_tt;
     std::map<int, long double> sumw2_by_tt;
@@ -46,6 +46,7 @@ namespace {
     std::map<int, std::vector<long double>> sumNamed_by_tt;
     std::map<int, std::vector<long double>> sumTopPt_by_tt;
     std::map<int, std::vector<long double>> sumBFragAndDecay_by_tt;
+    std::map<int, std::vector<long double>> sumCFragAndDecay_by_tt;
     std::map<int, std::vector<long double>> sumTOPML_by_tt;
 
     void clear() {
@@ -67,11 +68,12 @@ namespace {
       sumNamed_by_tt.clear();
       sumTopPt_by_tt.clear();
       sumBFragAndDecay_by_tt.clear();
+      sumCFragAndDecay_by_tt.clear();
       sumTOPML_by_tt.clear();
     }
 
     // inc the counters
-    void incGenOnly(double w, const int genTtbar, const std::vector<double>& topPtWeights, const std::vector<double>& bFragAndDecayWeights, const std::vector<double>& TOPMLWeights) {
+    void incGenOnly(double w, const int genTtbar, const std::vector<double>& topPtWeights, const std::vector<double>& bFragAndDecayWeights, const std::vector<double>& cFragAndDecayWeights, const std::vector<double>& TOPMLWeights) {
       num++;
       sumw += w;
       sumw2 += (w * w);
@@ -116,6 +118,13 @@ namespace {
             for (unsigned int i = 0, n = bFragAndDecayWeights.size(); i < n; ++i)
               vec_bfrag[i] += (w * bFragAndDecayWeights[i]);
 
+          // fill the vector with length 2 with the cfrag and decay weights
+          auto &vec_cfrag = sumCFragAndDecay_by_tt[cat];
+          if (vec_cfrag.empty())
+              vec_cfrag.resize(cFragAndDecayWeights.size(), 0);
+            for (unsigned int i = 0, n = cFragAndDecayWeights.size(); i < n; ++i)
+              vec_cfrag[i] += (w * cFragAndDecayWeights[i]);
+
           // fill the vector with length 2 with the TOPML weights
           auto &vec_topml = sumTOPML_by_tt[cat];
           if (vec_topml.empty())
@@ -137,6 +146,12 @@ namespace {
       for (unsigned int i = 0, n = bFragAndDecayWeights.size(); i < n; ++i)
           sumBFragAndDecay[i] += (w * bFragAndDecayWeights[i]);
 
+      // and one inclusive for all events for cfrag and decay weights
+      if (sumCFragAndDecay.empty())
+          sumCFragAndDecay.resize(cFragAndDecayWeights.size(), 0);
+      for (unsigned int i = 0, n = cFragAndDecayWeights.size(); i < n; ++i)
+          sumCFragAndDecay[i] += (w * cFragAndDecayWeights[i]);
+
       // and one inclusive for all events for TOPML weights
       if (sumTOPML.empty())
           sumTOPML.resize(TOPMLWeights.size(), 0);
@@ -144,7 +159,7 @@ namespace {
           sumTOPML[i] += (w * TOPMLWeights[i]);
     }
 
-    void incPSOnly(double w0, const std::vector<double>& wPS, const int genTtbar, const std::vector<double>& wTopPtWeights, const std::vector<double>& wbFragAndDecayWeights, const std::vector<double>& wTOPMLWeights) {
+    void incPSOnly(double w0, const std::vector<double>& wPS, const int genTtbar, const std::vector<double>& wTopPtWeights, const std::vector<double>& wbFragAndDecayWeights, const std::vector<double>& wcFragAndDecayWeights, const std::vector<double>& wTOPMLWeights) {
       if (!wPS.empty()) {
         if (sumPS.empty())
           sumPS.resize(wPS.size(), 0);
@@ -195,9 +210,10 @@ namespace {
                 const int genTtbar,
                 const std::vector<double>& topPtWeights,
                 const std::vector<double>& bFragAndDecayWeights,
+                const std::vector<double>& cFragAndDecayWeights,
                 const std::vector<double>& TOPMLWeights) {
       // add up weights
-      incGenOnly(w0, genTtbar, topPtWeights, bFragAndDecayWeights, TOPMLWeights);
+      incGenOnly(w0, genTtbar, topPtWeights, bFragAndDecayWeights, cFragAndDecayWeights, TOPMLWeights);
       // update per-ttbar nominal sum
       // if (genTtbar != -999) {
       //   int aid = std::abs(genTtbar);
@@ -373,7 +389,7 @@ namespace {
           }
         }
       }
-      incPSOnly(w0, wPS, genTtbar, topPtWeights, bFragAndDecayWeights, TOPMLWeights);
+      incPSOnly(w0, wPS, genTtbar, topPtWeights, bFragAndDecayWeights, cFragAndDecayWeights, TOPMLWeights);
     }
 
     void merge(const Counter& other) {
@@ -394,6 +410,8 @@ namespace {
         sumTopPt.resize(other.sumTopPt.size(), 0);
       if (sumBFragAndDecay.empty() && !other.sumBFragAndDecay.empty())
         sumBFragAndDecay.resize(other.sumBFragAndDecay.size(), 0);
+      if (sumCFragAndDecay.empty() && !other.sumCFragAndDecay.empty())
+        sumCFragAndDecay.resize(other.sumCFragAndDecay.size(), 0);
       if (sumTOPML.empty() && !other.sumTOPML.empty())
         sumTOPML.resize(other.sumTOPML.size(), 0);
       if (!other.sumScale.empty())
@@ -417,6 +435,9 @@ namespace {
       if (!other.sumBFragAndDecay.empty())
         for (unsigned int i = 0, n = sumBFragAndDecay.size(); i < n; ++i)
           sumBFragAndDecay[i] += other.sumBFragAndDecay[i];
+      if (!other.sumCFragAndDecay.empty())
+        for (unsigned int i = 0, n = sumCFragAndDecay.size(); i < n; ++i)
+          sumCFragAndDecay[i] += other.sumCFragAndDecay[i];
       if (!other.sumTOPML.empty())
         for (unsigned int i = 0, n = sumTOPML.size(); i < n; ++i)
           sumTOPML[i] += other.sumTOPML[i];
@@ -489,6 +510,15 @@ namespace {
         const int k = kv.first;
         const auto &ovec = kv.second;
         auto &mvec = sumBFragAndDecay_by_tt[k];
+        if (mvec.empty())
+          mvec.resize(ovec.size(), 0);
+        for (unsigned int i = 0, n = ovec.size(); i < n; ++i)
+          mvec[i] += ovec[i];
+      }
+      for (const auto &kv : other.sumCFragAndDecay_by_tt) {
+        const int k = kv.first;
+        const auto &ovec = kv.second;
+        auto &mvec = sumCFragAndDecay_by_tt[k];
         if (mvec.empty())
           mvec.resize(ovec.size(), 0);
         for (unsigned int i = 0, n = ovec.size(); i < n; ++i)
@@ -660,32 +690,32 @@ namespace {
   // *genJets, *frag, *fragUp, *fragDown, *decayWeightUp, *decayWeightDown
   std::vector<double> getbFragAndDecayWeights(const edm::Event& iEvent,
                                     const edm::EDGetTokenT<std::vector<reco::GenJet> >& genJetsToken_,
-                                    const edm::EDGetTokenT<edm::ValueMap<float> >& fragToken_,
-                                    const edm::EDGetTokenT<edm::ValueMap<float> >& fragUpToken_,
-                                    const edm::EDGetTokenT<edm::ValueMap<float> >& fragDownToken_,
-                                    const edm::EDGetTokenT<edm::ValueMap<float> >& fragPetersonToken_,
-                                    const edm::EDGetTokenT<edm::ValueMap<float> >& decayWeightUpToken_,
-                                    const edm::EDGetTokenT<edm::ValueMap<float> >& decayWeightDownToken_,
+                                    const edm::EDGetTokenT<edm::ValueMap<float> >& bfragToken_,
+                                    const edm::EDGetTokenT<edm::ValueMap<float> >& bfragUpToken_,
+                                    const edm::EDGetTokenT<edm::ValueMap<float> >& bfragDownToken_,
+                                    const edm::EDGetTokenT<edm::ValueMap<float> >& bfragPetersonToken_,
+                                    const edm::EDGetTokenT<edm::ValueMap<float> >& bdecayWeightUpToken_,
+                                    const edm::EDGetTokenT<edm::ValueMap<float> >& bdecayWeightDownToken_,
                                     bool debug=false) {
 
-    // vector with length 6: nominal, fragUp, fragDown, Peterson frag, decayUp, decayDown
+    // vector with length 6: nominal, bfragUp, bfragDown, Peterson bfrag, decayUp, decayDown
     std::vector<double> outVector(6, 1.0);
 
     // now for b-frag and b-decay weights
     edm::Handle<std::vector<reco::GenJet> > genJets;
     iEvent.getByToken(genJetsToken_, genJets);
-    edm::Handle<edm::ValueMap<float> > frag;
-    edm::Handle<edm::ValueMap<float> > fragUp;
-    edm::Handle<edm::ValueMap<float> > fragDown;
-    edm::Handle<edm::ValueMap<float> > fragPeterson;
-    edm::Handle<edm::ValueMap<float> > decayWeightUp;
-    edm::Handle<edm::ValueMap<float> > decayWeightDown;
-    iEvent.getByToken(fragToken_, frag);
-    iEvent.getByToken(fragUpToken_, fragUp);
-    iEvent.getByToken(fragDownToken_, fragDown);
-    iEvent.getByToken(fragPetersonToken_, fragPeterson);
-    iEvent.getByToken(decayWeightUpToken_, decayWeightUp);
-    iEvent.getByToken(decayWeightDownToken_, decayWeightDown);
+    edm::Handle<edm::ValueMap<float> > bfrag;
+    edm::Handle<edm::ValueMap<float> > bfragUp;
+    edm::Handle<edm::ValueMap<float> > bfragDown;
+    edm::Handle<edm::ValueMap<float> > bfragPeterson;
+    edm::Handle<edm::ValueMap<float> > bdecayWeightUp;
+    edm::Handle<edm::ValueMap<float> > bdecayWeightDown;
+    iEvent.getByToken(bfragToken_, bfrag);
+    iEvent.getByToken(bfragUpToken_, bfragUp);
+    iEvent.getByToken(bfragDownToken_, bfragDown);
+    iEvent.getByToken(bfragPetersonToken_, bfragPeterson);
+    iEvent.getByToken(bdecayWeightUpToken_, bdecayWeightUp);
+    iEvent.getByToken(bdecayWeightDownToken_, bdecayWeightDown);
     // derive all weights by looping over gen jets
 
     if (debug) {
@@ -696,19 +726,76 @@ namespace {
     for (auto genJet=genJets->begin(); genJet!=genJets->end(); ++genJet) {
       edm::Ref<std::vector<reco::GenJet> > genJetRef(genJets, genJet-genJets->begin());
       // Debugging output
-      outVector[0] *= (*frag)[genJetRef];
-      outVector[1] *= (*fragUp)[genJetRef];
-      outVector[2] *= (*fragDown)[genJetRef];
-      outVector[3] *= (*fragPeterson)[genJetRef];
-      outVector[4] *= (*decayWeightUp)[genJetRef];
-      outVector[5] *= (*decayWeightDown)[genJetRef];
+      outVector[0] *= (*bfrag)[genJetRef];
+      outVector[1] *= (*bfragUp)[genJetRef];
+      outVector[2] *= (*bfragDown)[genJetRef];
+      outVector[3] *= (*bfragPeterson)[genJetRef];
+      outVector[4] *= (*bdecayWeightUp)[genJetRef];
+      outVector[5] *= (*bdecayWeightDown)[genJetRef];
       if (debug) {
-        std::cout << "pt=" << genJet->pt() << " id=" << genJet->pdgId() << " fragWeight=" << (*frag)[genJetRef] << std::endl;
-        std::cout << "pt=" << genJet->pt() << " id=" << genJet->pdgId() << " fragWeightUp=" << (*fragUp)[genJetRef] << std::endl;
-        std::cout << "pt=" << genJet->pt() << " id=" << genJet->pdgId() << " fragWeightDown=" << (*fragDown)[genJetRef] << std::endl;
-        std::cout << "pt=" << genJet->pt() << " id=" << genJet->pdgId() << " fragWeightPeterson=" << (*fragPeterson)[genJetRef] << std::endl;
-        std::cout << "pt=" << genJet->pt() << " id=" << genJet->pdgId() << " decayWeightUp=" << (*decayWeightUp)[genJetRef] << std::endl;
-        std::cout << "pt=" << genJet->pt() << " id=" << genJet->pdgId() << " decayWeightDown=" << (*decayWeightDown)[genJetRef] << std::endl;
+        std::cout << "pt=" << genJet->pt() << " id=" << genJet->pdgId() << " bfragWeight=" << (*bfrag)[genJetRef] << std::endl;
+        std::cout << "pt=" << genJet->pt() << " id=" << genJet->pdgId() << " bfragWeightUp=" << (*bfragUp)[genJetRef] << std::endl;
+        std::cout << "pt=" << genJet->pt() << " id=" << genJet->pdgId() << " bfragWeightDown=" << (*bfragDown)[genJetRef] << std::endl;
+        std::cout << "pt=" << genJet->pt() << " id=" << genJet->pdgId() << " bfragWeightPeterson=" << (*bfragPeterson)[genJetRef] << std::endl;
+        std::cout << "pt=" << genJet->pt() << " id=" << genJet->pdgId() << " bdecayWeightUp=" << (*bdecayWeightUp)[genJetRef] << std::endl;
+        std::cout << "pt=" << genJet->pt() << " id=" << genJet->pdgId() << " bdecayWeightDown=" << (*bdecayWeightDown)[genJetRef] << std::endl;
+      }
+    }
+    return outVector;
+  }
+
+  // *genJets, *cfrag, *cfragUp, *cfragDown, *cdecayWeightUp, *cdecayWeightDown
+  std::vector<double> getcFragAndDecayWeights(const edm::Event& iEvent,
+                                    const edm::EDGetTokenT<std::vector<reco::GenJet> >& genJetsToken_,
+                                    const edm::EDGetTokenT<edm::ValueMap<float> >& cfragToken_,
+                                    const edm::EDGetTokenT<edm::ValueMap<float> >& cfragUpToken_,
+                                    const edm::EDGetTokenT<edm::ValueMap<float> >& cfragDownToken_,
+                                    const edm::EDGetTokenT<edm::ValueMap<float> >& cfragPetersonToken_,
+                                    const edm::EDGetTokenT<edm::ValueMap<float> >& cdecayWeightUpToken_,
+                                    const edm::EDGetTokenT<edm::ValueMap<float> >& cdecayWeightDownToken_,
+                                    bool debug=false) {
+
+    // vector with length 6: nominal, cfragUp, cfragDown, Peterson cfrag, cdecayUp, cdecayDown
+    std::vector<double> outVector(6, 1.0);
+
+    // now for c-frag and c-decay weights
+    edm::Handle<std::vector<reco::GenJet> > genJets;
+    iEvent.getByToken(genJetsToken_, genJets);
+    edm::Handle<edm::ValueMap<float> > cfrag;
+    edm::Handle<edm::ValueMap<float> > cfragUp;
+    edm::Handle<edm::ValueMap<float> > cfragDown;
+    edm::Handle<edm::ValueMap<float> > cfragPeterson;
+    edm::Handle<edm::ValueMap<float> > cdecayWeightUp;
+    edm::Handle<edm::ValueMap<float> > cdecayWeightDown;
+    iEvent.getByToken(cfragToken_, cfrag);
+    iEvent.getByToken(cfragUpToken_, cfragUp);
+    iEvent.getByToken(cfragDownToken_, cfragDown);
+    iEvent.getByToken(cfragPetersonToken_, cfragPeterson);
+    iEvent.getByToken(cdecayWeightUpToken_, cdecayWeightUp);
+    iEvent.getByToken(cdecayWeightDownToken_, cdecayWeightDown);
+    // derive all weights by looping over gen jets
+
+    if (debug) {
+      std::cout << "Calculating C-frag weights:" << std::endl;
+      std::cout << "C-frag weights per jet: " << std::endl;
+      std::cout<<"Number of gen jets: "<<genJets->size()<<std::endl;
+    }
+    for (auto genJet=genJets->begin(); genJet!=genJets->end(); ++genJet) {
+      edm::Ref<std::vector<reco::GenJet> > genJetRef(genJets, genJet-genJets->begin());
+      // Debugging output
+      outVector[0] *= (*cfrag)[genJetRef];
+      outVector[1] *= (*cfragUp)[genJetRef];
+      outVector[2] *= (*cfragDown)[genJetRef];
+      outVector[3] *= (*cfragPeterson)[genJetRef];
+      outVector[4] *= (*cdecayWeightUp)[genJetRef];
+      outVector[5] *= (*cdecayWeightDown)[genJetRef];
+      if (debug) {
+        std::cout << "pt=" << genJet->pt() << " id=" << genJet->pdgId() << " cfragWeight=" << (*cfrag)[genJetRef] << std::endl;
+        std::cout << "pt=" << genJet->pt() << " id=" << genJet->pdgId() << " cfragWeightUp=" << (*cfragUp)[genJetRef] << std::endl;
+        std::cout << "pt=" << genJet->pt() << " id=" << genJet->pdgId() << " cfragWeightDown=" << (*cfragDown)[genJetRef] << std::endl;
+        std::cout << "pt=" << genJet->pt() << " id=" << genJet->pdgId() << " cfragWeightPeterson=" << (*cfragPeterson)[genJetRef] << std::endl;
+        std::cout << "pt=" << genJet->pt() << " id=" << genJet->pdgId() << " cdecayWeightUp=" << (*cdecayWeightUp)[genJetRef] << std::endl;
+        std::cout << "pt=" << genJet->pt() << " id=" << genJet->pdgId() << " cdecayWeightDown=" << (*cdecayWeightDown)[genJetRef] << std::endl;
       }
     }
     return outVector;
@@ -791,12 +878,18 @@ public:
         genTtbarId_(consumes<int>(params.getParameter<edm::InputTag>("genTtbarId"))),
         genparticles_(consumes<edm::View<reco::GenParticle>>(params.getParameter<edm::InputTag>("genParticles"))),
         genJetsToken_(consumes<std::vector<reco::GenJet> >(edm::InputTag("particleLevelWithNu:jets"))),
-        fragToken_(consumes<edm::ValueMap<float> >(edm::InputTag("bfragWgtProducer:fragCP5BLVsPt"))),
-        fragUpToken_(consumes<edm::ValueMap<float> >(edm::InputTag("bfragWgtProducer:fragCP5BLupVsPt"))),
-        fragDownToken_(consumes<edm::ValueMap<float> >(edm::InputTag("bfragWgtProducer:fragCP5BLdownVsPt"))),
-        fragPetersonToken_(consumes<edm::ValueMap<float> >(edm::InputTag("bfragWgtProducer:fragCP5PetersonVsPt"))),
-        decayWeightUpToken_(consumes<edm::ValueMap<float> >(edm::InputTag("bfragWgtProducer:semilepbrup"))),
-        decayWeightDownToken_(consumes<edm::ValueMap<float> >(edm::InputTag("bfragWgtProducer:semilepbrdown"))),
+        bfragToken_(consumes<edm::ValueMap<float> >(edm::InputTag("bfragWgtProducer:fragCP5BLVsPt"))),
+        bfragUpToken_(consumes<edm::ValueMap<float> >(edm::InputTag("bfragWgtProducer:fragCP5BLupVsPt"))),
+        bfragDownToken_(consumes<edm::ValueMap<float> >(edm::InputTag("bfragWgtProducer:fragCP5BLdownVsPt"))),
+        bfragPetersonToken_(consumes<edm::ValueMap<float> >(edm::InputTag("bfragWgtProducer:fragCP5PetersonVsPt"))),
+        bdecayWeightUpToken_(consumes<edm::ValueMap<float> >(edm::InputTag("bfragWgtProducer:semilepbrup"))),
+        bdecayWeightDownToken_(consumes<edm::ValueMap<float> >(edm::InputTag("bfragWgtProducer:semilepbrdown"))),
+        cfragToken_(consumes<edm::ValueMap<float> >(edm::InputTag("cfragWgtProducer:fragCP5BLVsPt"))),
+        cfragUpToken_(consumes<edm::ValueMap<float> >(edm::InputTag("cfragWgtProducer:fragCP5BLupVsPt"))),
+        cfragDownToken_(consumes<edm::ValueMap<float> >(edm::InputTag("cfragWgtProducer:fragCP5BLdownVsPt"))),
+        cfragPetersonToken_(consumes<edm::ValueMap<float> >(edm::InputTag("cfragWgtProducer:fragCP5PetersonVsPt"))),
+        cdecayWeightUpToken_(consumes<edm::ValueMap<float> >(edm::InputTag("cfragWgtProducer:semilepbrup"))),
+        cdecayWeightDownToken_(consumes<edm::ValueMap<float> >(edm::InputTag("cfragWgtProducer:semilepbrdown"))),
         TOPMLWeighthdampUp13Token_(consumes<float>(edm::InputTag("MLWeightsHdampUp13:weight"))),
         TOPMLWeighthdampDown13Token_(consumes<float>(edm::InputTag("MLWeightsHdampDown13:weight"))),
         TOPMLWeighthdampUp13p6Token_(consumes<float>(edm::InputTag("MLWeightsHdampUp13p6:weight"))),
@@ -817,6 +910,7 @@ public:
     produces<nanoaod::FlatTable>("PS");
     // custom weight tables
     produces<nanoaod::FlatTable>("bFragAndDecayWeight");
+    produces<nanoaod::FlatTable>("cFragAndDecayWeight");
     produces<nanoaod::FlatTable>("TopMLWeight");
     produces<nanoaod::FlatTable>("TopPtWeight");
     produces<nanoaod::MergeableCounterTable, edm::Transition::EndRun>();
@@ -877,10 +971,16 @@ public:
     iEvent.getByToken(genparticles_, genParticles);
 
     // bfrag and b decay weights
-    auto bFragAndDecayWeights = getbFragAndDecayWeights(iEvent, genJetsToken_, fragToken_, fragUpToken_, fragDownToken_, fragPetersonToken_, decayWeightUpToken_, decayWeightDownToken_);
+    auto bFragAndDecayWeights = getbFragAndDecayWeights(iEvent, genJetsToken_, bfragToken_, bfragUpToken_, bfragDownToken_, bfragPetersonToken_, bdecayWeightUpToken_, bdecayWeightDownToken_);
     auto bFragAndDecayWeightsTable = std::make_unique<nanoaod::FlatTable>(bFragAndDecayWeights.size(), "bFragAndDecayWeight", false);
     bFragAndDecayWeightsTable->setDoc("B fragmentation and B decay reweighting factors: [0] nominal, [1] b fragUp, [2] b fragDown, [3] Peterson b frag, [4] b decayUp, [5] b decayDown");
     bFragAndDecayWeightsTable->addColumn<float>("", bFragAndDecayWeights, "B fragmentation and B decay reweighting factors", 14);
+
+    // cfrag and c decay weights
+    auto cFragAndDecayWeights = getcFragAndDecayWeights(iEvent, genJetsToken_, cfragToken_, cfragUpToken_, cfragDownToken_, cfragPetersonToken_, cdecayWeightUpToken_, cdecayWeightDownToken_);
+    auto cFragAndDecayWeightsTable = std::make_unique<nanoaod::FlatTable>(cFragAndDecayWeights.size(), "cFragAndDecayWeight", false);
+    cFragAndDecayWeightsTable->setDoc("C fragmentation and C decay reweighting factors: [0] nominal, [1] c fragUp, [2] c fragDown, [3] Peterson c frag, [4] c decayUp, [5] c decayDown");
+    cFragAndDecayWeightsTable->addColumn<float>("", cFragAndDecayWeights, "C fragmentation and C decay reweighting factors", 14);
 
     // TOP ML weights
     auto TOPMLWeights = getTOPMLWeights(iEvent, TOPMLWeighthdampUp13Token_, TOPMLWeighthdampUp13p6Token_, TOPMLWeighthdampDown13Token_, TOPMLWeighthdampDown13p6Token_, TOPMLWeightBFragUpToken_, TOPMLWeightBFragNomToken_, TOPMLWeightMiNNLOToken_);
@@ -913,6 +1013,7 @@ public:
               genTtbarVal,
               topPtWeights,
               bFragAndDecayWeights,
+              cFragAndDecayWeights,
               TOPMLWeights,
               lheScaleTab,
               lhePdfTab,
@@ -921,13 +1022,13 @@ public:
               genPSTab);
     } else if (getLHEweightsFromGenInfo) {
         fillLHEPdfWeightTablesFromGenInfo(
-          counter, genWeightChoice, weight, *genInfo, genTtbarVal, topPtWeights, bFragAndDecayWeights, TOPMLWeights, lheScaleTab, lhePdfTab, lheNamedTab, genPSTab);
+          counter, genWeightChoice, weight, *genInfo, genTtbarVal, topPtWeights, cFragAndDecayWeights, cFragAndDecayWeights, TOPMLWeights, lheScaleTab, lhePdfTab, lheNamedTab, genPSTab);
       lheRwgtTab = std::make_unique<nanoaod::FlatTable>(1, "LHEReweightingWeights", true);
       //lheNamedTab.reset(new nanoaod::FlatTable(1, "LHENamedWeights", true));
       //genPSTab.reset(new nanoaod::FlatTable(1, "PSWeight", true));
     } else {
       // Still try to add the PS weights
-      fillOnlyPSWeightTable(counter, genWeightChoice, weight, *genInfo, genTtbarVal, topPtWeights, bFragAndDecayWeights, TOPMLWeights, genPSTab);
+      fillOnlyPSWeightTable(counter, genWeightChoice, weight, *genInfo, genTtbarVal, topPtWeights, cFragAndDecayWeights, cFragAndDecayWeights, TOPMLWeights, genPSTab);
       // make dummy values
       lheScaleTab = std::make_unique<nanoaod::FlatTable>(1, "LHEScaleWeights", true);
       lhePdfTab = std::make_unique<nanoaod::FlatTable>(1, "LHEPdfWeights", true);
@@ -939,6 +1040,7 @@ public:
     }
 
     iEvent.put(std::move(bFragAndDecayWeightsTable), "bFragAndDecayWeight");
+    iEvent.put(std::move(cFragAndDecayWeightsTable), "cFragAndDecayWeight");
     iEvent.put(std::move(TOPMLWeightsTable), "TopMLWeight");
     iEvent.put(std::move(topPtWeightTable), "TopPtWeight");
     iEvent.put(std::move(lheScaleTab), "LHEScale");
@@ -957,6 +1059,7 @@ public:
                            int genTtbarId,
                            const std::vector<double>& topPtWeights,
                            const std::vector<double>& bFragAndDecayWeights,
+                           const std::vector<double>& cFragAndDecayWeights,
                            const std::vector<double>& TOPMLWeights,
                            std::unique_ptr<nanoaod::FlatTable>& outScale,
                            std::unique_ptr<nanoaod::FlatTable>& outPdf,
@@ -1020,7 +1123,7 @@ public:
                                       lheWeightPrecision_);
     }
 
-    counter->incLHE(genWeight, wScale, wPDF, wRwgt, wNamed, wPS, genTtbarId, topPtWeights, bFragAndDecayWeights, TOPMLWeights);
+    counter->incLHE(genWeight, wScale, wPDF, wRwgt, wNamed, wPS, genTtbarId, topPtWeights, bFragAndDecayWeights, cFragAndDecayWeights, TOPMLWeights);
   }
 
   void fillLHEPdfWeightTablesFromGenInfo(Counter* counter,
@@ -1030,6 +1133,7 @@ public:
                                          int genTtbarId,
                                          const std::vector<double>& topPtWeights,
                                          const std::vector<double>& bFragAndDecayWeights,
+                                         const std::vector<double>& cFragAndDecayWeights,
                                          const std::vector<double>& TOPMLWeights,
                                          std::unique_ptr<nanoaod::FlatTable>& outScale,
                                          std::unique_ptr<nanoaod::FlatTable>& outPdf,
@@ -1067,7 +1171,7 @@ public:
       outNamed->addColumnValue<float>(namedWeightLabels_[i], wNamed[i], "LHE weight for id "+namedWeightIDs_[i]+", relative to nominal", lheWeightPrecision_);
       }*/
 
-    counter->incLHE(genWeight, wScale, wPDF, std::vector<double>(), std::vector<double>(), wPS, genTtbarId, topPtWeights, bFragAndDecayWeights, TOPMLWeights);
+    counter->incLHE(genWeight, wScale, wPDF, std::vector<double>(), std::vector<double>(), wPS, genTtbarId, topPtWeights, bFragAndDecayWeights, cFragAndDecayWeights, TOPMLWeights);
   }
 
   void fillOnlyPSWeightTable(Counter* counter,
@@ -1077,6 +1181,7 @@ public:
                              int genTtbarId,
                              const std::vector<double>& topPtWeights,
                              const std::vector<double>& bFragAndDecayWeights,
+                             const std::vector<double>& cFragAndDecayWeights,
                              const std::vector<double>& TOPMLWeights,
                              std::unique_ptr<nanoaod::FlatTable>& outPS) const {
     std::vector<double> wPS;
@@ -1085,8 +1190,8 @@ public:
     outPS = std::make_unique<nanoaod::FlatTable>(wPS.size(), "PSWeight", false);
     outPS->addColumn<float>("", wPS, psWeightDocStr, lheWeightPrecision_);
 
-    counter->incGenOnly(genWeight, genTtbarId, topPtWeights, bFragAndDecayWeights, TOPMLWeights);
-    counter->incPSOnly(genWeight, wPS, genTtbarId, topPtWeights, bFragAndDecayWeights, TOPMLWeights);
+    counter->incGenOnly(genWeight, genTtbarId, topPtWeights, bFragAndDecayWeights, cFragAndDecayWeights, TOPMLWeights);
+    counter->incPSOnly(genWeight, wPS, genTtbarId, topPtWeights, bFragAndDecayWeights, cFragAndDecayWeights, TOPMLWeights);
   }
 
   void setPSWeightInfo(const std::vector<double>& genWeights,
@@ -1768,6 +1873,13 @@ public:
                              "Sum of genEventWeight * BFragAndDecayWeight_, divided by genEventSumw" + doclabel,
                              sumBFragAndDecayWeights,
                              runCounter->sumw);
+      auto sumCFragAndDecayWeights = runCounter->sumCFragAndDecay;
+      for (auto& val : sumCFragAndDecayWeights)
+        val *= norm;
+      out->addVFloatWithNorm("CFragAndDecayWeightSumw" + label,
+                             "Sum of genEventWeight * CFragAndDecayWeight_, divided by genEventSumw" + doclabel,
+                             sumCFragAndDecayWeights,
+                             runCounter->sumw);
       auto sumTOPMLWeights = runCounter->sumTOPML;
       for (auto& val : sumTOPMLWeights)
         val *= norm;
@@ -1862,6 +1974,25 @@ public:
           out->addVFloatWithNorm("BFragAndDecayWeightSumw_" + keystr + label,
                                   "Sum of genEventWeight * BFragAndDecayWeight_, divided by genEventSumw, for ttbar category " + keystr + doclabel,
                                   sumBFragAndDecayWeights_tt,
+                                  catSumw);
+        }
+      }
+
+      if (!runCounter->sumCFragAndDecay_by_tt.empty()) {
+        for (const auto &kv : runCounter->sumCFragAndDecay_by_tt) {
+          // const int cat = kv.first;
+          auto sumCFragAndDecayWeights_tt = kv.second;
+          long double catSumw = 0;
+          auto itw = runCounter->sumw_by_tt.find(kv.first);
+          if (itw != runCounter->sumw_by_tt.end())
+            catSumw = itw->second;
+          double catnorm = catSumw ? 1.0 / catSumw : 1;
+          for (auto &val : sumCFragAndDecayWeights_tt)
+            val *= catnorm;
+          std::stringstream keyss; keyss << kv.first; std::string keystr = keyss.str();
+          out->addVFloatWithNorm("CFragAndDecayWeightSumw_" + keystr + label,
+                                  "Sum of genEventWeight * CFragAndDecayWeight_, divided by genEventSumw, for ttbar category " + keystr + doclabel,
+                                  sumCFragAndDecayWeights_tt,
                                   catSumw);
         }
       }
@@ -2040,12 +2171,18 @@ protected:
   const edm::EDGetTokenT<edm::View<reco::GenParticle>> genparticles_;
 
   const edm::EDGetTokenT<std::vector<reco::GenJet>> genJetsToken_;
-  const edm::EDGetTokenT<edm::ValueMap<float>> fragToken_;
-  const edm::EDGetTokenT<edm::ValueMap<float>> fragUpToken_;
-  const edm::EDGetTokenT<edm::ValueMap<float>> fragDownToken_;
-  const edm::EDGetTokenT<edm::ValueMap<float>> fragPetersonToken_;
-  const edm::EDGetTokenT<edm::ValueMap<float>> decayWeightUpToken_;
-  const edm::EDGetTokenT<edm::ValueMap<float>> decayWeightDownToken_;
+  const edm::EDGetTokenT<edm::ValueMap<float>> bfragToken_;
+  const edm::EDGetTokenT<edm::ValueMap<float>> bfragUpToken_;
+  const edm::EDGetTokenT<edm::ValueMap<float>> bfragDownToken_;
+  const edm::EDGetTokenT<edm::ValueMap<float>> bfragPetersonToken_;
+  const edm::EDGetTokenT<edm::ValueMap<float>> bdecayWeightUpToken_;
+  const edm::EDGetTokenT<edm::ValueMap<float>> bdecayWeightDownToken_;
+  const edm::EDGetTokenT<edm::ValueMap<float>> cfragToken_;
+  const edm::EDGetTokenT<edm::ValueMap<float>> cfragUpToken_;
+  const edm::EDGetTokenT<edm::ValueMap<float>> cfragDownToken_;
+  const edm::EDGetTokenT<edm::ValueMap<float>> cfragPetersonToken_;
+  const edm::EDGetTokenT<edm::ValueMap<float>> cdecayWeightUpToken_;
+  const edm::EDGetTokenT<edm::ValueMap<float>> cdecayWeightDownToken_;
 
   const edm::EDGetTokenT<float> TOPMLWeighthdampUp13Token_;
   const edm::EDGetTokenT<float> TOPMLWeighthdampDown13Token_;
