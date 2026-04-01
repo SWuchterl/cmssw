@@ -31,6 +31,7 @@
 #include "RecoVertex/VertexTools/interface/VertexDistanceXY.h"
 #include "RecoVertex/VertexPrimitives/interface/VertexState.h"
 #include "RecoVertex/VertexPrimitives/interface/ConvertToFromReco.h"
+#include "RecoBTag/FeatureTools/interface/deep_helpers.h"
 
 using namespace btagbtvdeep;
 
@@ -260,6 +261,24 @@ void LeptonTagInfoCollectionProducer<LeptonType>::fill_pf_features(const LeptonT
   features.add("PF_energy");
   features.reserve("PF_energy", pfcands.size());
 
+  // and all displacement variables to catch nans
+  features.add("PF_dxy");
+  features.add("PF_dxy_asinh");
+  features.add("PF_dxysig");
+  features.add("PF_dxysig_asinh");
+  features.add("PF_dz");
+  features.add("PF_dz_asinh");
+  features.add("PF_dzsig");
+  features.add("PF_dzsig_asinh");
+  features.reserve("PF_dxy", pfcands.size());
+  features.reserve("PF_dxy_asinh", pfcands.size());
+  features.reserve("PF_dxysig", pfcands.size());
+  features.reserve("PF_dxysig_asinh", pfcands.size());
+  features.reserve("PF_dz", pfcands.size());
+  features.reserve("PF_dz_asinh", pfcands.size());
+  features.reserve("PF_dzsig", pfcands.size());
+  features.reserve("PF_dzsig_asinh", pfcands.size());
+
   for (const auto& cand : pfcands) {
     features.fill("PF_phi_rel", reco::deltaPhi(lep.phi(), cand.phi()));
     features.fill("PF_eta_rel", lep.eta() - cand.eta());
@@ -273,9 +292,25 @@ void LeptonTagInfoCollectionProducer<LeptonType>::fill_pf_features(const LeptonT
     if (cand.hasTrackDetails()) {
       features.fill("PF_dxySig_log", asinh(cand.dxy() / cand.dxyError()));
       features.fill("PF_dzSig_log", asinh(cand.dz() / cand.dzError()));
+      features.fill("PF_dxy", catch_infs(cand.dxy()));
+      features.fill("PF_dxy_asinh", catch_infs(asinh(cand.dxy())));
+      features.fill("PF_dxysig", catch_infs(cand.dxy() / cand.dxyError()));
+      features.fill("PF_dxysig_asinh", catch_infs(asinh(cand.dxy() / cand.dxyError())));
+      features.fill("PF_dz", catch_infs(cand.dz()));
+      features.fill("PF_dz_asinh", catch_infs(asinh(cand.dz())));
+      features.fill("PF_dzsig", catch_infs(cand.dz() / cand.dzError()));
+      features.fill("PF_dzsig_asinh", catch_infs(asinh(cand.dz() / cand.dzError())));
     } else {
       features.fill("PF_dxySig_log", 0);
       features.fill("PF_dzSig_log", 0);
+      features.fill("PF_dxy", 0);
+      features.fill("PF_dxy_asinh", 0);
+      features.fill("PF_dxysig", 0);
+      features.fill("PF_dxysig_asinh", 0);
+      features.fill("PF_dz", 0);
+      features.fill("PF_dz_asinh", 0);
+      features.fill("PF_dzsig", 0);
+      features.fill("PF_dzsig_asinh", 0);
     }
 
     features.fill("PF_quality", cand.hasTrackDetails() ? cand.pseudoTrack().qualityMask() : (1 << reco::TrackBase::loose));
@@ -317,6 +352,24 @@ void LeptonTagInfoCollectionProducer<LeptonType>::fill_lt_features(const LeptonT
   features.add("LT_quality");
   features.reserve("LT_quality", ltcands.size());
 
+  // and all displacement variables to catch nans
+  features.add("LT_dxy");
+  features.add("LT_dxy_asinh");
+  features.add("LT_dxysig");
+  features.add("LT_dxysig_asinh");
+  features.add("LT_dz");
+  features.add("LT_dz_asinh");
+  features.add("LT_dzsig");
+  features.add("LT_dzsig_asinh");
+  features.reserve("LT_dxy", ltcands.size());
+  features.reserve("LT_dxy_asinh", ltcands.size());
+  features.reserve("LT_dxysig", ltcands.size());
+  features.reserve("LT_dxysig_asinh", ltcands.size());
+  features.reserve("LT_dz", ltcands.size());
+  features.reserve("LT_dz_asinh", ltcands.size());
+  features.reserve("LT_dzsig", ltcands.size());
+  features.reserve("LT_dzsig_asinh", ltcands.size());
+
   for (const auto& cand : ltcands) {
     features.fill("LT_phi_rel", reco::deltaPhi(lep.phi(), cand.phi()));
     features.fill("LT_eta_rel", lep.eta() - cand.eta());
@@ -326,9 +379,25 @@ void LeptonTagInfoCollectionProducer<LeptonType>::fill_lt_features(const LeptonT
     if (cand.hasTrackDetails()) {
       features.fill("LT_dxySig_log", asinh(abs(cand.dxy() / cand.dxyError())));
       features.fill("LT_dzSig_log", asinh(abs(cand.dz() / cand.dzError())));
+      features.fill("LT_dxy", catch_infs(cand.dxy()));
+      features.fill("LT_dxy_asinh", catch_infs(asinh(cand.dxy())));
+      features.fill("LT_dxysig", catch_infs(cand.dxy() / cand.dxyError()));
+      features.fill("LT_dxysig_asinh", catch_infs(asinh(cand.dxy() / cand.dxyError())));
+      features.fill("LT_dz", catch_infs(cand.dz()));
+      features.fill("LT_dz_asinh", catch_infs(asinh(cand.dz())));
+      features.fill("LT_dzsig", catch_infs(cand.dz() / cand.dzError()));
+      features.fill("LT_dzsig_asinh", catch_infs(asinh(cand.dz() / cand.dzError())));
     } else {
       features.fill("LT_dxySig_log", 0);
       features.fill("LT_dzSig_log", 0);
+      features.fill("LT_dxy", 0);
+      features.fill("LT_dxy_asinh", 0);
+      features.fill("LT_dxysig", 0);
+      features.fill("LT_dxysig_asinh", 0);
+      features.fill("LT_dz", 0);
+      features.fill("LT_dz_asinh", 0);
+      features.fill("LT_dzsig", 0);
+      features.fill("LT_dzsig_asinh", 0);
     }
     features.fill("LT_quality", cand.hasTrackDetails() ? cand.pseudoTrack().qualityMask() : (1 << reco::TrackBase::loose));
   }
@@ -415,11 +484,11 @@ void LeptonTagInfoCollectionProducer<LeptonType>::fill_sv_features(const LeptonT
     features.fill("SV_dlenSig_log", log(abs(dl.significance()) + 1e-8));
     Measurement1D d2d =
         vdistXY.distance(PV0, VertexState(RecoVertex::convertPos(sv.position()), RecoVertex::convertError(sv.error())));
-    features.fill("SV_dxy", d2d.value());
-    features.fill("SV_dxy_asinh", asinh(d2d.value()));
-    features.fill("SV_dxy_log", log(abs(d2d.value()) + 1e-8));
-    features.fill("SV_dxysig", d2d.significance());
-    features.fill("SV_dxysig_asinh", asinh(d2d.significance()));
+    features.fill("SV_dxy", catch_infs(d2d.value()));
+    features.fill("SV_dxy_asinh", catch_infs(asinh(d2d.value())));
+    features.fill("SV_dxy_log", log(abs(catch_infs(d2d.value())) + 1e-8));
+    features.fill("SV_dxysig", catch_infs(d2d.significance()));
+    features.fill("SV_dxysig_asinh", catch_infs(asinh(catch_infs(d2d.significance()))));
     features.fill("SV_phi_rel", reco::deltaPhi(lep.phi(), sv.phi()));
     features.fill("SV_eta_rel", lep.eta() - sv.eta());
     features.fill("SV_dR_lep", reco::deltaR(sv, lep));
