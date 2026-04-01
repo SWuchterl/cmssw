@@ -583,7 +583,7 @@ electronParTVariables = cms.EDProducer(
         Lepton_eoverp_log=cms.string("log(eSuperClusterOverP()+1.e-8)"),
         Lepton_passConversionVeto=cms.string("passConversionVeto()"),
         Lepton_dr03HcalDepth1TowerSumEt_Rel=cms.string(
-            "?(pt()>35.)?(dr03HcalTowerSumEt(1)*1./pt()):-100"),
+            "?(pt()>0.)?(dr03HcalTowerSumEt(1)*1./pt()):-100"),
         Lepton_jetNDauChargedMVASel=cms.string(
             "?userCand('jetForLepJetVar').isNonnull()?userFloat('jetNDauChargedMVASel'):0"),
         Lepton_miniRelIsoCharged_log=cms.string(
