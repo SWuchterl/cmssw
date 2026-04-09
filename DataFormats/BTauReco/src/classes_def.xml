@@ -425,12 +425,15 @@
   <class name="btagbtvdeep::ShallowTagInfoFeatures" ClassVersion="3">
     <version ClassVersion="3" checksum="273372007"/>
   </class>
-  <class name="btagbtvdeep::NeutralCandidateFeatures" ClassVersion="5">
+  <class name="btagbtvdeep::NeutralCandidateFeatures" ClassVersion="6">
+   <version ClassVersion="6" checksum="1474468729"/>
    <version ClassVersion="5" checksum="267457446"/>
    <version ClassVersion="4" checksum="3657612864"/>
     <version ClassVersion="3" checksum="938442516"/>
   </class>
-  <class name="btagbtvdeep::ChargedCandidateFeatures" ClassVersion="7">
+  <class name="btagbtvdeep::ChargedCandidateFeatures" ClassVersion="9">
+   <version ClassVersion="9" checksum="2781347046"/>
+   <version ClassVersion="8" checksum="3636820859"/>
    <version ClassVersion="7" checksum="2760889180"/>
    <version ClassVersion="6" checksum="3294985591"/>
    <version ClassVersion="5" checksum="3385708923"/>

@@ -15,6 +15,11 @@ namespace btagbtvdeep {
     float btagPf_trackSip3dVal;
     float btagPf_trackSip3dSig;
     float btagPf_trackJetDistVal;
+    float btagPf_trackDecayLen;
+    float dz;
+    float HadFrac;
+    float CaloFrac;
+    float pdgID;
     float drminsv;
     float charge;
     float puppiw;
@@ -27,6 +32,10 @@ namespace btagbtvdeep {
     float eta;
     float phi;
     float e;
+    float px;
+    float py;
+    float pz;
+   
   };
 
 }  // namespace btagbtvdeep

@@ -13,6 +13,7 @@ namespace btagbtvdeep {
 
     n_pf_features.hadFrac = n_pf->hcalFraction();
     n_pf_features.puppiw = puppiw;
+    n_pf_features.tau_signal = 0;
   }
 
   void recoCandidateToFeatures(const reco::PFCandidate* n_pf,
@@ -29,7 +30,7 @@ namespace btagbtvdeep {
     // otherwise will be different than for PackedCandidates
     // https://github.com/cms-sw/cmssw/blob/master/PhysicsTools/PatAlgos/python/slimming/packedPFCandidates_cfi.py
     if (abs(n_pf->pdgId()) == 1 || abs(n_pf->pdgId()) == 130) {
-      n_pf_features.hadFrac = n_pf->hcalEnergy() / (n_pf->ecalEnergy() + n_pf->hcalEnergy());
+      n_pf_features.hadFrac = catch_infs(n_pf->hcalEnergy() / (n_pf->ecalEnergy() + n_pf->hcalEnergy()), 0);
     } else {
       n_pf_features.hadFrac = 0;
     }

@@ -109,4 +109,48 @@ namespace UparT {
   }};
 
 }  // namespace UparT
+
+namespace ScoutingUparT {
+
+  enum InputFeatures {
+    kBegin = 0,
+    kChargedCandidates = kBegin,
+    kNeutralCandidates = 1,
+    kVertices = 2,
+    kLostTracks = 3,
+    kChargedCandidates4Vec = 4,
+    kNeutralCandidates4Vec = 5,
+    kVertices4Vec = 6,
+    kLostTracks4Vec = 7,
+    kEnd = 8
+  };
+
+  inline constexpr unsigned n_cpf_accept = 32;
+  inline constexpr unsigned n_lt_accept = 8;
+  inline constexpr unsigned n_npf_accept = 32;
+  inline constexpr unsigned n_sv_accept = 4;
+
+  constexpr std::array<unsigned int, kEnd> N_InputFeatures{{
+      31,  // kChargedCandidates
+      13,  // kNeutralCandidates
+      18,  // kVertices
+      22,  // kLostTracks
+      4,   // kChargedCandidates4Vec
+      4,   // kNeutralCandidates4Vec
+      4,   // kVertices4Vec
+      4,   // kLostTracks4Vec
+  }};
+
+  constexpr std::array<unsigned int, kEnd> N_AcceptedFeatures{{
+      n_cpf_accept,  // kChargedCandidates
+      n_npf_accept,  // kNeutralCandidates
+      n_sv_accept,   // kVertices
+      n_lt_accept,   // kLostTracks
+      n_cpf_accept,  // kChargedCandidates4Vec
+      n_npf_accept,  // kNeutralCandidates4Vec
+      n_sv_accept,   // kVertices4Vec
+      n_lt_accept,   // kLostTracks4Vec
+  }};
+
+}  // namespace ScoutingUparT
 #endif

@@ -44,6 +44,12 @@ namespace btagbtvdeep {
     c_pf_features.dxysig = c_pf->bestTrack() ? catch_infs(c_pf->dxy() / c_pf->dxyError()) : 0;
     c_pf_features.dzsig = c_pf->bestTrack() ? catch_infs(c_pf->dz() / c_pf->dzError()) : 0;
 
+    c_pf_features.qdotp = c_pf->charge()*c_pf->pt();
+    c_pf_features.qoverp = c_pf->charge()/c_pf->pt();
+    c_pf_features.tau_signal = 0;
+
+    std::cout << "initial pdgID " << c_pf->pdgId() << std::endl;
+
     float pdgid_;
     if (abs(c_pf->pdgId()) == 11 and c_pf->charge() != 0) {
       pdgid_ = 0.0;
@@ -83,10 +89,63 @@ namespace btagbtvdeep {
 
     c_pf_features.vtx_ass = vtx_ass_from_pfcand(*c_pf, pv_ass_quality, pv);
     c_pf_features.puppiw = puppiw;
-
+    c_pf_features.charge = c_pf->charge();
     const auto& pseudo_track = (c_pf->bestTrack()) ? *c_pf->bestTrack() : reco::Track();
     c_pf_features.chi2 = catch_infs_and_bound(std::floor(pseudo_track.normalizedChi2()), 300, -1, 300);
     c_pf_features.quality = quality_from_pfcand(*c_pf);
+
+    int lostHits = 0;
+    int nlost = pseudo_track.hitPattern().numberOfLostHits(reco::HitPattern::MISSING_INNER_HITS);
+    if (nlost == 0) {
+      if (pseudo_track.hitPattern().hasValidHitInPixelLayer(PixelSubdetector::SubDetector::PixelBarrel, 1)) {
+        lostHits = pat::PackedCandidate::validHitInFirstPixelBarrelLayer;
+      }
+    } else {
+      lostHits = (nlost == 1 ? pat::PackedCandidate::oneLostInnerHit : pat::PackedCandidate::moreLostInnerHits);
+    }
+    lostHits = 2; // weird hacks
+    c_pf_features.lostInnerHits = catch_infs(lostHits, 2);
+    c_pf_features.numberOfPixelHits = catch_infs(pseudo_track.hitPattern().numberOfValidPixelHits(), -1);
+    c_pf_features.numberOfStripHits = catch_infs(pseudo_track.hitPattern().stripLayersWithMeasurement(), -1);
+
+
+
+    math::XYZPoint pvPosition = pv->position();
+    double dxy = pseudo_track.dxy(pvPosition);
+    double dz  = pseudo_track.dz(pvPosition);	
+
+    c_pf_features.dxy = catch_infs(dxy);
+    c_pf_features.dz = catch_infs(dz);
+    c_pf_features.dxysig = c_pf->bestTrack() ? catch_infs(dxy / c_pf->dxyError()) : 0;
+    c_pf_features.dzsig = c_pf->bestTrack() ? catch_infs(dz / c_pf->dzError()) : 0;
+
+    c_pf_features.qdotp = c_pf->charge()*c_pf->pt();
+    c_pf_features.qoverp = c_pf->charge()/c_pf->pt();
+    c_pf_features.tau_signal = 0;
+
+
+    float pdgid_;
+    if (abs(c_pf->pdgId()) == 11 and c_pf->charge() != 0) {
+      pdgid_ = 0.0;
+    } else if (abs(c_pf->pdgId()) == 13 and c_pf->charge() != 0) {
+      pdgid_ = 1.0;
+    } else if (abs(c_pf->pdgId()) == 22 and c_pf->charge() == 0) {
+      pdgid_ = 2.0;
+    } else if (abs(c_pf->pdgId()) != 22 and c_pf->charge() == 0 and abs(c_pf->pdgId()) != 1 and
+               abs(c_pf->pdgId()) != 2) {
+      pdgid_ = 3.0;
+    } else if (abs(c_pf->pdgId()) != 11 and abs(c_pf->pdgId()) != 13 and c_pf->charge() != 0) {
+      pdgid_ = 4.0;
+    } else if (c_pf->charge() == 0 and abs(c_pf->pdgId()) == 1) {
+      pdgid_ = 5.0;
+    } else if (c_pf->charge() == 0 and abs(c_pf->pdgId()) == 2) {
+      pdgid_ = 6.0;
+    } else {
+      pdgid_ = 7.0;
+    }
+    c_pf_features.pdgID = pdgid_;
+
+
 
     // To be implemented if FatJet tag becomes RECO compatible
     // const auto *trk =

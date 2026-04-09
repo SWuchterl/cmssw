@@ -40,12 +40,16 @@ namespace btagbtvdeep {
 
     float charge;
     float btagPf_trackDecayLen;
+    float tau_signal;
     float HadFrac;
     float CaloFrac;
     float pdgID;
     float lostInnerHits;
     float numberOfPixelHits;
     float numberOfStripHits;
+
+    float qdotp;
+    float qoverp;
 
     float pt;
     float px;

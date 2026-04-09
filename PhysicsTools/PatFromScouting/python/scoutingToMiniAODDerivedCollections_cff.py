@@ -510,7 +510,7 @@ def customizeForScoutingAK4ReclusteredJets(process, pName):
         secondary_vertices = cms.InputTag('inclusiveCandidateSecondaryVertices'),
         jets = cms.InputTag('recoScoutingPFJetRecluster'),
         unsubjet_map = cms.InputTag(''),
-        candidates = cms.InputTag("packedPFCandidates", "recoCands", pName),
+        candidates = cms.InputTag("packedPFCandidates", "", pName),
         vertex_associator = cms.InputTag(''),
         fallback_puppi_weight = cms.bool(True),
         fallback_vertex_association = cms.bool(True),
@@ -520,7 +520,7 @@ def customizeForScoutingAK4ReclusteredJets(process, pName):
         mightGet = cms.optional.untracked.vstring
       )
 
-    process.scoutingPFJetReclusterPFUnifiedParticleTransformerAK4Tags = cms.EDProducer('UnifiedParticleTransformerAK4ONNXJetTagsScoutingProducer',
+    process.scoutingPFJetReclusterPFUnifiedParticleTransformerAK4Tags = cms.EDProducer('UnifiedParticleTransformerAK4ONNXJetTagsScoutingv2Producer',
         src = cms.InputTag('scoutingPFJetReclusterPFUnifiedParticleTransformerAK4TagInfos'),
         input_names = cms.vstring(
           'input_1',
@@ -529,15 +529,17 @@ def customizeForScoutingAK4ReclusteredJets(process, pName):
           'input_4',
           'input_5',
           'input_6',
+          'input_7',
+          'input_8',
         ),
-        model_path = cms.FileInPath('RecoBTag/CombinedScouting/data/model.onnx'),
+        model_path = cms.FileInPath('RecoBTag/CombinedScouting/data/model_v2.onnx'),
         output_names = cms.vstring('ID_pred'),
         flav_names = cms.vstring(
         'probb',
+        'probbb',
+        'probleptonicB',
         'probc',
-        'probs',
-        'probu',
-        'probd',
+        'probuds',
         'probg',            
         ),
         mightGet = cms.optional.untracked.vstring
@@ -562,10 +564,10 @@ def customizeForScoutingAK4ReclusteredJets(process, pName):
             "scoutingPFJetReclusterHLTParticleNetONNXJetTags:probuds",
             "scoutingPFJetReclusterHLTParticleNetONNXJetTags:probg",
             'scoutingPFJetReclusterPFUnifiedParticleTransformerAK4Tags:probb',
+            'scoutingPFJetReclusterPFUnifiedParticleTransformerAK4Tags:probbb',
+            'scoutingPFJetReclusterPFUnifiedParticleTransformerAK4Tags:probleptonicB',
             'scoutingPFJetReclusterPFUnifiedParticleTransformerAK4Tags:probc',
-            'scoutingPFJetReclusterPFUnifiedParticleTransformerAK4Tags:probs',
-            'scoutingPFJetReclusterPFUnifiedParticleTransformerAK4Tags:probu',
-            'scoutingPFJetReclusterPFUnifiedParticleTransformerAK4Tags:probd',
+            'scoutingPFJetReclusterPFUnifiedParticleTransformerAK4Tags:probuds',
             'scoutingPFJetReclusterPFUnifiedParticleTransformerAK4Tags:probg',            
            
             ],
@@ -737,10 +739,10 @@ def customiseScoutingNanoDerived(process, pName):
             hltPNet_probuds = Var("?(pt>=5)&&(abs(eta)<=2.6)?bDiscriminator('scoutingPFJetReclusterHLTParticleNetONNXJetTags:probuds'):-1", float, doc="HLT PNet tagger uds raw score", precision=10),
             hltPNet_probg = Var("?(pt>=5)&&(abs(eta)<=2.6)?bDiscriminator('scoutingPFJetReclusterHLTParticleNetONNXJetTags:probg'):-1", float, doc="HLT PNet tagger g raw score", precision=10),
             scoutUParT_probb = Var("?(pt>=15)&&(abs(eta)<=2.5)?bDiscriminator('scoutingPFJetReclusterPFUnifiedParticleTransformerAK4Tags:probb'):-1", float, doc="scouting uParT tagger b raw score", precision=10),
+            scoutUParT_probbb = Var("?(pt>=15)&&(abs(eta)<=2.5)?bDiscriminator('scoutingPFJetReclusterPFUnifiedParticleTransformerAK4Tags:probbb'):-1", float, doc="scouting uParT tagger bb raw score", precision=10),
+            scoutUParT_probleptonicB = Var("?(pt>=15)&&(abs(eta)<=2.5)?bDiscriminator('scoutingPFJetReclusterPFUnifiedParticleTransformerAK4Tags:probleptonicB'):-1", float, doc="scouting uParT tagger leptonicB raw score", precision=10),
             scoutUParT_probc = Var("?(pt>=15)&&(abs(eta)<=2.5)?bDiscriminator('scoutingPFJetReclusterPFUnifiedParticleTransformerAK4Tags:probc'):-1", float, doc="scouting uParT tagger c raw score", precision=10),
-            scoutUParT_probs = Var("?(pt>=15)&&(abs(eta)<=2.5)?bDiscriminator('scoutingPFJetReclusterPFUnifiedParticleTransformerAK4Tags:probs'):-1", float, doc="scouting uParT tagger s raw score", precision=10),
-            scoutUParT_probu = Var("?(pt>=15)&&(abs(eta)<=2.5)?bDiscriminator('scoutingPFJetReclusterPFUnifiedParticleTransformerAK4Tags:probu'):-1", float, doc="scouting uParT tagger u raw score", precision=10),
-            scoutUParT_probd = Var("?(pt>=15)&&(abs(eta)<=2.5)?bDiscriminator('scoutingPFJetReclusterPFUnifiedParticleTransformerAK4Tags:probd'):-1", float, doc="scouting uParT tagger d raw score", precision=10),
+            scoutUParT_probuds = Var("?(pt>=15)&&(abs(eta)<=2.5)?bDiscriminator('scoutingPFJetReclusterPFUnifiedParticleTransformerAK4Tags:probuds'):-1", float, doc="scouting uParT tagger uds raw score", precision=10),
             scoutUParT_probg = Var("?(pt>=15)&&(abs(eta)<=2.5)?bDiscriminator('scoutingPFJetReclusterPFUnifiedParticleTransformerAK4Tags:probg'):-1", float, doc="scouting uParT tagger g raw score", precision=10),
         ),
     )

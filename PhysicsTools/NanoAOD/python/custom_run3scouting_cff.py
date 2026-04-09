@@ -4,7 +4,8 @@ from EventFilter.L1TRawToDigi.gtStage2Digis_cfi import gtStage2Digis
 from PhysicsTools.NanoAOD.triggerObjects_cff import l1bits
 from PhysicsTools.NanoAOD.globals_cff import puTable
 from PhysicsTools.NanoAOD.genWeightsTable_cfi import genWeightsTable
-
+from PhysicsTools.NanoAOD.jetMC_cff import *
+#from PhysicsTools.NanoAOD.nanogen_cff import customizeNanoGENFromMini 
 ############################
 ### Sub Task Definitions ###
 ############################
@@ -125,6 +126,10 @@ def prepareScoutingNanoTaskMC():
 
     scoutingNanoTaskMC.add(puTable)
     scoutingNanoTaskMC.add(genWeightsTable)
+    scoutingNanoTaskMC.add(genJetTable)
+    scoutingNanoTaskMC.add(patJetPartonsNano)
+    scoutingNanoTaskMC.add(genJetFlavourAssociation)
+    scoutingNanoTaskMC.add(genJetFlavourTable)
     return scoutingNanoTaskMC
 
 # Common tasks added to main scoutingNanoSequence
@@ -147,6 +152,8 @@ def customiseScoutingNano(process):
     # specific tasks when running on MC
     runOnMC = hasattr(process,"NANOEDMAODSIMoutput") or hasattr(process,"NANOAODSIMoutput")
     if runOnMC:
+        #process.load('PhysicsTools.NanoAOD.nanogen_cff')
+        #process = customizeNanoGENFromMini(process)
         process.scoutingNanoSequence.associate(scoutingNanoTaskMC)
     
     return process

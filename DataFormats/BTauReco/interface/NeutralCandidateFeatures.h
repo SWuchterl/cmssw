@@ -23,6 +23,8 @@ namespace btagbtvdeep {
     float etarel;
     float phirel;
 
+    float tau_signal;
+
     float pt;
     float px;
     float py;

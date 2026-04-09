@@ -46,7 +46,6 @@ namespace cms::Ort {
       // get input shapes
       auto type_info = session_->GetInputTypeInfo(i);
       auto tensor_info = type_info.GetTensorTypeAndShapeInfo();
-
       input_node_dims_[input_name] = tensor_info.GetShape();
     }
 
