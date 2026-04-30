@@ -355,6 +355,7 @@ void DeepDoubleXTagInfoProducer::produce(edm::Event& iEvent, const edm::EventSet
                 }
               }
               auto pv = reco::VertexRef(vtxs, pvi);
+	      int quality = -1;
               btagbtvdeep::recoCandidateToFeatures(reco_cand,
                                                    jet,
                                                    trackinfo,
@@ -363,6 +364,7 @@ void DeepDoubleXTagInfoProducer::produce(edm::Event& iEvent, const edm::EventSet
                                                    static_cast<float>(jet_radius_),
                                                    puppiw,
                                                    pv_ass_quality,
+						   quality,
                                                    pv,
                                                    c_pf_features);
             }

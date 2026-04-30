@@ -469,6 +469,7 @@ void DeepFlavourTagInfoProducer::produce(edm::Event& iEvent, const edm::EventSet
             if (PV_orig.isNonnull())
               PV = reco::VertexRef(vtxs, PV_orig.key());
           }
+	  int quality = -1;
           btagbtvdeep::recoCandidateToFeatures(reco_cand,
                                                jet,
                                                trackinfo,
@@ -477,6 +478,7 @@ void DeepFlavourTagInfoProducer::produce(edm::Event& iEvent, const edm::EventSet
                                                static_cast<float>(jet_radius_),
                                                puppiw,
                                                pv_ass_quality,
+					       quality,
                                                PV,
                                                c_pf_features,
                                                flip_);

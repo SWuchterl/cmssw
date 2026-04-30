@@ -94,6 +94,7 @@ namespace btagbtvdeep {
                                const float jetR,
                                const float puppiw,
                                const int pv_ass_quality,
+                               const int quality,
                                const reco::VertexRef& pv,
                                ChargedCandidateFeatures& c_pf_features,
                                const bool flip = false,

@@ -3,6 +3,7 @@
 
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
+#include "FWCore/Common/interface/Provenance.h"
 
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/Utilities/interface/StreamID.h"
@@ -79,6 +80,7 @@ private:
   const double jet_radius_;
   const double min_candidate_pt_;
   const bool flip_;
+  const bool scouting_;
   const bool sort_cand_by_pt_;
   const bool fix_lt_sorting_;
 
@@ -88,6 +90,7 @@ private:
   const edm::EDGetTokenT<SVCollection> sv_token_;
   edm::EDGetTokenT<JetMatchMap> unsubjet_map_token_;
   edm::EDGetTokenT<edm::ValueMap<float>> puppi_value_map_token_;
+  edm::EDGetTokenT<edm::ValueMap<int>> quality_map_token_;
   edm::EDGetTokenT<edm::ValueMap<int>> pvasq_value_map_token_;
   edm::EDGetTokenT<edm::Association<VertexCollection>> pvas_token_;
   const edm::EDGetTokenT<edm::View<reco::Candidate>> candidateToken_;
@@ -111,6 +114,7 @@ UnifiedParticleTransformerAK4TagInfoProducer::UnifiedParticleTransformerAK4TagIn
     : jet_radius_(iConfig.getParameter<double>("jet_radius")),
       min_candidate_pt_(iConfig.getParameter<double>("min_candidate_pt")),
       flip_(iConfig.getParameter<bool>("flip")),
+      scouting_(iConfig.getParameter<bool>("scouting")),
       sort_cand_by_pt_(iConfig.getParameter<bool>("sort_cand_by_pt")),
       fix_lt_sorting_(iConfig.getParameter<bool>("fix_lt_sorting")),
       jet_token_(consumes<edm::View<reco::Jet>>(iConfig.getParameter<edm::InputTag>("jets"))),
@@ -153,6 +157,13 @@ UnifiedParticleTransformerAK4TagInfoProducer::UnifiedParticleTransformerAK4TagIn
     use_pvasq_value_map_ = true;
   }
 
+  const auto& quality_tag = iConfig.getParameter<edm::InputTag>("quality");
+  if (!quality_tag.label().empty()) {
+    quality_map_token_ = consumes<edm::ValueMap<int>>(quality_tag);
+  }
+
+
+
   const auto& unsubjet_map_tag = iConfig.getParameter<edm::InputTag>("unsubjet_map");
   if (!unsubjet_map_tag.label().empty()) {
     unsubjet_map_token_ = consumes<JetMatchMap>(unsubjet_map_tag);
@@ -166,6 +177,7 @@ void UnifiedParticleTransformerAK4TagInfoProducer::fillDescriptions(edm::Configu
   desc.add<double>("jet_radius", 0.4);
   desc.add<double>("min_candidate_pt", 0.10);
   desc.add<bool>("flip", false);
+  desc.add<bool>("scouting", false);
   desc.add<bool>("sort_cand_by_pt", false);
   desc.add<bool>("fix_lt_sorting", true);
   desc.add<edm::InputTag>("vertices", edm::InputTag("offlinePrimaryVertices"));
@@ -175,6 +187,7 @@ void UnifiedParticleTransformerAK4TagInfoProducer::fillDescriptions(edm::Configu
   desc.add<edm::InputTag>("jets", edm::InputTag("ak4PFJetsCHS"));
   desc.add<edm::InputTag>("unsubjet_map", {});
   desc.add<edm::InputTag>("candidates", edm::InputTag("packedPFCandidates"));
+  desc.add<edm::InputTag>("quality", edm::InputTag(""));
   desc.add<edm::InputTag>("vertex_associator", edm::InputTag("primaryVertexAssociation", "original"));
   desc.add<bool>("fallback_puppi_weight", false);
   desc.add<bool>("fallback_vertex_association", false);
@@ -185,7 +198,6 @@ void UnifiedParticleTransformerAK4TagInfoProducer::fillDescriptions(edm::Configu
 }
 
 void UnifiedParticleTransformerAK4TagInfoProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
-
 
   auto output_tag_infos = std::make_unique<UnifiedParticleTransformerAK4TagInfoCollection>();
   edm::Handle<edm::View<reco::Jet>> jets;
@@ -227,13 +239,17 @@ void UnifiedParticleTransformerAK4TagInfoProducer::produce(edm::Event& iEvent, c
     iEvent.getByToken(pvasq_value_map_token_, pvasq_value_map);
     iEvent.getByToken(pvas_token_, pvas);
   }
+  edm::Handle<edm::ValueMap<int>> quality_value_map;
+  if (scouting_) {
+    iEvent.getByToken(quality_map_token_, quality_value_map);
+  }
+
 
   edm::ESHandle<TransientTrackBuilder> track_builder = iSetup.getHandle(track_builder_token_);
 
   for (std::size_t jet_n = 0; jet_n < jets->size(); jet_n++) {
     // create data containing structure
     btagbtvdeep::UnifiedParticleTransformerAK4Features features;
-
     // reco jet reference (use as much as possible)
     const auto& jet = jets->at(jet_n);
     if (jet.pt() < min_jet_pt_) {
@@ -521,6 +537,10 @@ void UnifiedParticleTransformerAK4TagInfoProducer::produce(edm::Event& iEvent, c
               if (PV_orig.isNonnull())
                 PV = reco::VertexRef(vtxs, PV_orig.key());
             }
+	    int quality = -1;
+	    if (scouting_)
+		quality = (*quality_value_map)[reco_ptr];
+
             btagbtvdeep::recoCandidateToFeatures(reco_cand,
                                                  jet,
                                                  trackinfo,
@@ -529,6 +549,7 @@ void UnifiedParticleTransformerAK4TagInfoProducer::produce(edm::Event& iEvent, c
                                                  static_cast<float>(jet_radius_),
                                                  puppiw,
                                                  pv_ass_quality,
+						 quality,
                                                  PV,
                                                  c_pf_features,
                                                  flip_,

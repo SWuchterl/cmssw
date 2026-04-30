@@ -12,6 +12,9 @@ namespace btagbtvdeep {
                                  LostTracksFeatures& lt_features,
                                  const bool flip,
                                  const float distminpfcandsv) {
+
+
+
     commonCandidateToFeatures(
         c_pf, jet, track_info, isWeightedJet, drminpfcandsv, jetR, puppiw, lt_features, flip, distminpfcandsv);
 
@@ -82,9 +85,8 @@ namespace btagbtvdeep {
         c_pf, jet, track_info, isWeightedJet, drminpfcandsv, jetR, puppiw, lt_features, flip, distminpfcandsv);
 
     lt_features.puppiw = puppiw;
-
     const auto& pseudo_track = (c_pf->bestTrack()) ? *c_pf->bestTrack() : reco::Track();
-    lt_features.chi2 = catch_infs_and_bound(std::floor(pseudo_track.normalizedChi2()), 300, -1, 300);
+    lt_features.chi2 = (c_pf->bestTrack()) ? catch_infs_and_bound(std::floor(pseudo_track.normalizedChi2()), 300, -1, 300) : -1;
     lt_features.quality = quality_from_pfcand(*c_pf);
 
     lt_features.charge = c_pf->charge();

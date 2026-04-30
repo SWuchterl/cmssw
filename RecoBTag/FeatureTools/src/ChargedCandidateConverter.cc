@@ -48,7 +48,6 @@ namespace btagbtvdeep {
     c_pf_features.qoverp = c_pf->charge()/c_pf->pt();
     c_pf_features.tau_signal = 0;
 
-    std::cout << "initial pdgID " << c_pf->pdgId() << std::endl;
 
     float pdgid_;
     if (abs(c_pf->pdgId()) == 11 and c_pf->charge() != 0) {
@@ -80,19 +79,21 @@ namespace btagbtvdeep {
                                const float jetR,
                                const float puppiw,
                                const int pv_ass_quality,
+                               const int quality,
                                const reco::VertexRef& pv,
                                ChargedCandidateFeatures& c_pf_features,
                                const bool flip,
                                const float distminpfcandsv) {
     commonCandidateToFeatures(
         c_pf, jet, track_info, isWeightedJet, drminpfcandsv, jetR, puppiw, c_pf_features, flip, distminpfcandsv);
-
-    c_pf_features.vtx_ass = vtx_ass_from_pfcand(*c_pf, pv_ass_quality, pv);
+    //c_pf_features.vtx_ass = vtx_ass_from_pfcand(*c_pf, pv_ass_quality, pv);
+    c_pf_features.vtx_ass = pv_ass_quality;
     c_pf_features.puppiw = puppiw;
     c_pf_features.charge = c_pf->charge();
     const auto& pseudo_track = (c_pf->bestTrack()) ? *c_pf->bestTrack() : reco::Track();
-    c_pf_features.chi2 = catch_infs_and_bound(std::floor(pseudo_track.normalizedChi2()), 300, -1, 300);
-    c_pf_features.quality = quality_from_pfcand(*c_pf);
+    c_pf_features.chi2 = (c_pf->bestTrack()) ? catch_infs_and_bound(std::floor(pseudo_track.normalizedChi2()), 300, -1, 300) : -1;
+    if (quality < 0) c_pf_features.quality = quality_from_pfcand(*c_pf);
+    else c_pf_features.quality = quality;
 
     int lostHits = 0;
     int nlost = pseudo_track.hitPattern().numberOfLostHits(reco::HitPattern::MISSING_INNER_HITS);

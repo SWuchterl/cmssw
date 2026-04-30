@@ -19,6 +19,9 @@
 #include "FWCore/ParameterSet/interface/ConfigurationDescriptions.h"
 #include "FWCore/ParameterSet/interface/ParameterSetDescription.h"
 
+#include "DataFormats/Common/interface/ValueMap.h"
+#include "DataFormats/Common/interface/Association.h"
+
 #include "DataFormats/PatCandidates/interface/PackedCandidate.h"
 #include "DataFormats/ParticleFlowCandidate/interface/PFCandidate.h"
 #include "DataFormats/Scouting/interface/Run3ScoutingParticle.h"
@@ -33,6 +36,8 @@
 
 class Run3ScoutingParticleToPackedCandidateProducer : public edm::stream::EDProducer<> {
 public:
+  typedef edm::Association<reco::VertexCollection> CandToVertex;
+
   explicit Run3ScoutingParticleToPackedCandidateProducer(const edm::ParameterSet&);
   ~Run3ScoutingParticleToPackedCandidateProducer() override = default;
 
@@ -62,6 +67,9 @@ Run3ScoutingParticleToPackedCandidateProducer::Run3ScoutingParticleToPackedCandi
   produces<reco::PFCandidateCollection>("recoCands");
   produces<pat::PackedCandidateCollection>();
   produces<edm::Association<pat::PackedCandidateCollection>>();
+  produces<edm::ValueMap<int>>("quality");
+  produces<edm::ValueMap<int>>("vtxass");
+  produces<CandToVertex>("vtxass");
 }
 
 void Run3ScoutingParticleToPackedCandidateProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
@@ -85,6 +93,9 @@ void Run3ScoutingParticleToPackedCandidateProducer::produce(edm::Event& iEvent, 
 
   output->reserve(particles.size());
   std::vector<int> mapping(particles.size());
+  std::vector<int> vtx_ass;
+  std::vector<int> qual;
+  std::vector<int> pfToPVVector;
 
   for (unsigned int ic = 0, nc = particles.size(); ic < nc; ++ic) {
 	  const auto& particle = particles[ic];
@@ -148,6 +159,7 @@ void Run3ScoutingParticleToPackedCandidateProducer::produce(edm::Event& iEvent, 
     float trkPhi = relativeTrackVars ? particle.trk_phi() + particle.phi() : particle.trk_phi();
 
     int vtxIdx = particle.vertex();
+    pfToPVVector.push_back(vtxIdx);
     reco::VertexRef::key_type pvKey = 0;
     if (vtxIdx >= 0 && static_cast<size_t>(vtxIdx) < vertices.size()) {
       pvKey = static_cast<reco::VertexRef::key_type>(vtxIdx);
@@ -196,6 +208,7 @@ void Run3ScoutingParticleToPackedCandidateProducer::produce(edm::Event& iEvent, 
       cand.setAssociationQuality(pat::PackedCandidate::NotReconstructedPrimary);
     }
 
+
     // Match charged candidates to reco::Tracks and embed track details
     if (particle.pdgId() != 22 && particle.pdgId() != 130 && particle.pdgId() != 2 && particle.pdgId() != 1 && trkPt > 0) {
       int bestIdx = -1;
@@ -232,8 +245,9 @@ void Run3ScoutingParticleToPackedCandidateProducer::produce(edm::Event& iEvent, 
     mapping[ic] = ic;
     outputReco->push_back(pfCand);
     output->push_back(cand);
+    qual.push_back(cand.hasTrackDetails() ? cand.pseudoTrack().qualityMask() : (1 << reco::TrackBase::loose));
+    vtx_ass.push_back(cand.pvAssociationQuality());
   }
-
 
   auto pfHandle = iEvent.put(std::move(outputReco), "recoCands");
   assert(mapping.size() == pfHandle->size());
@@ -246,6 +260,23 @@ void Run3ScoutingParticleToPackedCandidateProducer::produce(edm::Event& iEvent, 
   pf2pcFiller.fill();
   iEvent.put(std::move(pf2pc));
 
+  std::unique_ptr<edm::ValueMap<int>> quality_VM(new edm::ValueMap<int>());
+  edm::ValueMap<int>::Filler filler_quality(*quality_VM);
+  filler_quality.insert(pfHandle, qual.begin(), qual.end());
+  filler_quality.fill();
+  iEvent.put(std::move(quality_VM), "quality");  
+
+  std::unique_ptr<edm::ValueMap<int>> vtx_ass_VM(new edm::ValueMap<int>());
+  edm::ValueMap<int>::Filler filler_vtx_ass(*vtx_ass_VM);
+  filler_vtx_ass.insert(pfHandle, vtx_ass.begin(), vtx_ass.end());
+  filler_vtx_ass.fill();
+  iEvent.put(std::move(vtx_ass_VM), "vtxass");  
+
+  std::unique_ptr<CandToVertex> pfCandToOriginalVertexOutput(new CandToVertex(vertexRefProd));
+  CandToVertex::Filler cand2VertexFiller(*pfCandToOriginalVertexOutput);
+  cand2VertexFiller.insert(pfHandle, pfToPVVector.begin(), pfToPVVector.end());
+  cand2VertexFiller.fill();
+  iEvent.put(std::move(pfCandToOriginalVertexOutput), "vtxass");
 }
 
 void Run3ScoutingParticleToPackedCandidateProducer::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {

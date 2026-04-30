@@ -86,7 +86,7 @@ def customiseForScoutingSecondaryCandidateVertices(process, pName):
         minSignificance = cms.double(10.0)
     )
 
-    process.slimmedSecondaryVertices = cms.EDProducer("PATSecondaryVertexSlimmer",
+    process.slimmedCandidateSecondaryVertices = cms.EDProducer("PATSecondaryVertexSlimmer",
         src = cms.InputTag("inclusiveCandidateSecondaryVertices", "", "%s"%pName),
         packedPFCandidates = cms.InputTag("packedPFCandidates", "", "%s"%pName),
         lostTracksCandidates = cms.InputTag("lostTracks", "", pName)
@@ -94,7 +94,7 @@ def customiseForScoutingSecondaryCandidateVertices(process, pName):
 
     process.scoutingTransientTrackBuilderTask = cms.Task(process.TransientTrackBuilderESProducer)
 
-    process.scoutingSecondaryVertexTask = cms.Task(process.inclusiveCandidateVertexFinder, process.candidateVertexMerger, process.candidateVertexArbitrator, process.inclusiveCandidateSecondaryVertices, process.slimmedSecondaryVertices)
+    process.scoutingCandidateSecondaryVertexTask = cms.Task(process.inclusiveCandidateVertexFinder, process.candidateVertexMerger, process.candidateVertexArbitrator, process.inclusiveCandidateSecondaryVertices, process.slimmedCandidateSecondaryVertices)
     #process.scoutingSecondaryVertexTask = cms.Task(process.inclusiveCandidateVertexFinder, process.candidateVertexMerger, process.candidateVertexArbitrator, process.inclusiveCandidateSecondaryVertices)
 
     #process.scoutingToMiniAODTask.add(process.scoutingTransientTrackBuilderTask, process.scoutingSecondaryVertexTask)
@@ -139,13 +139,13 @@ def customizeForScoutingLostTracks(process, pName):
     #        particles = cms.InputTag("packedPFCandidates", "", "%s"%pName)
     #)
     #Candidates from LostTracks
-    #process.lostTrackCandidates = cms.EDProducer("ConcreteChargedCandidateProducer",
-    #    src = cms.InputTag("lostTracks", "", "DNNFiller"),
-    #    particleType = cms.string('pi+')
-    #)
+    process.lostTrackCandidates = cms.EDProducer("ConcreteChargedCandidateProducer",
+        src = cms.InputTag("lostTracks", "", pName),
+        particleType = cms.string('pi+')
+    )
 
-    #process.scoutingLostTracksTask = cms.Task(process.lostTracks, process.lostTrackCandidates)
-    process.scoutingLostTracksTask = cms.Task(process.lostTracks)
+    process.scoutingLostTracksTask = cms.Task(process.lostTracks, process.lostTrackCandidates)
+    #process.scoutingLostTracksTask = cms.Task(process.lostTracks)
 
     return process
 
@@ -433,7 +433,7 @@ def customizeForScoutingAK4ReclusteredJets(process, pName):
             maxDzSigForPrimaryAssignment = cms.double(5.0),
             maxJetDeltaR = cms.double(0.5),
             minJetPt = cms.double(5.0), # lower from 25.0
-            preferHighRanked = cms.bool(False),
+            preferHighRanked = cms.bool(True),
             useTiming = cms.bool(False),
             useVertexFit = cms.bool(True)
         ),
@@ -469,7 +469,8 @@ def customizeForScoutingAK4ReclusteredJets(process, pName):
         min_pt_for_track_properties = cms.double(0.95),
         min_puppi_wgt = cms.double(-1.0),
         normchi2_value_map = cms.InputTag(""),
-        pf_candidates = cms.InputTag("packedPFCandidates", "recoCands", pName),
+        #pf_candidates = cms.InputTag("packedPFCandidates", "recoCands", pName),
+        pf_candidates = cms.InputTag("packedPFCandidates", "", pName),
         puppi_value_map = cms.InputTag(""),
         quality_value_map = cms.InputTag(""),
         secondary_vertices = cms.InputTag("inclusiveCandidateSecondaryVertices", "", pName),
@@ -502,16 +503,20 @@ def customizeForScoutingAK4ReclusteredJets(process, pName):
         jet_radius = cms.double(0.4),
         min_candidate_pt = cms.double(0.1),
         flip = cms.bool(False),
+        scouting = cms.bool(True),
         sort_cand_by_pt = cms.bool(False),
         fix_lt_sorting = cms.bool(True),
         vertices = cms.InputTag("offlineSlimmedPrimaryVertices", "", pName),
-        losttracks = cms.InputTag(''),
+        losttracks = cms.InputTag("lostTracks", "", pName),
         puppi_value_map = cms.InputTag(''),
-        secondary_vertices = cms.InputTag('inclusiveCandidateSecondaryVertices'),
+        #secondary_vertices = cms.InputTag('inclusiveCandidateSecondaryVertices'),
+        secondary_vertices = cms.InputTag('slimmedSecondaryVertices', "", pName),
         jets = cms.InputTag('recoScoutingPFJetRecluster'),
         unsubjet_map = cms.InputTag(''),
-        candidates = cms.InputTag("packedPFCandidates", "", pName),
-        vertex_associator = cms.InputTag(''),
+        candidates = cms.InputTag("packedPFCandidates", "recoCands", pName),
+        #vertex_associator = cms.InputTag("scoutingPFJetReclusterPrimaryVertexAssociation", "original", pName),
+        vertex_associator = cms.InputTag("packedPFCandidates", "vtxass", pName),
+        quality = cms.InputTag("packedPFCandidates", "quality", pName),
         fallback_puppi_weight = cms.bool(True),
         fallback_vertex_association = cms.bool(True),
         is_weighted_jet = cms.bool(False),
@@ -684,6 +689,7 @@ def customiseScoutingForStandalone(process):
 def customiseForUParTInference(process, pName):
 
     process = customiseScoutingForStandalone(process)
+    process = customizeForScoutingLostTracks(process, pName)
     process = customiseForScoutingSecondaryCandidateVertices(process, pName)
 
     process = customizeForScoutingAK4ReclusteredJets(process, pName)
@@ -695,9 +701,15 @@ def customiseForUParTInference(process, pName):
 def customiseScoutingNanoDerived(process, pName):
 
     process = customiseScoutingForStandalone(process)
+    process = customizeForScoutingV0s(process, pName)
+    process = customizeForScoutingLostTracks(process, pName)
+    process = customiseForScoutingSecondaryVertices(process, pName)
     process = customiseForScoutingSecondaryCandidateVertices(process, pName)
     process.scoutingNanoSequence.associate(process.scoutingTransientTrackBuilderTask)
     process.scoutingNanoSequence.associate(process.scoutingSecondaryVertexTask)
+    process.scoutingNanoSequence.associate(process.scoutingCandidateSecondaryVertexTask)
+    process.scoutingNanoSequence.associate(process.scoutingV0Task)
+    process.scoutingNanoSequence.associate(process.scoutingLostTracksTask)
 
     process = customizeForScoutingAK4ReclusteredJets(process, pName)
 
@@ -754,7 +766,7 @@ def customiseScoutingNanoDerived(process, pName):
         cut = process.scoutingPFJetRecluster2Table.cut,
     )
 
-    process.scoutingPFJetRecluster2TableTask = cms.Task(process.scoutingPFJetRecluster2Task, process.scoutingPFJetRecluster2Table)
+    process.scoutingPFJetRecluster2TableTask = cms.Task( process.scoutingSecondaryVertexTask, process.scoutingCandidateSecondaryVertexTask, process.scoutingV0Task, process.scoutingLostTracksTask, process.scoutingPFJetRecluster2Task, process.scoutingPFJetRecluster2Table)
     process.scoutingNanoSequence.associate(process.scoutingPFJetRecluster2TableTask)
 
     runOnMC = hasattr(process,"NANOEDMAODSIMoutput") or hasattr(process,"NANOAODSIMoutput")

@@ -46,7 +46,6 @@ namespace btagbtvdeep {
     lt_features.btagPf_trackDecayLen = track_info.getTrackJetDecayLen();
 
     lt_features.drminsv = catch_infs_and_bound(drminpfcandsv, 0, -1. * jetR, 0, -1. * jetR);
-
     lt_features.pt = c_pf->pt();
     lt_features.eta = c_pf->eta();
     lt_features.phi = c_pf->phi();
