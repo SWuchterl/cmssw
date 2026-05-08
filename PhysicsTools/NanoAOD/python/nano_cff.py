@@ -250,6 +250,14 @@ def nanoAOD_customizeCommon(process):
     if not(nanoAOD_rePuppi_switch.useExistingWeights) and (nanoAOD_rePuppi_switch.reclusterAK4MET or nanoAOD_rePuppi_switch.reclusterAK8):
         process = UsePuppiWeightFromValueMapForPFCandTable(process)
 
+
+    (run2_nanoAOD_106Xv2 | run3_nanoAOD_pre142X | nanoAOD_rePuppi).toModify(
+        nanoAOD_addDeepInfoAK4_switch,
+        nanoAOD_addParticleNet_switch=False,
+        nanoAOD_addRobustParTAK4Tag_switch=False,
+        nanoAOD_addUnifiedParTAK4Tag_switch=False,
+        nanoAOD_addNoPIDParTAK4Tag_switch=False,
+    )
     # This function is defined in jetsAK4_Puppi_cff.py
     process = nanoAOD_addDeepInfoAK4(process,
                                      addParticleNet=nanoAOD_addDeepInfoAK4_switch.nanoAOD_addParticleNet_switch,
