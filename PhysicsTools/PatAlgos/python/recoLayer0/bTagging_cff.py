@@ -50,6 +50,8 @@ supportedBtagInfos = [
   , 'pfUnifiedParticleTransformerAK4V1TagInfos'
     # GlobalParticleTransformerAK8 tag infos
   , 'pfGlobalParticleTransformerAK8TagInfos'
+    # ParticleTransformerAK15 tag infos
+  , 'pfParticleTransformerAK15TagInfos'
     # DeepDoubleB/C tag infos
   , 'pfDeepDoubleXTagInfos'
     # DeepBoostedJet tag infos
@@ -417,4 +419,13 @@ for disc in _pfGlobalParticleTransformerAK8JetTagsProbs:
 # update supportedMetaDiscr
 for disc in _pfGlobalParticleTransformerAK8JetTagsMetaDiscrs:
     supportedMetaDiscr[disc] = _pfGlobalParticleTransformerAK8JetTagsProbs
+# -----------------------------------
+# setup ParticleTransformer AK15
+from RecoBTag.ONNXRuntime.pfParticleTransformerAK15_cff import _pfParticleTransformerAK15JetTagsProbs, _pfParticleTransformerAK15JetTagsMetaDiscrs
+# update supportedBtagDiscr
+for disc in _pfParticleTransformerAK15JetTagsProbs + _pfParticleTransformerAK15JetTagsMetaDiscrs:
+    supportedBtagDiscr[disc] = [["pfParticleTransformerAK15TagInfos"]]
+# update supportedMetaDiscr
+for disc in _pfParticleTransformerAK15JetTagsMetaDiscrs:
+    supportedMetaDiscr[disc] = _pfParticleTransformerAK15JetTagsProbs
 # -----------------------------------

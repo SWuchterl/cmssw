@@ -840,7 +840,8 @@ def setupBTagging(process, jetSource, pfCandidates, explicitJTA, pvSource, svSou
                                       ),
                                     process, task)
 
-            if btagInfo == 'pfParticleNetTagInfos' or btagInfo == 'pfGlobalParticleTransformerAK8TagInfos':
+            # if btagInfo == 'pfParticleNetTagInfos' or btagInfo == 'pfGlobalParticleTransformerAK8TagInfos':
+            if btagInfo == 'pfParticleNetTagInfos' or btagInfo == 'pfGlobalParticleTransformerAK8TagInfos' or btagInfo == 'pfParticleTransformerAK15TagInfos':
                 if pfCandidates.value() == 'packedPFCandidates':
                     # case 1: running over jets whose daughters are PackedCandidates (only via updateJetCollection for now)
                     vertex_associator = ""

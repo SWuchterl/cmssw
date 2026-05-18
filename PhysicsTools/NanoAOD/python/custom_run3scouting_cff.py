@@ -65,6 +65,22 @@ scoutingFatPFJetReclusterMatchGenExtensionTask = cms.Task(
     scoutingFatPFJetReclusterMatchGenExtensionTable
 )
 
+scoutingFatPFJet15ReclusterTask = cms.Task(
+    scoutingPFCandidate, # translate to reco::PFCandidate, used as input
+    scoutingFatPFJet15Recluster, # jet clustering
+    scoutingFatPFJet15ReclusterParticleNetJetTagInfos, scoutingFatPFJet15ReclusterParticleNetJetTags, # jet tagging
+    scoutingFatPFJet15ReclusterGlobalParticleTransformerJetTagInfos, scoutingFatPFJet15ReclusterGlobalParticleTransformerJetTags, # jet tagging with Global Particle Transformer
+    scoutingFatPFJet15ReclusterSoftDrop, scoutingFatPFJet15ReclusterSoftDropMass, # softdrop mass
+    scoutingFatPFJet15ReclusterParticleNetJetTagInfos, scoutingFatPFJet15ReclusterParticleNetMassRegressionJetTags, # regressed mass
+    scoutingFatPFJet15ReclusterEcfNbeta1, scoutingFatPFJet15ReclusterNjettiness, # substructure variables
+    scoutingFatPFJet15ReclusterTable
+)
+scoutingFatPFJet15ReclusterMatchGenExtensionTask = cms.Task(
+    # slimmedGenJetsAK15,
+    scoutingFatPFJet15ReclusterMatchGen, # gen jet matching
+    scoutingFatPFJet15ReclusterMatchGenExtensionTable
+)
+
 ############################
 # Trigger Bits and Objects #
 ############################
@@ -107,6 +123,7 @@ def prepareScoutingNanoTaskCommon():
     # Scouting derived objects
     scoutingNanoTaskCommon.add(scoutingPFJetReclusterTask)
     scoutingNanoTaskCommon.add(scoutingFatPFJetReclusterTask)
+    scoutingNanoTaskCommon.add(scoutingFatPFJet15ReclusterTask)
 
     return scoutingNanoTaskCommon
 
@@ -121,6 +138,7 @@ def prepareScoutingNanoTaskMC():
     scoutingNanoTaskMC = cms.Task()
     scoutingNanoTaskMC.add(scoutingPFJetReclusterMatchGenExtensionTask)
     scoutingNanoTaskMC.add(scoutingFatPFJetReclusterMatchGenExtensionTask)
+    scoutingNanoTaskMC.add(scoutingFatPFJet15ReclusterMatchGenExtensionTask)
 
     scoutingNanoTaskMC.add(puTable)
     return scoutingNanoTaskMC
