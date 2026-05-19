@@ -534,16 +534,16 @@ electronPNetVariables = _electronTagInfos.clone(
     ),
 )
 
-from PhysicsTools.PatAlgos.electronPNetTags_cfi import electronPNetTags as _electronPNetTags
-electronPNetScores = _electronPNetTags.clone(
-    src=cms.InputTag("electronPNetVariables"),
-    srcLeps=cms.InputTag("linkedObjects", "electrons"),
-    model_path=cms.FileInPath(
-        'PhysicsTools/NanoAOD/data/PNetElectronId/model.onnx'),
-    preprocess_json=cms.string(
-        'PhysicsTools/NanoAOD/data/PNetElectronId/preprocess.json'),
-    flav_names=cms.vstring(["prompt", "heavy", "light", "unknown"]),
-)
+# from PhysicsTools.PatAlgos.electronPNetTags_cfi import electronPNetTags as _electronPNetTags
+# electronPNetScores = _electronPNetTags.clone(
+#     src=cms.InputTag("electronPNetVariables"),
+#     srcLeps=cms.InputTag("linkedObjects", "electrons"),
+#     model_path=cms.FileInPath(
+#         'PhysicsTools/NanoAOD/data/PNetElectronId/model.onnx'),
+#     preprocess_json=cms.string(
+#         'PhysicsTools/NanoAOD/data/PNetElectronId/preprocess.json'),
+#     flav_names=cms.vstring(["prompt", "heavy", "light", "unknown"]),
+# )
 
 ################################################electronParticleNet end#####################
 
@@ -861,15 +861,15 @@ electronParTTrainVariables = cms.EDProducer(
 )
 
 from PhysicsTools.PatAlgos.electronParTTags_cfi import electronParTTags as _electronParTTags
-electronParTScores = _electronParTTags.clone(
-    src=cms.InputTag("electronParTVariables"),
-    srcLeps=cms.InputTag("linkedObjects", "electrons"),
-    model_path=cms.FileInPath(
-        'PhysicsTools/NanoAOD/data/ParTElectronId/model.onnx'),
-    preprocess_json=cms.string(
-        'PhysicsTools/NanoAOD/data/ParTElectronId/preprocess.json'),
-    flav_names=cms.vstring(["prompt", "tau", "heavy", "light", "fake"]),
-)
+# electronParTScores = _electronParTTags.clone(
+#     src=cms.InputTag("electronParTVariables"),
+#     srcLeps=cms.InputTag("linkedObjects", "electrons"),
+#     model_path=cms.FileInPath(
+#         'PhysicsTools/NanoAOD/data/ParTElectronId/model.onnx'),
+#     preprocess_json=cms.string(
+#         'PhysicsTools/NanoAOD/data/ParTElectronId/preprocess.json'),
+#     flav_names=cms.vstring(["prompt", "tau", "heavy", "light", "fake"]),
+# )
 
 electronParTLLScores = _electronParTTags.clone(
     src=cms.InputTag("electronParTTrainVariables"),
@@ -956,33 +956,33 @@ electronTable = simplePATElectronFlatTableProducer.clone(
     externalVariables = cms.PSet(
         promptMVA = ExtVar(cms.InputTag("electronPROMPTMVA"),float, doc="Prompt MVA lepton ID score. Corresponds to the previous mvaTTH",precision=14),
         fsrPhotonIdx = ExtVar(cms.InputTag("leptonFSRphotons:eleFsrIndex"), "int16", doc="Index of the lowest-dR/ET2 among associated FSR photons"),
-        pnScore_prompt=ExtVar(cms.InputTag("electronPNetScores:prompt"), float,
-                              doc="PNet electron ID score for lepton from W/Z/H bosons", precision=14),
-        pnScore_heavy=ExtVar(cms.InputTag("electronPNetScores:heavy"), float,
-                             doc="PNet electron ID score for lepton from B or D hadrons", precision=14),
-        pnScore_light=ExtVar(cms.InputTag("electronPNetScores:light"), float,
-                             doc="PNet electron ID score for lepton from hadrons w/o b or c quarks OR w/o generator matching", precision=14),
-        pnScore_tau=ExtVar(cms.InputTag("electronPNetScores:unknown"), float,
-                           doc="PNet electron ID score for leptons with no matched generated particle", precision=14),
-        parTScore_prompt=ExtVar(cms.InputTag("electronParTScores:prompt"), float,
-                                doc="ParT electron ID score for lepton from W/Z/H bosons", precision=14),
-        parTScore_tau=ExtVar(cms.InputTag("electronParTScores:tau"), float,
-                             doc="ParT electron ID score for leptons from a tau lepton", precision=14),
-        parTScore_heavy=ExtVar(cms.InputTag("electronParTScores:heavy"), float,
-                               doc="ParT electron ID score for lepton from B or D hadrons", precision=14),
-        parTScore_light=ExtVar(cms.InputTag("electronParTScores:light"), float,
-                               doc="ParT electron ID score for lepton from hadrons w/o b or c quarks", precision=14),
-        parTScore_fake=ExtVar(cms.InputTag("electronParTScores:fake"), float,
-                              doc="ParT electron ID score for leptons with no matched generated particle", precision=14),    
-        parTLLScore_prompt=ExtVar(cms.InputTag("electronParTLLScores:prompt"), float,
+        # pnScore_prompt=ExtVar(cms.InputTag("electronPNetScores:prompt"), float,
+        #                       doc="PNet electron ID score for lepton from W/Z/H bosons", precision=14),
+        # pnScore_heavy=ExtVar(cms.InputTag("electronPNetScores:heavy"), float,
+        #                      doc="PNet electron ID score for lepton from B or D hadrons", precision=14),
+        # pnScore_light=ExtVar(cms.InputTag("electronPNetScores:light"), float,
+        #                      doc="PNet electron ID score for lepton from hadrons w/o b or c quarks OR w/o generator matching", precision=14),
+        # pnScore_tau=ExtVar(cms.InputTag("electronPNetScores:unknown"), float,
+        #                    doc="PNet electron ID score for leptons with no matched generated particle", precision=14),
+        # parTScore_prompt=ExtVar(cms.InputTag("electronParTScores:prompt"), float,
+        #                         doc="ParT electron ID score for lepton from W/Z/H bosons", precision=14),
+        # parTScore_tau=ExtVar(cms.InputTag("electronParTScores:tau"), float,
+        #                      doc="ParT electron ID score for leptons from a tau lepton", precision=14),
+        # parTScore_heavy=ExtVar(cms.InputTag("electronParTScores:heavy"), float,
+        #                        doc="ParT electron ID score for lepton from B or D hadrons", precision=14),
+        # parTScore_light=ExtVar(cms.InputTag("electronParTScores:light"), float,
+        #                        doc="ParT electron ID score for lepton from hadrons w/o b or c quarks", precision=14),
+        # parTScore_fake=ExtVar(cms.InputTag("electronParTScores:fake"), float,
+        #                       doc="ParT electron ID score for leptons with no matched generated particle", precision=14),    
+        parTScore_prompt=ExtVar(cms.InputTag("electronParTLLScores:prompt"), float,
                                 doc="ParTLL electron ID score for lepton from W/Z/H bosons", precision=14),
-        parTLLScore_tau=ExtVar(cms.InputTag("electronParTLLScores:tau"), float,
+        parTScore_tau=ExtVar(cms.InputTag("electronParTLLScores:tau"), float,
                              doc="ParTLL electron ID score for leptons from a tau lepton", precision=14),
-        parTLLScore_heavy=ExtVar(cms.InputTag("electronParTLLScores:heavy"), float,
+        parTScore_heavy=ExtVar(cms.InputTag("electronParTLLScores:heavy"), float,
                                doc="ParTLL electron ID score for lepton from B or D hadrons", precision=14),
-        parTLLScore_light=ExtVar(cms.InputTag("electronParTLLScores:light"), float,
+        parTScore_light=ExtVar(cms.InputTag("electronParTLLScores:light"), float,
                                doc="ParTLL electron ID score for lepton from hadrons w/o b or c quarks", precision=14),
-        parTLLScore_fake=ExtVar(cms.InputTag("electronParTLLScores:fake"), float,
+        parTScore_fake=ExtVar(cms.InputTag("electronParTLLScores:fake"), float,
                               doc="ParTLL electron ID score for leptons with no matched generated particle", precision=14),    
     ),
 )
@@ -1222,7 +1222,8 @@ electronMCTable = cms.EDProducer("CandMCMatchTableProducer",
                                  )
 
 electronTask = cms.Task(bitmapVIDForEle,bitmapVIDForEleFall17V2,bitmapVIDForEleHEEP,isoForEle,isoForEleFall17V2,ptRatioRelForEle,seedGainEle,slimmedElectronsWithUserData,finalElectrons)
-electronTablesTask = cms.Task(electronPROMPTMVA, electronPNetVariables, electronPNetScores, electronParTVariables, electronParTTrainVariables, electronParTScores, electronParTLLScores, electronTable)
+# electronTablesTask = cms.Task(electronPROMPTMVA, electronPNetVariables, electronPNetScores, electronParTVariables, electronParTTrainVariables, electronParTScores, electronParTLLScores, electronTable)
+electronTablesTask = cms.Task(electronPROMPTMVA, electronParTTrainVariables, electronParTLLScores, electronTable)
 electronMCTask = cms.Task(tautaggerForMatching, matchingElecPhoton, electronsMCMatchForTable, electronsMCMatchForTableAlt, electronMCTable)
 
 _electronTask_Run2 = electronTask.copy()

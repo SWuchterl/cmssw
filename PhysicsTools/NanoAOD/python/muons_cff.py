@@ -546,13 +546,13 @@ muonParTTrainVariables = cms.EDProducer(
 
 
 from PhysicsTools.PatAlgos.muonParTTags_cfi import muonParTTags as _muonParTTags
-muonParTScores = _muonParTTags.clone(
-    src=cms.InputTag("muonParTVariables"),
-    srcLeps=cms.InputTag("linkedObjects", "muons"),
-    model_path='PhysicsTools/NanoAOD/data/ParTMuonId/model.onnx',
-    preprocess_json='PhysicsTools/NanoAOD/data/ParTMuonId/preprocess.json',
-    flav_names=cms.vstring(["prompt", "tau", "heavy", "light", "fake"]),
-)
+# muonParTScores = _muonParTTags.clone(
+#     src=cms.InputTag("muonParTVariables"),
+#     srcLeps=cms.InputTag("linkedObjects", "muons"),
+#     model_path='PhysicsTools/NanoAOD/data/ParTMuonId/model.onnx',
+#     preprocess_json='PhysicsTools/NanoAOD/data/ParTMuonId/preprocess.json',
+#     flav_names=cms.vstring(["prompt", "tau", "heavy", "light", "fake"]),
+# )
 
 muonParTLLScores = _muonParTTags.clone(
     src=cms.InputTag("muonParTTrainVariables"),
@@ -636,16 +636,16 @@ muonTable = simplePATMuonFlatTableProducer.clone(
         pnScore_heavy = ExtVar(cms.InputTag("muonPNetScores:heavy"),float, doc="PNet muon ID score for lepton from B or D hadrons", precision=14),
         pnScore_light = ExtVar(cms.InputTag("muonPNetScores:light"),float, doc="PNet muon ID score for lepton from hadrons w/o b or c quarks OR w/o generator matching", precision=14),
         pnScore_tau = ExtVar(cms.InputTag("muonPNetScores:tau"),float, doc="PNet muon ID score for decay of tau to light leptons (mu)", precision=14),
-        parTScore_prompt=ExtVar(cms.InputTag("muonParTScores:prompt"), float, doc="ParT muon ID score for lepton from W/Z/H bosons", precision=14),
-        parTScore_heavy=ExtVar(cms.InputTag("muonParTScores:heavy"), float, doc="ParT muon ID score for lepton from B or D hadrons", precision=14),
-        parTScore_light=ExtVar(cms.InputTag("muonParTScores:light"), float, doc="ParT muon ID score for lepton from hadrons w/o b or c quarks OR w/o generator matching", precision=14),
-        parTScore_tau=ExtVar(cms.InputTag("muonParTScores:tau"), float, doc="ParT muon ID score for decay of tau to light leptons (mu)", precision=14),
-        parTScore_fake=ExtVar(cms.InputTag("muonParTScores:fake"), float, doc="ParT muon ID score for fake leptons", precision=14),
-        parTLLScore_prompt=ExtVar(cms.InputTag("muonParTLLScores:prompt"), float, doc="ParTLL muon ID score for lepton from W/Z/H bosons", precision=14),
-        parTLLScore_heavy=ExtVar(cms.InputTag("muonParTLLScores:heavy"), float, doc="ParTLL muon ID score for lepton from B or D hadrons", precision=14),
-        parTLLScore_light=ExtVar(cms.InputTag("muonParTLLScores:light"), float, doc="ParTLL muon ID score for lepton from hadrons w/o b or c quarks OR w/o generator matching", precision=14),
-        parTLLScore_tau=ExtVar(cms.InputTag("muonParTLLScores:tau"), float, doc="ParTLL muon ID score for decay of tau to light leptons (mu)", precision=14),
-        parTLLScore_fake=ExtVar(cms.InputTag("muonParTLLScores:fake"), float, doc="ParTLL muon ID score for fake leptons", precision=14),
+        # parTScore_prompt=ExtVar(cms.InputTag("muonParTScores:prompt"), float, doc="ParT muon ID score for lepton from W/Z/H bosons", precision=14),
+        # parTScore_heavy=ExtVar(cms.InputTag("muonParTScores:heavy"), float, doc="ParT muon ID score for lepton from B or D hadrons", precision=14),
+        # parTScore_light=ExtVar(cms.InputTag("muonParTScores:light"), float, doc="ParT muon ID score for lepton from hadrons w/o b or c quarks OR w/o generator matching", precision=14),
+        # parTScore_tau=ExtVar(cms.InputTag("muonParTScores:tau"), float, doc="ParT muon ID score for decay of tau to light leptons (mu)", precision=14),
+        # parTScore_fake=ExtVar(cms.InputTag("muonParTScores:fake"), float, doc="ParT muon ID score for fake leptons", precision=14),
+        parTScore_prompt=ExtVar(cms.InputTag("muonParTLLScores:prompt"), float, doc="ParTLL muon ID score for lepton from W/Z/H bosons", precision=14),
+        parTScore_heavy=ExtVar(cms.InputTag("muonParTLLScores:heavy"), float, doc="ParTLL muon ID score for lepton from B or D hadrons", precision=14),
+        parTScore_light=ExtVar(cms.InputTag("muonParTLLScores:light"), float, doc="ParTLL muon ID score for lepton from hadrons w/o b or c quarks OR w/o generator matching", precision=14),
+        parTScore_tau=ExtVar(cms.InputTag("muonParTLLScores:tau"), float, doc="ParTLL muon ID score for decay of tau to light leptons (mu)", precision=14),
+        parTScore_fake=ExtVar(cms.InputTag("muonParTLLScores:fake"), float, doc="ParTLL muon ID score for fake leptons", precision=14),
         fsrPhotonIdx = ExtVar(cms.InputTag("leptonFSRphotons:muFsrIndex"), "int16", doc="Index of the lowest-dR/ET2 among associated FSR photons"),
         bsConstrainedPt = ExtVar(cms.InputTag("muonBSConstrain:muonBSConstrainedPt"),float, doc="pT with beamspot constraint",precision=-1),
         bsConstrainedPtErr = ExtVar(cms.InputTag("muonBSConstrain:muonBSConstrainedPtErr"),float, doc="pT error with beamspot constraint ",precision=6),
@@ -697,4 +697,5 @@ muonMCTable = cms.EDProducer("CandMCMatchTableProducer",
 
 muonTask = cms.Task(slimmedMuonsUpdated,isoForMu,ptRatioRelForMu,slimmedMuonsWithUserData,finalMuons,finalLooseMuons)
 muonMCTask = cms.Task(muonsMCMatchForTable,muonMCTable)
-muonTablesTask = cms.Task(muonPROMPTMVA,muonMVALowPt,muonBSConstrain,muonTable,muonMVAID,muonPNetVariables,muonPNetScores, muonParTVariables, muonParTTrainVariables, muonParTScores, muonParTLLScores)
+# muonTablesTask = cms.Task(muonPROMPTMVA,muonMVALowPt,muonBSConstrain,muonTable,muonMVAID,muonPNetVariables,muonPNetScores, muonParTVariables, muonParTTrainVariables, muonParTScores, muonParTLLScores)
+muonTablesTask = cms.Task(muonPROMPTMVA,muonMVALowPt,muonBSConstrain,muonTable,muonMVAID,muonPNetVariables,muonPNetScores, muonParTTrainVariables, muonParTLLScores)

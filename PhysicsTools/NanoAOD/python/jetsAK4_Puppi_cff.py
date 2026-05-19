@@ -123,7 +123,7 @@ jetPuppiTable = simplePATJetFlatTableProducer.clone(
         btagNoPIDParTAK4probud = Var("bDiscriminator('pfNoPIDParticleTransformerAK4JetTags:probud')",float,precision=12,doc="No PID ParT ud raw score"),
         btagNoPIDParTAK4probs = Var("bDiscriminator('pfNoPIDParticleTransformerAK4JetTags:probs')",float,precision=12,doc="No PID ParT s raw score"),
         btagNoPIDParTAK4probg = Var("bDiscriminator('pfNoPIDParticleTransformerAK4JetTags:probg')",float,precision=12,doc="No PID ParT g raw score"),
-        btagNoPIDParTAK4probpu = Var("bDiscriminator('pfNoPIDParticleTransformerAK4JetTags:probu')",float,precision=12,doc="No PID ParT pu raw score"),
+        # btagNoPIDParTAK4probpu = Var("bDiscriminator('pfNoPIDParticleTransformerAK4JetTags:probu')",float,precision=12,doc="No PID ParT pu raw score"),
 
         # puIdDisc = Var("userFloat('pileupJetIdPuppi:fullDiscriminant')", float,doc="Pileup ID BDT discriminant with 133X Winter24 PuppiV18 training",precision=10),
         hfsigmaEtaEta = Var("userFloat('hfsigmaEtaEta')",float,doc="sigmaEtaEta for HF jets (noise discriminating variable)",precision=10),
