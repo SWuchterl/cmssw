@@ -23,8 +23,10 @@ genWeightsTable = cms.EDProducer("GenWeightsTableProducer",
     namedWeightLabels = cms.vstring(),
     lheWeightPrecision = cms.int32(14),
     maxPdfWeights = cms.uint32(150),
-    keepAllPSWeights = cms.bool(False),
+    keepAllPSWeights = cms.bool(True),
     allowedNumScaleWeights = cms.vuint32(9),
+    genTtbarId = cms.InputTag("categorizeGenTtbar","genTtbarId"),
+    genParticles = cms.InputTag("finalGenParticles"),
     debug = cms.untracked.bool(False),
 )
 

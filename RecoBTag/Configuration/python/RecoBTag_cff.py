@@ -15,8 +15,10 @@ from RecoBTag.ONNXRuntime.pfParticleNet_cff import *
 from RecoBTag.ONNXRuntime.pfParticleNetAK4_cff import *
 from RecoBTag.ONNXRuntime.pfParticleTransformerAK4_cff import *
 from RecoBTag.ONNXRuntime.pfUnifiedParticleTransformerAK4_cff import *
+from RecoBTag.ONNXRuntime.pfNoPIDParticleTransformerAK4_cff import *
 from RecoBTag.ONNXRuntime.pfUnifiedParticleTransformerAK4V1_cff import *
 from RecoBTag.ONNXRuntime.pfGlobalParticleTransformerAK8_cff import *
+from RecoBTag.ONNXRuntime.pfParticleTransformerAK15_cff import *
 from RecoVertex.AdaptiveVertexFinder.inclusiveVertexing_cff import *
 from RecoBTag.PixelCluster.pixelClusterTagInfos_cfi import *
 

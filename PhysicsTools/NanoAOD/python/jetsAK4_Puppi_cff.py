@@ -64,22 +64,28 @@ jetPuppiTable = simplePATJetFlatTableProducer.clone(
         svIdx1 = Var("?overlaps('vertices').size()>0?overlaps('vertices')[0].key():-1", "int16", doc="index of first matching secondary vertex"),
         svIdx2 = Var("?overlaps('vertices').size()>1?overlaps('vertices')[1].key():-1", "int16", doc="index of second matching secondary vertex"),
         nSVs = Var("?hasOverlaps('vertices')?overlaps('vertices').size():0", "uint8", doc="number of secondary vertices in the jet"),
+        
         btagDeepFlavB = Var("bDiscriminator('pfDeepFlavourJetTags:probb')+bDiscriminator('pfDeepFlavourJetTags:probbb')+bDiscriminator('pfDeepFlavourJetTags:problepb')",float,doc="DeepJet b+bb+lepb tag discriminator",precision=10),
         btagDeepFlavCvL = Var("?(bDiscriminator('pfDeepFlavourJetTags:probc')+bDiscriminator('pfDeepFlavourJetTags:probuds')+bDiscriminator('pfDeepFlavourJetTags:probg'))>0?bDiscriminator('pfDeepFlavourJetTags:probc')/(bDiscriminator('pfDeepFlavourJetTags:probc')+bDiscriminator('pfDeepFlavourJetTags:probuds')+bDiscriminator('pfDeepFlavourJetTags:probg')):-1",float,doc="DeepJet c vs uds+g discriminator",precision=10),
         btagDeepFlavCvB = Var("?(bDiscriminator('pfDeepFlavourJetTags:probc')+bDiscriminator('pfDeepFlavourJetTags:probb')+bDiscriminator('pfDeepFlavourJetTags:probbb')+bDiscriminator('pfDeepFlavourJetTags:problepb'))>0?bDiscriminator('pfDeepFlavourJetTags:probc')/(bDiscriminator('pfDeepFlavourJetTags:probc')+bDiscriminator('pfDeepFlavourJetTags:probb')+bDiscriminator('pfDeepFlavourJetTags:probbb')+bDiscriminator('pfDeepFlavourJetTags:problepb')):-1",float,doc="DeepJet c vs b+bb+lepb discriminator",precision=10),
         btagDeepFlavQG = Var("?(bDiscriminator('pfDeepFlavourJetTags:probg')+bDiscriminator('pfDeepFlavourJetTags:probuds'))>0?bDiscriminator('pfDeepFlavourJetTags:probg')/(bDiscriminator('pfDeepFlavourJetTags:probg')+bDiscriminator('pfDeepFlavourJetTags:probuds')):-1",float,doc="DeepJet g vs uds discriminator",precision=10),
+        
         btagPNetB = Var("?bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:BvsAll')>0?bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:BvsAll'):-1",float,precision=10,doc="ParticleNet b vs. udscg"),
         btagPNetCvNotB = Var("?bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralJetTags:probb')>0?bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralJetTags:probc')/(1.-bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralJetTags:probb')):-1",float,precision=10,doc="ParticleNet C vs notB"),
         btagPNetCvL = Var("?bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:CvsL')>0?bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:CvsL'):-1",float,precision=10,doc="ParticleNet c vs. udsg"),
         btagPNetCvB = Var("?bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:CvsB')>0?bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:CvsB'):-1",float,precision=10,doc="ParticleNet c vs. b"),
         btagPNetQvG = Var("?abs(eta())<2.5?bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:QvsG'):bDiscriminator('pfParticleNetFromMiniAODAK4PuppiForwardDiscriminatorsJetTags:QvsG')",float,precision=10,doc="ParticleNet q (udsbc) vs. g"),
         btagPNetTauVJet = Var("?bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:TauVsJet')>0?bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:TauVsJet'):-1",float,precision=10,doc="ParticleNet tau vs. jet"),
+        
         PNetRegPtRawCorr = Var("?abs(eta())<2.5?bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralJetTags:ptcorr'):bDiscriminator('pfParticleNetFromMiniAODAK4PuppiForwardJetTags:ptcorr')",float,precision=10,doc="ParticleNet universal flavor-aware visible pT regression (no neutrinos), correction relative to raw jet pT"),
         PNetRegPtRawCorrNeutrino = Var("?abs(eta())<2.5?bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralJetTags:ptnu'):bDiscriminator('pfParticleNetFromMiniAODAK4PuppiForwardJetTags:ptnu')",float,precision=10,doc="ParticleNet universal flavor-aware pT regression neutrino correction, relative to visible. To apply full regression, multiply raw jet pT by both PNetRegPtRawCorr and PNetRegPtRawCorrNeutrino."),
         PNetRegPtRawRes = Var("?abs(eta())<2.5?0.5*(bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralJetTags:ptreshigh')-bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralJetTags:ptreslow')):0.5*(bDiscriminator('pfParticleNetFromMiniAODAK4PuppiForwardJetTags:ptreshigh')-bDiscriminator('pfParticleNetFromMiniAODAK4PuppiForwardJetTags:ptreslow'))",float,precision=10,doc="ParticleNet universal flavor-aware jet pT resolution estimator, (q84 - q16)/2"),
+        
         btagUParTAK4B = Var("?bDiscriminator('pfUnifiedParticleTransformerAK4DiscriminatorsJetTags:BvsAll')>0?bDiscriminator('pfUnifiedParticleTransformerAK4DiscriminatorsJetTags:BvsAll'):-1",float,precision=12,doc="UnifiedParT b vs. udscg"),
         btagUParTAK4CvL = Var("?bDiscriminator('pfUnifiedParticleTransformerAK4DiscriminatorsJetTags:CvsL')>0?bDiscriminator('pfUnifiedParticleTransformerAK4DiscriminatorsJetTags:CvsL'):-1",float,precision=12,doc="UnifiedParT c vs. udsg"),
         btagUParTAK4CvB = Var("?bDiscriminator('pfUnifiedParticleTransformerAK4DiscriminatorsJetTags:CvsB')>0?bDiscriminator('pfUnifiedParticleTransformerAK4DiscriminatorsJetTags:CvsB'):-1",float,precision=12,doc="UnifiedParT c vs. b"),
+        # btagUParTAK4BvC = Var("?((bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:probc')+bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:probb')+bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:probbb')+bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:problepb')))>0?((bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:probb')+bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:probbb')+bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:problepb'))/(bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:probc')+bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:probb')+bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:probbb')+bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:problepb'))):-1",float,precision=12,doc="UnifiedParT b vs. c"),
+        # btagUParTAK4HFvLF = Var("?((bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:probc')+bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:probb')+bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:probbb')+bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:problepb')+bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:probu')+bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:probd')+bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:probs')+bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:probg')))>0?((bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:probc')+bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:probb')+bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:probbb')+bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:problepb'))/(bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:probc')+bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:probb')+bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:probbb')+bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:problepb')+bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:probu')+bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:probd')+bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:probs')+bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:probg'))):-1",float,precision=12,doc="UnifiedParT b+c vs. udsg"),
         btagUParTAK4CvNotB = Var("?((bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:probb')+bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:probbb')+bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:problepb')))>0?((bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:probc'))/(1.-bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:probb')-bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:probbb')-bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:problepb'))):-1",float,precision=12,doc="UnifiedParT c vs. not b"),
         btagUParTAK4SvCB  = Var("?bDiscriminator('pfUnifiedParticleTransformerAK4DiscriminatorsJetTags:SvsBC')>0?bDiscriminator('pfUnifiedParticleTransformerAK4DiscriminatorsJetTags:SvsBC'):-1",float,precision=12,doc="UnifiedParT s vs. bc"),
         btagUParTAK4SvUDG = Var("?bDiscriminator('pfUnifiedParticleTransformerAK4DiscriminatorsJetTags:SvsUDG')>0?bDiscriminator('pfUnifiedParticleTransformerAK4DiscriminatorsJetTags:SvsUDG'):-1",float,precision=12,doc="UnifiedParT s vs. udg"),
@@ -90,13 +96,36 @@ jetPuppiTable = simplePATJetFlatTableProducer.clone(
         btagUParTAK4Mu = Var("bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:probmu')",float,precision=12,doc="UnifiedParT muon raw score"),
         btagUParTAK4probb =  Var("bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:probb')",float,precision=12,doc="UnifiedParT b raw score"),
         btagUParTAK4probbb =  Var("bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:probbb')",float,precision=12,doc="UnifiedParT bb raw score"),
+        
         UParTAK4RegPtRawCorr = Var("?bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:ptcorr')>0?bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:ptcorr'):-1",float,precision=10,doc="UnifiedParT universal flavor-aware visible pT regression (no neutrinos), correction relative to raw jet pT"),
         UParTAK4RegPtRawCorrNeutrino = Var("?bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:ptnu')>0?bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:ptnu'):-1",float,precision=10,doc="UnifiedParT universal flavor-aware pT regression neutrino correction, relative to visible. Correction relative to raw jet pT"),
         UParTAK4RegPtRawRes = Var("?(bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:ptreshigh')+bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:ptreslow'))>0?0.5*(bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:ptreshigh')-bDiscriminator('pfUnifiedParticleTransformerAK4JetTags:ptreslow')):-1",float,precision=10,doc="UnifiedParT universal flavor-aware jet pT resolution estimator, (q84 - q16)/2"),
         UParTAK4V1RegPtRawCorr = Var("?bDiscriminator('pfUnifiedParticleTransformerAK4V1JetTags:ptcorr')>0?bDiscriminator('pfUnifiedParticleTransformerAK4V1JetTags:ptcorr'):-1",float,precision=10,doc="UnifiedParT V1 universal flavor-aware visible pT regression (no neutrinos), correction relative to raw jet pT"),
         UParTAK4V1RegPtRawCorrNeutrino = Var("?bDiscriminator('pfUnifiedParticleTransformerAK4V1JetTags:ptnu')>0?bDiscriminator('pfUnifiedParticleTransformerAK4V1JetTags:ptnu'):-1",float,precision=10,doc="UnifiedParT V1 universal flavor-aware pT regression neutrino correction, relative to visible. Correction relative to raw jet pT"),
         UParTAK4V1RegPtRawRes = Var("?(bDiscriminator('pfUnifiedParticleTransformerAK4V1JetTags:ptreshigh')+bDiscriminator('pfUnifiedParticleTransformerAK4V1JetTags:ptreslow'))>0?0.5*(bDiscriminator('pfUnifiedParticleTransformerAK4V1JetTags:ptreshigh')-bDiscriminator('pfUnifiedParticleTransformerAK4V1JetTags:ptreslow')):-1",float,precision=10,doc="UnifiedParT V1 universal flavor-aware jet pT resolution estimator, (q84 - q16)/2"),
-        puIdDisc = Var("userFloat('pileupJetIdPuppi:fullDiscriminant')", float,doc="Pileup ID BDT discriminant with 133X Winter24 PuppiV18 training",precision=10),
+        
+        # btagNoPIDParTAK4B = Var("?bDiscriminator('pfNoPIDParticleTransformerAK4DiscriminatorsJetTags:BvsAll')>0?bDiscriminator('pfNoPIDParticleTransformerAK4DiscriminatorsJetTags:BvsAll'):-1",float,precision=12,doc="NoPID UnifiedParT b vs. udscg"),
+        # btagNoPIDParTAK4CvL = Var("?bDiscriminator('pfNoPIDParticleTransformerAK4DiscriminatorsJetTags:CvsL')>0?bDiscriminator('pfNoPIDParticleTransformerAK4DiscriminatorsJetTags:CvsL'):-1",float,precision=12,doc="NoPID UnifiedParT c vs. udsg"),
+        # btagNoPIDParTAK4CvB = Var("?bDiscriminator('pfNoPIDParticleTransformerAK4DiscriminatorsJetTags:CvsB')>0?bDiscriminator('pfNoPIDParticleTransformerAK4DiscriminatorsJetTags:CvsB'):-1",float,precision=12,doc="NoPID UnifiedParT c vs. b"),
+        # btagNoPIDParTAK4BvC = Var("?bDiscriminator('pfNoPIDParticleTransformerAK4DiscriminatorsJetTags:BvsC')>0?bDiscriminator('pfNoPIDParticleTransformerAK4DiscriminatorsJetTags:BvsC'):-1",float,precision=12,doc="NoPID UnifiedParT b vs. c"),
+        # btagNoPIDParTAK4HFvLF = Var("?bDiscriminator('pfNoPIDParticleTransformerAK4DiscriminatorsJetTags:HFvsLF')>0?bDiscriminator('pfNoPIDParticleTransformerAK4DiscriminatorsJetTags:HFvsLF'):-1",float,precision=12,doc="NoPID UnifiedParT b+c vs. udsg"),
+        # btagNoPIDParTAK4CvNotB = Var("?bDiscriminator('pfNoPIDParticleTransformerAK4DiscriminatorsJetTags:CvsNotB')>0?bDiscriminator('pfNoPIDParticleTransformerAK4DiscriminatorsJetTags:CvsNotB'):-1",float,precision=12,doc="NoPID UnifiedParT c vs. not b"),
+        # btagNoPIDParTAK4SvCB  = Var("?bDiscriminator('pfNoPIDParticleTransformerAK4DiscriminatorsJetTags:SvsBC')>0?bDiscriminator('pfNoPIDParticleTransformerAK4DiscriminatorsJetTags:SvsBC'):-1",float,precision=12,doc="No PID ParT s vs. bc"),
+        # btagNoPIDParTAK4SvUDG = Var("?bDiscriminator('pfNoPIDParticleTransformerAK4DiscriminatorsJetTags:SvsUDG')>0?bDiscriminator('pfNoPIDParticleTransformerAK4DiscriminatorsJetTags:SvsUDG'):-1",float,precision=12,doc="No PID ParT s vs. udg"),
+        # btagNoPIDParTAK4UDG = Var("bDiscriminator('pfNoPIDParticleTransformerAK4JetTags:probu')+bDiscriminator('pfNoPIDParticleTransformerAK4JetTags:probd')+bDiscriminator('pfNoPIDParticleTransformerAK4JetTags:probg')",float,precision=12,doc="No PID ParT u+d+g raw score"),
+        # btagNoPIDParTAK4QvG = Var("?bDiscriminator('pfNoPIDParticleTransformerAK4DiscriminatorsJetTags:QvsG')>0?bDiscriminator('pfNoPIDParticleTransformerAK4DiscriminatorsJetTags:QvsG'):-1",float,precision=12,doc="No PID ParT q (uds) vs. g"),
+        # btagNoPIDParTAK4AllvPU = Var("?bDiscriminator('pfNoPIDParticleTransformerAK4DiscriminatorsJetTags:AllvsPU')>0?bDiscriminator('pfNoPIDParticleTransformerAK4DiscriminatorsJetTags:AllvsPU'):-1",float,precision=12,doc="No PID ParT all (b+c+udsg) vs. PU"),
+        # raw scores instead
+        btagNoPIDParTAK4probb = Var("bDiscriminator('pfNoPIDParticleTransformerAK4JetTags:probb')",float,precision=12,doc="No PID ParT b raw score"),
+        btagNoPIDParTAK4probbb = Var("bDiscriminator('pfNoPIDParticleTransformerAK4JetTags:probbb')",float,precision=12,doc="No PID ParT bb raw score"),
+        btagNoPIDParTAK4probc = Var("bDiscriminator('pfNoPIDParticleTransformerAK4JetTags:probc')",float,precision=12,doc="No PID ParT c raw score"),
+        btagNoPIDParTAK4probcc = Var("bDiscriminator('pfNoPIDParticleTransformerAK4JetTags:probcc')",float,precision=12,doc="No PID ParT cc raw score"),
+        btagNoPIDParTAK4probud = Var("bDiscriminator('pfNoPIDParticleTransformerAK4JetTags:probud')",float,precision=12,doc="No PID ParT ud raw score"),
+        btagNoPIDParTAK4probs = Var("bDiscriminator('pfNoPIDParticleTransformerAK4JetTags:probs')",float,precision=12,doc="No PID ParT s raw score"),
+        btagNoPIDParTAK4probg = Var("bDiscriminator('pfNoPIDParticleTransformerAK4JetTags:probg')",float,precision=12,doc="No PID ParT g raw score"),
+        # btagNoPIDParTAK4probpu = Var("bDiscriminator('pfNoPIDParticleTransformerAK4JetTags:probu')",float,precision=12,doc="No PID ParT pu raw score"),
+
+        # puIdDisc = Var("userFloat('pileupJetIdPuppi:fullDiscriminant')", float,doc="Pileup ID BDT discriminant with 133X Winter24 PuppiV18 training",precision=10),
         hfsigmaEtaEta = Var("userFloat('hfsigmaEtaEta')",float,doc="sigmaEtaEta for HF jets (noise discriminating variable)",precision=10),
         hfsigmaPhiPhi = Var("userFloat('hfsigmaPhiPhi')",float,doc="sigmaPhiPhi for HF jets (noise discriminating variable)",precision=10),
         hfcentralEtaStripSize = Var("userInt('hfcentralEtaStripSize')", int, doc="eta size of the central tower strip in HF (noise discriminating variable)"),
@@ -123,7 +152,7 @@ jetPuppiTable.variables.pt.precision=10
 ## - To be used in nanoAOD_customizeCommon() in nano_cff.py
 ###############################################################
 from PhysicsTools.PatAlgos.tools.jetTools import updateJetCollection
-def nanoAOD_addDeepInfoAK4(process,addParticleNet,addRobustParTAK4=False,addUnifiedParTAK4=False):
+def nanoAOD_addDeepInfoAK4(process,addParticleNet,addRobustParTAK4=False,addUnifiedParTAK4=False, addNoPIDParTAK4=False):
     _btagDiscriminators=[]
     if addParticleNet:
         print("Updating process to run ParticleNetAK4")
@@ -142,6 +171,10 @@ def nanoAOD_addDeepInfoAK4(process,addParticleNet,addRobustParTAK4=False,addUnif
         print("Updating process to run UnifiedParTAK4V1")
         from RecoBTag.ONNXRuntime.pfUnifiedParticleTransformerAK4V1_cff import _pfUnifiedParticleTransformerAK4V1JetTagsAll as pfUnifiedParticleTransformerAK4V1JetTagsAll
         _btagDiscriminators += pfUnifiedParticleTransformerAK4V1JetTagsAll
+    if addNoPIDParTAK4:
+        print("Updating process to run NoPIDParTAK4")
+        from RecoBTag.ONNXRuntime.pfNoPIDParticleTransformerAK4_cff import _pfNoPIDParticleTransformerAK4JetTagsAll as pfNoPIDParticleTransformerAK4JetTagsAll
+        _btagDiscriminators += pfNoPIDParticleTransformerAK4JetTagsAll
     if len(_btagDiscriminators)==0: return process
     print("Will recalculate the following discriminators: "+", ".join(_btagDiscriminators))
     updateJetCollection(
@@ -162,9 +195,10 @@ def nanoAOD_addDeepInfoAK4(process,addParticleNet,addRobustParTAK4=False,addUnif
 
 nanoAOD_addDeepInfoAK4_switch = cms.PSet(
 
-    nanoAOD_addParticleNet_switch = cms.untracked.bool(False),
-    nanoAOD_addRobustParTAK4Tag_switch = cms.untracked.bool(False),
-    nanoAOD_addUnifiedParTAK4Tag_switch = cms.untracked.bool(False)
+    nanoAOD_addParticleNet_switch = cms.untracked.bool(True),
+    nanoAOD_addRobustParTAK4Tag_switch = cms.untracked.bool(True),
+    nanoAOD_addUnifiedParTAK4Tag_switch = cms.untracked.bool(True),
+    nanoAOD_addNoPIDParTAK4Tag_switch = cms.untracked.bool(True),
 )
 
 ################################################
