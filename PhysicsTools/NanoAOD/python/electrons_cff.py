@@ -411,9 +411,8 @@ run2_egamma_2016.toModify(
 ################################################ electronPROMPTMVA end#####################
 
 
-################################################electronParticleNet #####################
+################################################ electronParticleNet #####################
 
-from PhysicsTools.PatAlgos.electronTagInfos_cfi import electronTagInfos as _electronTagInfos
 electronPNetVariables = _electronTagInfos.clone(
     src=cms.InputTag("linkedObjects", "electrons"),
     secondary_vertices=cms.InputTag("slimmedSecondaryVertices"),
@@ -545,55 +544,83 @@ electronPNetVariables = _electronTagInfos.clone(
 #     flav_names=cms.vstring(["prompt", "heavy", "light", "unknown"]),
 # )
 
-################################################electronParticleNet end#####################
+################################################ electronParticleNet end#####################
 
 
-################################################electronParticleTransformer #####################
+################################################ electronParticleTransformer #####################
 
 _legacy_ParTVariables_LeptonPSet = cms.PSet(
+    Lepton_mask=cms.string("1"),
+    Lepton_pt=cms.string("pt"),
     Lepton_pt_log=cms.string("log(pt+1.e-8)"),
     Lepton_eta=cms.string("eta"),
+    Lepton_phi=cms.string("phi"),
+    Lepton_px=cms.string("px"),
+    Lepton_py=cms.string("py"),
+    Lepton_pz=cms.string("pz"),
+    Lepton_energy=cms.string("energy"),
+    Lepton_energy_log=cms.string("log(energy+1.e-8)"),
+    Lepton_jetNDauChargedMVASel=cms.string(
+        "?userCand('jetForLepJetVar').isNonnull()?userFloat('jetNDauChargedMVASel'):0"),
+    Lepton_miniPFRelIso_all=cms.string("userFloat('miniIsoAll_Fall17V2')/pt"),
+    Lepton_miniRelIsoCharged=cms.string(
+        "(userFloat('miniIsoChg_Fall17V2')/pt)"),
+    Lepton_miniRelIsoCharged_log=cms.string(
+        "log((userFloat('miniIsoChg_Fall17V2')/pt)+1.e-8)"),
+    Lepton_miniRelIsoNeutral=cms.string(
+        "((userFloat('miniIsoAll_Fall17V2')-userFloat('miniIsoChg_Fall17V2'))/pt)"),
+    Lepton_miniRelIsoNeutral_log=cms.string(
+        "log(((userFloat('miniIsoAll_Fall17V2')-userFloat('miniIsoChg_Fall17V2'))/pt)+1.e-8)"),
+    Lepton_pfRelIso03_all=cms.string("(userFloat('PFIsoAll_Fall17V2')/pt)"),
+    Lepton_pfRelIso03_all_log=cms.string(
+        "log((userFloat('PFIsoAll_Fall17V2')/pt)+1.e-8)"),
+    Lepton_jetPtRelv2_log=cms.string(
+        "?userCand('jetForLepJetVar').isNonnull()?log(abs(userFloat('ptRel'))+1.e-8):0"),
+    # Lepton_jetPNet=cms.string("?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:BvsAll'),0.0):0.0"),
+    # Lepton_jetPNet_TauVsJet=cms.string("?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:TauVsJet'),0.0):0.0"),
+    # Lepton_jetPNet_CvsL=cms.string("?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:CvsL'),0.0):0.0"),
+    # Lepton_jetPNet_CvsB=cms.string("?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:CvsB'),0.0):0.0"),
+    # Lepton_jetPNet_QvsG=cms.string("?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:QvsG'),0.0):0.0"),
+    Lepton_jetPtRatio=cms.string(
+        "?userCand('jetForLepJetVar').isNonnull()?min(userFloat('ptRatio'),1.5):1.0/(1.0+(pfIsolationVariables().sumChargedHadronPt + max(pfIsolationVariables().sumNeutralHadronEt + pfIsolationVariables().sumPhotonEt - pfIsolationVariables().sumPUPt/2,0.0))/pt)"),
     Lepton_dxy=cms.string("dB('PV2D')"),
+    Lepton_dxy_sig=cms.string("?edB('PV2D')>0?dB('PV2D')/edB('PV2D'):0"),
+    Lepton_dxy_asinh=cms.string(
+        "log(abs(dB('PV2D')+sqrt(dB('PV2D')*dB('PV2D')+1.0+1.e-8)))"),
+    Lepton_dxy_sig_asinh=cms.string(
+        "?edB('PV2D')>0?log(abs((dB('PV2D')/edB('PV2D'))+sqrt((dB('PV2D')/edB('PV2D'))*(dB('PV2D')/edB('PV2D')) + 1))+1.e-8):0"),
+    Lepton_sip3d=cms.string("dB('PV3D')"),
+    Lepton_sip3d_asinh=cms.string(
+        "log(abs(dB('PV3D')+sqrt(dB('PV3D')*dB('PV3D')+1.0+1.e-8)))"),
+    Lepton_sip3d_sig=cms.string("?edB('PV3D')>0?dB('PV3D')/edB('PV3D'):0"),
+    Lepton_sip3d_sig_asinh=cms.string(
+        "?edB('PV3D')>0?log(abs((dB('PV3D')/edB('PV3D'))+sqrt((dB('PV3D')/edB('PV3D'))*(dB('PV3D')/edB('PV3D')) + 1))+1.e-8):0"),
     Lepton_dz=cms.string("dB('PVDZ')"),
-    Lepton_sip3d=cms.string("dB('PV3D')/max(1.e-6,edB('PV3D'))"),
-    Lepton_closeTrackNLayers=cms.string(
-        "closestCtfTrackNLayers()"),
-    Lepton_deltaetacltrkcalo=cms.string(
-        "deltaEtaSeedClusterTrackAtCalo"),
+    Lepton_dz_asinh=cms.string(
+        "log(abs(dB('PVDZ')+sqrt(dB('PVDZ')*dB('PVDZ')+1.0+1.e-8)))"),
+    Lepton_dz_sig_asinh=cms.string(
+        "?edB('PVDZ')>0?log(abs((dB('PVDZ')/edB('PVDZ'))+sqrt((dB('PVDZ')/edB('PVDZ'))*(dB('PVDZ')/edB('PVDZ'))+1.0+1.e-8))):0"),
+    # electron specific variables
+    Lepton_closeTrackNLayers=cms.string("closestCtfTrackNLayers()"),
+    Lepton_deltaetacltrkcalo=cms.string("deltaEtaSeedClusterTrackAtCalo"),
     Lepton_dEtaInSeed=cms.string(
         "deltaEtaSuperClusterTrackAtVtx()-superCluster().eta()+superCluster().seed().eta()"),
+    Lepton_hcaloverecal=cms.string("full5x5_hcalOverEcal()"),
     Lepton_hcaloverecal_log=cms.string(
         "log(full5x5_hcalOverEcal()+1.e-8)"),
     Lepton_r9full=cms.string("full5x5_r9()"),
-    Lepton_e1x5bye5x5=cms.string(
-        "1-full5x5_e1x5()/full5x5_e5x5()"),
+    Lepton_e1x5bye5x5=cms.string("1-full5x5_e1x5()/full5x5_e5x5()"),
     Lepton_sigmaietaieta=cms.string("full5x5_sigmaIetaIeta()"),
     Lepton_sigmaiphiiphi=cms.string("full5x5_sigmaIphiIphi()"),
-    Lepton_supcl_etaWidth=cms.string(
-        "superCluster().etaWidth()"),
-    Lepton_supcl_phiWidth=cms.string(
-        "superCluster().phiWidth()"),
+    Lepton_supcl_etaWidth=cms.string("superCluster().etaWidth()"),
+    Lepton_supcl_phiWidth=cms.string("superCluster().phiWidth()"),
     Lepton_fbrem=cms.string("fbrem()"),
+    Lepton_fbrem_reallog=cms.string("log(abs(fbrem()+1.e-8))"),
+    Lepton_eoverp=cms.string("eSuperClusterOverP()"),
     Lepton_eoverp_log=cms.string("log(eSuperClusterOverP()+1.e-8)"),
     Lepton_passConversionVeto=cms.string("passConversionVeto()"),
     Lepton_dr03HcalDepth1TowerSumEt_Rel=cms.string(
-        "?(pt()>0.)?(dr03HcalTowerSumEt(1)*1./pt()):-100"),
-    Lepton_jetNDauChargedMVASel=cms.string(
-        "?userCand('jetForLepJetVar').isNonnull()?userFloat('jetNDauChargedMVASel'):0"),
-    Lepton_miniRelIsoCharged_log=cms.string(
-        "log((userFloat('miniIsoChg_Fall17V2')/pt)+1.e-8)"),
-    Lepton_miniRelIsoNeutral_log=cms.string(
-        "log(((userFloat('miniIsoAll_Fall17V2')-userFloat('miniIsoChg_Fall17V2'))/pt)+1.e-8)"),
-    Lepton_pfRelIso03_all_log=cms.string(
-        "log((userFloat('PFIsoAll_Fall17V2')/pt)+1.e-8)"),
-    Lepton_jetPNet=cms.string(
-        "?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:BvsAll'),0.0):0.0"),
-    Lepton_jetPtRelv2_log=cms.string(
-        "log((?userCand('jetForLepJetVar').isNonnull()?userFloat('ptRel'):0)+1.e-8)"),
-    Lepton_jetPtRatio=cms.string(
-        "?userCand('jetForLepJetVar').isNonnull()?min(userFloat('ptRatio'),1.5):1.0/(1.0+(pfIsolationVariables().sumChargedHadronPt + max(pfIsolationVariables().sumNeutralHadronEt + pfIsolationVariables().sumPhotonEt - pfIsolationVariables().sumPUPt/2,0.0))/pt)"),
-    Lepton_mvaId=cms.string(
-        "userFloat('mvaNoIso_Fall17V2')"),
+        "?(pt()>0.)?(dr03HcalTowerSumEt(1)*1./pt()):0."),
 )
 
 ParTVariables_LeptonPSet = cms.PSet(
@@ -680,8 +707,9 @@ electronParTVariables = cms.EDProducer(
 
 (run2_egamma_2016 | run2_egamma_2017 | run2_egamma_2018).toModify(
     electronParTVariables,
-    leptonVars = _legacy_ParTVariables_LeptonPSet
+    leptonVars=_legacy_ParTVariables_LeptonPSet
 )
+
 
 electronParTTrainVariables = cms.EDProducer(
     "ElectronTagInfoCollectionProducer",
@@ -701,37 +729,53 @@ electronParTTrainVariables = cms.EDProducer(
         Lepton_pz=cms.string("pz"),
         Lepton_energy=cms.string("energy"),
         Lepton_energy_log=cms.string("log(energy+1.e-8)"),
-        Lepton_jetNDauChargedMVASel=cms.string("?userCand('jetForLepJetVar').isNonnull()?userFloat('jetNDauChargedMVASel'):0"),
-        # Lepton_miniRelIsoCharged=cms.string("(userFloat('miniIsoChg')/pt)"),
-        # Lepton_miniRelIsoCharged_log=cms.string("log((userFloat('miniIsoChg')/pt)+1.e-8)"),
-        # Lepton_miniRelIsoNeutral=cms.string("((userFloat('miniIsoAll')-userFloat('miniIsoChg'))/pt)"),
-        # Lepton_miniRelIsoNeutral_log=cms.string("log(((userFloat('miniIsoAll')-userFloat('miniIsoChg'))/pt)+1.e-8)"),
-        # Lepton_pfRelIso03_all=cms.string("(userFloat('PFIsoAll')/pt)"),
-        # Lepton_pfRelIso03_all_log=cms.string("log((userFloat('PFIsoAll')/pt)+1.e-8)"),
-        Lepton_jetPtRelv2_log=cms.string("?userCand('jetForLepJetVar').isNonnull()?log(abs(userFloat('ptRel'))+1.e-8):0"),
+        Lepton_jetNDauChargedMVASel=cms.string(
+            "?userCand('jetForLepJetVar').isNonnull()?userFloat('jetNDauChargedMVASel'):0"),
+        Lepton_miniPFRelIso_all=cms.string("userFloat('miniIsoAll')/pt"),
+        Lepton_miniRelIsoCharged=cms.string("(userFloat('miniIsoChg')/pt)"),
+        Lepton_miniRelIsoCharged_log=cms.string(
+            "log((userFloat('miniIsoChg')/pt)+1.e-8)"),
+        Lepton_miniRelIsoNeutral=cms.string(
+            "((userFloat('miniIsoAll')-userFloat('miniIsoChg'))/pt)"),
+        Lepton_miniRelIsoNeutral_log=cms.string(
+            "log(((userFloat('miniIsoAll')-userFloat('miniIsoChg'))/pt)+1.e-8)"),
+        Lepton_pfRelIso03_all=cms.string("(userFloat('PFIsoAll')/pt)"),
+        Lepton_pfRelIso03_all_log=cms.string(
+            "log((userFloat('PFIsoAll')/pt)+1.e-8)"),
+        Lepton_jetPtRelv2_log=cms.string(
+            "?userCand('jetForLepJetVar').isNonnull()?log(abs(userFloat('ptRel'))+1.e-8):0"),
         # Lepton_jetPNet=cms.string("?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:BvsAll'),0.0):0.0"),
         # Lepton_jetPNet_TauVsJet=cms.string("?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:TauVsJet'),0.0):0.0"),
         # Lepton_jetPNet_CvsL=cms.string("?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:CvsL'),0.0):0.0"),
         # Lepton_jetPNet_CvsB=cms.string("?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:CvsB'),0.0):0.0"),
         # Lepton_jetPNet_QvsG=cms.string("?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:QvsG'),0.0):0.0"),
-        Lepton_jetPtRatio=cms.string("?userCand('jetForLepJetVar').isNonnull()?min(userFloat('ptRatio'),1.5):1.0/(1.0+(pfIsolationVariables().sumChargedHadronPt + max(pfIsolationVariables().sumNeutralHadronEt + pfIsolationVariables().sumPhotonEt - pfIsolationVariables().sumPUPt/2,0.0))/pt)"),
+        Lepton_jetPtRatio=cms.string(
+            "?userCand('jetForLepJetVar').isNonnull()?min(userFloat('ptRatio'),1.5):1.0/(1.0+(pfIsolationVariables().sumChargedHadronPt + max(pfIsolationVariables().sumNeutralHadronEt + pfIsolationVariables().sumPhotonEt - pfIsolationVariables().sumPUPt/2,0.0))/pt)"),
         Lepton_dxy=cms.string("dB('PV2D')"),
         Lepton_dxy_sig=cms.string("?edB('PV2D')>0?dB('PV2D')/edB('PV2D'):0"),
-        Lepton_dxy_asinh=cms.string("log(abs(dB('PV2D')+sqrt(dB('PV2D')*dB('PV2D')+1.0+1.e-8)))"),
-        Lepton_dxy_sig_asinh=cms.string("?edB('PV2D')>0?log(abs((dB('PV2D')/edB('PV2D'))+sqrt((dB('PV2D')/edB('PV2D'))*(dB('PV2D')/edB('PV2D')) + 1))+1.e-8):0"),
+        Lepton_dxy_asinh=cms.string(
+            "log(abs(dB('PV2D')+sqrt(dB('PV2D')*dB('PV2D')+1.0+1.e-8)))"),
+        Lepton_dxy_sig_asinh=cms.string(
+            "?edB('PV2D')>0?log(abs((dB('PV2D')/edB('PV2D'))+sqrt((dB('PV2D')/edB('PV2D'))*(dB('PV2D')/edB('PV2D')) + 1))+1.e-8):0"),
         Lepton_sip3d=cms.string("dB('PV3D')"),
-        Lepton_sip3d_asinh=cms.string("log(abs(dB('PV3D')+sqrt(dB('PV3D')*dB('PV3D')+1.0+1.e-8)))"),
+        Lepton_sip3d_asinh=cms.string(
+            "log(abs(dB('PV3D')+sqrt(dB('PV3D')*dB('PV3D')+1.0+1.e-8)))"),
         Lepton_sip3d_sig=cms.string("?edB('PV3D')>0?dB('PV3D')/edB('PV3D'):0"),
-        Lepton_sip3d_sig_asinh=cms.string("?edB('PV3D')>0?log(abs((dB('PV3D')/edB('PV3D'))+sqrt((dB('PV3D')/edB('PV3D'))*(dB('PV3D')/edB('PV3D')) + 1))+1.e-8):0"),
+        Lepton_sip3d_sig_asinh=cms.string(
+            "?edB('PV3D')>0?log(abs((dB('PV3D')/edB('PV3D'))+sqrt((dB('PV3D')/edB('PV3D'))*(dB('PV3D')/edB('PV3D')) + 1))+1.e-8):0"),
         Lepton_dz=cms.string("dB('PVDZ')"),
-        Lepton_dz_asinh=cms.string("log(abs(dB('PVDZ')+sqrt(dB('PVDZ')*dB('PVDZ')+1.0+1.e-8)))"),
-        Lepton_dz_sig_asinh=cms.string("?edB('PVDZ')>0?log(abs((dB('PVDZ')/edB('PVDZ'))+sqrt((dB('PVDZ')/edB('PVDZ'))*(dB('PVDZ')/edB('PVDZ'))+1.0+1.e-8))):0"),
+        Lepton_dz_asinh=cms.string(
+            "log(abs(dB('PVDZ')+sqrt(dB('PVDZ')*dB('PVDZ')+1.0+1.e-8)))"),
+        Lepton_dz_sig_asinh=cms.string(
+            "?edB('PVDZ')>0?log(abs((dB('PVDZ')/edB('PVDZ'))+sqrt((dB('PVDZ')/edB('PVDZ'))*(dB('PVDZ')/edB('PVDZ'))+1.0+1.e-8))):0"),
         # electron specific variables
         Lepton_closeTrackNLayers=cms.string("closestCtfTrackNLayers()"),
         Lepton_deltaetacltrkcalo=cms.string("deltaEtaSeedClusterTrackAtCalo"),
-        Lepton_dEtaInSeed=cms.string("deltaEtaSuperClusterTrackAtVtx()-superCluster().eta()+superCluster().seed().eta()"),
+        Lepton_dEtaInSeed=cms.string(
+            "deltaEtaSuperClusterTrackAtVtx()-superCluster().eta()+superCluster().seed().eta()"),
         Lepton_hcaloverecal=cms.string("full5x5_hcalOverEcal()"),
-        Lepton_hcaloverecal_log=cms.string("log(full5x5_hcalOverEcal()+1.e-8)"),
+        Lepton_hcaloverecal_log=cms.string(
+            "log(full5x5_hcalOverEcal()+1.e-8)"),
         Lepton_r9full=cms.string("full5x5_r9()"),
         Lepton_e1x5bye5x5=cms.string("1-full5x5_e1x5()/full5x5_e5x5()"),
         Lepton_sigmaietaieta=cms.string("full5x5_sigmaIetaIeta()"),
@@ -743,7 +787,8 @@ electronParTTrainVariables = cms.EDProducer(
         Lepton_eoverp=cms.string("eSuperClusterOverP()"),
         Lepton_eoverp_log=cms.string("log(eSuperClusterOverP()+1.e-8)"),
         Lepton_passConversionVeto=cms.string("passConversionVeto()"),
-        Lepton_dr03HcalDepth1TowerSumEt_Rel=cms.string("?(pt()>0.)?(dr03HcalTowerSumEt(1)*1./pt()):0."),
+        Lepton_dr03HcalDepth1TowerSumEt_Rel=cms.string(
+            "?(pt()>0.)?(dr03HcalTowerSumEt(1)*1./pt()):0."),
         # Lepton_mvaId=cms.string("userFloat('mvaNoIso')"),
         # and some of the other IDs for comparison
         # Lepton_ID_cutBasedVeto=cms.string("userInt('cutBasedID_veto')"),
@@ -860,7 +905,11 @@ electronParTTrainVariables = cms.EDProducer(
     ),
 )
 
-from PhysicsTools.PatAlgos.electronParTTags_cfi import electronParTTags as _electronParTTags
+(run2_egamma_2016 | run2_egamma_2017 | run2_egamma_2018).toModify(
+    electronParTTrainVariables,
+    leptonVars=_legacy_ParTVariables_LeptonPSet
+)
+
 # electronParTScores = _electronParTTags.clone(
 #     src=cms.InputTag("electronParTVariables"),
 #     srcLeps=cms.InputTag("linkedObjects", "electrons"),
@@ -878,84 +927,147 @@ electronParTLLScores = _electronParTTags.clone(
         'PhysicsTools/NanoAOD/data/ParTElectronId/v2/electron_ParT_2024.onnx'),
     preprocess_json=cms.string(
         'PhysicsTools/NanoAOD/data/ParTElectronId/v2/preprocess.json'),
-        # [prompt, tau, heavy, light, fake]
+    # [prompt, tau, heavy, light, fake]
     flav_names=cms.vstring(["prompt", "tau", "heavy", "light", "fake"]),
 )
 
-################################################electronParticleTransformer end#####################
+################################################ electronParticleTransformer end#####################
 
-################################################electronTable defn #####################
+################################################ electronTable defn #####################
 electronTable = simplePATElectronFlatTableProducer.clone(
-    src = cms.InputTag("linkedObjects","electrons"),
-    name= cms.string("Electron"),
-    doc = cms.string("slimmedElectrons after basic selection (" + finalElectrons.cut.value()+")"),
-    variables = cms.PSet(CandVars,
-        jetIdx = Var("?hasUserCand('jet')?userCand('jet').key():-1", "int16", doc="index of the associated jet (-1 if none)"),
-        photonIdx = Var("?overlaps('photons').size()>0?overlaps('photons')[0].key():-1", "int16", doc="index of the first associated photon (-1 if none)"),
-        svIdx = Var("?hasUserCand('vertex')?userCand('vertex').key():-1", "int16", doc="index of matching secondary vertex"),
-        fbrem = Var("fbrem()",float,doc="Fraction of brem",precision=10),                 
-        rawEnergy = Var("superCluster.rawEnergy",float,doc="raw energy of Supercluster",precision=10),
-        PreshowerEnergy = Var("superCluster.preshowerEnergy",float,doc="energy deposited in preshower",precision=10),                 
-        ecalEnergy = Var("ecalEnergy()",float,doc="energy after ECAL-only regression applied",precision=10),
-        ecalEnergyError = Var("ecalEnergyError",float,doc="ecalEnergy error",precision=10),
-        energyErr = Var("p4Error('P4_COMBINATION')",float,doc="energy error of the cluster-track combination",precision=6),
-        gsfTrkpMode = Var("gsfTrack().pMode()",float,doc="GSF track pMode",precision=10),
-        gsfTrkpModeErr = Var("abs(gsfTrack().qoverpModeError())*gsfTrack().pMode()*gsfTrack().pMode()",float,doc="GSF track pMode error",precision=8),
-        gsfTrketaMode = Var("gsfTrack().etaMode()",float,doc="GSF track etaMode",precision=10),
-        gsfTrkphiMode = Var("gsfTrack().phiMode()",float,doc="GSF track phiMode",precision=10),                 
-        isEcalDriven = Var("ecalDrivenSeed",bool,doc="is ECAL driven if true"),
-        isEB = Var("isEB",bool,doc="object in barrel if true derived from the seedCrystal and detID information"),                 
-        dz = Var("dB('PVDZ')",float,doc="dz (with sign) wrt first PV, in cm",precision=10),
-        dzErr = Var("abs(edB('PVDZ'))",float,doc="dz uncertainty, in cm",precision=6),
-        dxy = Var("dB('PV2D')",float,doc="dxy (with sign) wrt first PV, in cm",precision=10),
-        dxyErr = Var("edB('PV2D')",float,doc="dxy uncertainty, in cm",precision=6),
-        ip3d = Var("abs(dB('PV3D'))",float,doc="3D impact parameter wrt first PV, in cm",precision=10),
-        sip3d = Var("abs(dB('PV3D')/edB('PV3D'))",float,doc="3D impact parameter significance wrt first PV, in cm",precision=10),
-        deltaEtaSC = Var("superCluster().eta()-eta()",float,doc="delta eta (SC,ele) with sign",precision=10),
-        superclusterEta = Var("superCluster().eta()",float,doc="supercluster eta",precision=10),
-        r9 = Var("full5x5_r9()",float,doc="R9 of the supercluster, calculated with full 5x5 region",precision=10),
-        sieie = Var("full5x5_sigmaIetaIeta()",float,doc="sigma_IetaIeta of the supercluster, calculated with full 5x5 region",precision=10),
-        eInvMinusPInv = Var("(1-eSuperClusterOverP())/ecalEnergy()",float,doc="1/E_SC - 1/p_trk",precision=10),
-        scEtOverPt = Var("(superCluster().energy()/(pt*cosh(superCluster().eta())))-1",float,doc="(supercluster transverse energy)/pt-1",precision=8),
+    src=cms.InputTag("linkedObjects", "electrons"),
+    name=cms.string("Electron"),
+    doc=cms.string("slimmedElectrons after basic selection (" +
+                   finalElectrons.cut.value()+")"),
+    variables=cms.PSet(CandVars,
+                       jetIdx=Var("?hasUserCand('jet')?userCand('jet').key():-1",
+                                  "int16", doc="index of the associated jet (-1 if none)"),
+                       photonIdx=Var(
+                           "?overlaps('photons').size()>0?overlaps('photons')[0].key():-1", "int16", doc="index of the first associated photon (-1 if none)"),
+                       svIdx=Var("?hasUserCand('vertex')?userCand('vertex').key():-1",
+                                 "int16", doc="index of matching secondary vertex"),
+                       fbrem=Var("fbrem()", float,
+                                 doc="Fraction of brem", precision=10),
+                       rawEnergy=Var("superCluster.rawEnergy", float,
+                                     doc="raw energy of Supercluster", precision=10),
+                       PreshowerEnergy=Var(
+                           "superCluster.preshowerEnergy", float, doc="energy deposited in preshower", precision=10),
+                       ecalEnergy=Var("ecalEnergy()", float,
+                                      doc="energy after ECAL-only regression applied", precision=10),
+                       ecalEnergyError=Var("ecalEnergyError", float,
+                                           doc="ecalEnergy error", precision=10),
+                       energyErr=Var("p4Error('P4_COMBINATION')", float,
+                                     doc="energy error of the cluster-track combination", precision=6),
+                       gsfTrkpMode=Var("gsfTrack().pMode()", float,
+                                       doc="GSF track pMode", precision=10),
+                       gsfTrkpModeErr=Var("abs(gsfTrack().qoverpModeError())*gsfTrack().pMode()*gsfTrack().pMode()",
+                                          float, doc="GSF track pMode error", precision=8),
+                       gsfTrketaMode=Var("gsfTrack().etaMode()", float,
+                                         doc="GSF track etaMode", precision=10),
+                       gsfTrkphiMode=Var("gsfTrack().phiMode()", float,
+                                         doc="GSF track phiMode", precision=10),
+                       isEcalDriven=Var("ecalDrivenSeed", bool,
+                                        doc="is ECAL driven if true"),
+                       isEB=Var(
+                           "isEB", bool, doc="object in barrel if true derived from the seedCrystal and detID information"),
+                       dz=Var("dB('PVDZ')", float,
+                              doc="dz (with sign) wrt first PV, in cm", precision=10),
+                       dzErr=Var("abs(edB('PVDZ'))", float,
+                                 doc="dz uncertainty, in cm", precision=6),
+                       dxy=Var("dB('PV2D')", float,
+                               doc="dxy (with sign) wrt first PV, in cm", precision=10),
+                       dxyErr=Var("edB('PV2D')", float,
+                                  doc="dxy uncertainty, in cm", precision=6),
+                       ip3d=Var("abs(dB('PV3D'))", float,
+                                doc="3D impact parameter wrt first PV, in cm", precision=10),
+                       sip3d=Var("abs(dB('PV3D')/edB('PV3D'))", float,
+                                 doc="3D impact parameter significance wrt first PV, in cm", precision=10),
+                       deltaEtaSC=Var("superCluster().eta()-eta()", float,
+                                      doc="delta eta (SC,ele) with sign", precision=10),
+                       superclusterEta=Var("superCluster().eta()", float,
+                                           doc="supercluster eta", precision=10),
+                       r9=Var("full5x5_r9()", float,
+                              doc="R9 of the supercluster, calculated with full 5x5 region", precision=10),
+                       sieie=Var("full5x5_sigmaIetaIeta()", float,
+                                 doc="sigma_IetaIeta of the supercluster, calculated with full 5x5 region", precision=10),
+                       eInvMinusPInv=Var("(1-eSuperClusterOverP())/ecalEnergy()",
+                                         float, doc="1/E_SC - 1/p_trk", precision=10),
+                       scEtOverPt=Var("(superCluster().energy()/(pt*cosh(superCluster().eta())))-1",
+                                      float, doc="(supercluster transverse energy)/pt-1", precision=8),
 
-        mvaIso = Var("userFloat('mvaIso')",float,doc="MVA Iso ID score, Winter22V1"),
-        mvaIso_WP80 = Var("userInt('mvaIso_WP80')",bool,doc="MVA Iso ID WP80, Winter22V1"),
-        mvaIso_WP90 = Var("userInt('mvaIso_WP90')",bool,doc="MVA Iso ID WP90, Winter22V1"),
-        mvaNoIso = Var("userFloat('mvaNoIso')",float,doc="MVA noIso ID score, Winter22V1"),
-        mvaNoIso_WP80 = Var("userInt('mvaNoIso_WP80')",bool,doc="MVA noIso ID WP80, Winter22V1"),
-        mvaNoIso_WP90 = Var("userInt('mvaNoIso_WP90')",bool,doc="MVA noIso ID WP90, Winter22V1"),                 
-        mvaHZZIso = Var("userFloat('mvaHZZIso')", float,doc="HZZ MVA Iso ID score"),
-        mvaIso_WPHZZ = Var("userInt('mvaIso_WPHZZ')",bool,doc="MVA Iso ID WPHZZ, Winter22V1"),
+                       mvaIso=Var("userFloat('mvaIso')", float,
+                                  doc="MVA Iso ID score, Winter22V1"),
+                       mvaIso_WP80=Var("userInt('mvaIso_WP80')", bool,
+                                       doc="MVA Iso ID WP80, Winter22V1"),
+                       mvaIso_WP90=Var("userInt('mvaIso_WP90')", bool,
+                                       doc="MVA Iso ID WP90, Winter22V1"),
+                       mvaNoIso=Var("userFloat('mvaNoIso')", float,
+                                    doc="MVA noIso ID score, Winter22V1"),
+                       mvaNoIso_WP80=Var("userInt('mvaNoIso_WP80')", bool,
+                                         doc="MVA noIso ID WP80, Winter22V1"),
+                       mvaNoIso_WP90=Var("userInt('mvaNoIso_WP90')", bool,
+                                         doc="MVA noIso ID WP90, Winter22V1"),
+                       mvaHZZIso=Var("userFloat('mvaHZZIso')", float,
+                                     doc="HZZ MVA Iso ID score"),
+                       mvaIso_WPHZZ=Var("userInt('mvaIso_WPHZZ')", bool,
+                                        doc="MVA Iso ID WPHZZ, Winter22V1"),
 
-        cutBased = Var("userInt('cutBasedID_veto')+userInt('cutBasedID_loose')+userInt('cutBasedID_medium')+userInt('cutBasedID_tight')", "uint8", doc="cut-based ID RunIII Winter22: fail ==0, veto >=1 (to veto, ask for <1), loose >=2, medium >=3, tight >=4"),
-        vidNestedWPBitmap = Var("userInt('VIDNestedWPBitmap')", int, doc=_bitmapVIDForEle_docstring),
-        vidNestedWPBitmapHEEP = Var("userInt('VIDNestedWPBitmapHEEP')", int, doc=_bitmapVIDForEleHEEP_docstring),
-        cutBased_HEEP = Var("userInt('cutBasedID_HEEP')",bool,doc="cut-based HEEP ID"),
-        miniPFRelIso_chg = Var("userFloat('miniIsoChg')/pt",float,doc="mini PF relative isolation, charged component"),
-        miniPFRelIso_all = Var("userFloat('miniIsoAll')/pt",float,doc="mini PF relative isolation, total (with scaled rho*EA PU Winter22V1 corrections)"),
-        pfRelIso03_chg = Var("userFloat('PFIsoChg')/pt",float,doc="PF relative isolation dR=0.3, charged component"),
-        pfRelIso03_all = Var("userFloat('PFIsoAll')/pt",float,doc="PF relative isolation dR=0.3, total (with rho*EA PU Winter22V1 corrections)"),                
-        pfRelIso04_all = Var("userFloat('PFIsoAll04')/pt",float,doc="PF relative isolation dR=0.4, total (with rho*EA PU Winter22V1 corrections)", precision=10),
-        jetRelIso = Var("?userCand('jetForLepJetVar').isNonnull()?(1./userFloat('ptRatio'))-1.:-1.",float,doc="Relative isolation in matched jet (1/ptRatio-1), -1 if none",precision=8),
-        jetPtRelv2 = Var("?userCand('jetForLepJetVar').isNonnull()?userFloat('ptRel'):0",float,doc="Relative momentum of the lepton with respect to the closest jet after subtracting the lepton",precision=8),
-        jetDF = Var("?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfDeepFlavourJetTags:probbb')+userCand('jetForLepJetVar').bDiscriminator('pfDeepFlavourJetTags:probb')+userCand('jetForLepJetVar').bDiscriminator('pfDeepFlavourJetTags:problepb'),0.0):0.0",float,doc="value of the DEEPJET b tagging algorithm discriminator of the associated jet (0 if none)",precision=8,lazyEval=True),
-        dr03TkSumPt = Var("?pt>35?dr03TkSumPt():0",float,doc="Non-PF track isolation within a delta R cone of 0.3 with electron pt > 35 GeV",precision=8),
-        dr03TkSumPtHEEP = Var("?pt>35?dr03TkSumPtHEEP():0",float,doc="Non-PF track isolation within a delta R cone of 0.3 with electron pt > 35 GeV used in HEEP ID",precision=8),
-        dr03EcalRecHitSumEt = Var("?pt>35?dr03EcalRecHitSumEt():0",float,doc="Non-PF Ecal isolation within a delta R cone of 0.3 with electron pt > 35 GeV",precision=8),
-        dr03HcalDepth1TowerSumEt = Var("?pt>35?dr03HcalTowerSumEt(1):0",float,doc="Non-PF Hcal isolation within a delta R cone of 0.3 with electron pt > 35 GeV",precision=8),
-        hoe = Var("hadronicOverEm()",float,doc="H over E",precision=8),
-        tightCharge = Var("isGsfCtfScPixChargeConsistent() + isGsfScPixChargeConsistent()", "uint8", doc="Tight charge criteria (0:none, 1:isGsfScPixChargeConsistent, 2:isGsfCtfScPixChargeConsistent)"),
-        convVeto = Var("passConversionVeto()",bool,doc="pass conversion veto"),
-        lostHits = Var("gsfTrack.hitPattern.numberOfLostHits('MISSING_INNER_HITS')","uint8",doc="number of missing inner hits"),
-        isPFcand = Var("pfCandidateRef().isNonnull()",bool,doc="electron is PF candidate"),
-        seedGain = Var("userInt('seedGain')","uint8",doc="Gain of the seed crystal"),
-        seediEtaOriX = Var("superCluster().seedCrysIEtaOrIx","int16",doc="iEta or iX of seed crystal. iEta is barrel-only, iX is endcap-only. iEta runs from -85 to +85, with no crystal at iEta=0. iX runs from 1 to 100."),
-        seediPhiOriY = Var("superCluster().seedCrysIPhiOrIy","int16",doc="iPhi or iY of seed crystal. iPhi is barrel-only, iY is endcap-only. iPhi runs from 1 to 360. iY runs from 1 to 100."),
-        jetNDauCharged = Var("?userCand('jetForLepJetVar').isNonnull()?userFloat('jetNDauChargedMVASel'):0", "uint8", doc="number of charged daughters of the closest jet"),
-    ),
-    externalVariables = cms.PSet(
-        promptMVA = ExtVar(cms.InputTag("electronPROMPTMVA"),float, doc="Prompt MVA lepton ID score. Corresponds to the previous mvaTTH",precision=14),
-        fsrPhotonIdx = ExtVar(cms.InputTag("leptonFSRphotons:eleFsrIndex"), "int16", doc="Index of the lowest-dR/ET2 among associated FSR photons"),
+                       cutBased=Var("userInt('cutBasedID_veto')+userInt('cutBasedID_loose')+userInt('cutBasedID_medium')+userInt('cutBasedID_tight')",
+                                    "uint8", doc="cut-based ID RunIII Winter22: fail ==0, veto >=1 (to veto, ask for <1), loose >=2, medium >=3, tight >=4"),
+                       vidNestedWPBitmap=Var("userInt('VIDNestedWPBitmap')",
+                                             int, doc=_bitmapVIDForEle_docstring),
+                       vidNestedWPBitmapHEEP=Var(
+                           "userInt('VIDNestedWPBitmapHEEP')", int, doc=_bitmapVIDForEleHEEP_docstring),
+                       cutBased_HEEP=Var("userInt('cutBasedID_HEEP')",
+                                         bool, doc="cut-based HEEP ID"),
+                       miniPFRelIso_chg=Var("userFloat('miniIsoChg')/pt", float,
+                                            doc="mini PF relative isolation, charged component"),
+                       miniPFRelIso_all=Var("userFloat('miniIsoAll')/pt", float,
+                                            doc="mini PF relative isolation, total (with scaled rho*EA PU Winter22V1 corrections)"),
+                       pfRelIso03_chg=Var("userFloat('PFIsoChg')/pt", float,
+                                          doc="PF relative isolation dR=0.3, charged component"),
+                       pfRelIso03_all=Var("userFloat('PFIsoAll')/pt", float,
+                                          doc="PF relative isolation dR=0.3, total (with rho*EA PU Winter22V1 corrections)"),
+                       pfRelIso04_all=Var("userFloat('PFIsoAll04')/pt", float,
+                                          doc="PF relative isolation dR=0.4, total (with rho*EA PU Winter22V1 corrections)", precision=10),
+                       jetRelIso=Var("?userCand('jetForLepJetVar').isNonnull()?(1./userFloat('ptRatio'))-1.:-1.",
+                                     float, doc="Relative isolation in matched jet (1/ptRatio-1), -1 if none", precision=8),
+                       jetPtRelv2=Var("?userCand('jetForLepJetVar').isNonnull()?userFloat('ptRel'):0", float,
+                                      doc="Relative momentum of the lepton with respect to the closest jet after subtracting the lepton", precision=8),
+                       jetDF=Var("?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfDeepFlavourJetTags:probbb')+userCand('jetForLepJetVar').bDiscriminator('pfDeepFlavourJetTags:probb')+userCand('jetForLepJetVar').bDiscriminator('pfDeepFlavourJetTags:problepb'),0.0):0.0",
+                                 float, doc="value of the DEEPJET b tagging algorithm discriminator of the associated jet (0 if none)", precision=8, lazyEval=True),
+                       dr03TkSumPt=Var("?pt>35?dr03TkSumPt():0", float,
+                                       doc="Non-PF track isolation within a delta R cone of 0.3 with electron pt > 35 GeV", precision=8),
+                       dr03TkSumPtHEEP=Var("?pt>35?dr03TkSumPtHEEP():0", float,
+                                           doc="Non-PF track isolation within a delta R cone of 0.3 with electron pt > 35 GeV used in HEEP ID", precision=8),
+                       dr03EcalRecHitSumEt=Var("?pt>35?dr03EcalRecHitSumEt():0", float,
+                                               doc="Non-PF Ecal isolation within a delta R cone of 0.3 with electron pt > 35 GeV", precision=8),
+                       dr03HcalDepth1TowerSumEt=Var("?pt>35?dr03HcalTowerSumEt(1):0", float,
+                                                    doc="Non-PF Hcal isolation within a delta R cone of 0.3 with electron pt > 35 GeV", precision=8),
+                       hoe=Var("hadronicOverEm()", float,
+                               doc="H over E", precision=8),
+                       tightCharge=Var("isGsfCtfScPixChargeConsistent() + isGsfScPixChargeConsistent()", "uint8",
+                                       doc="Tight charge criteria (0:none, 1:isGsfScPixChargeConsistent, 2:isGsfCtfScPixChargeConsistent)"),
+                       convVeto=Var("passConversionVeto()", bool,
+                                    doc="pass conversion veto"),
+                       lostHits=Var("gsfTrack.hitPattern.numberOfLostHits('MISSING_INNER_HITS')",
+                                    "uint8", doc="number of missing inner hits"),
+                       isPFcand=Var("pfCandidateRef().isNonnull()", bool,
+                                    doc="electron is PF candidate"),
+                       seedGain=Var("userInt('seedGain')", "uint8",
+                                    doc="Gain of the seed crystal"),
+                       seediEtaOriX=Var("superCluster().seedCrysIEtaOrIx", "int16",
+                                        doc="iEta or iX of seed crystal. iEta is barrel-only, iX is endcap-only. iEta runs from -85 to +85, with no crystal at iEta=0. iX runs from 1 to 100."),
+                       seediPhiOriY=Var("superCluster().seedCrysIPhiOrIy", "int16",
+                                        doc="iPhi or iY of seed crystal. iPhi is barrel-only, iY is endcap-only. iPhi runs from 1 to 360. iY runs from 1 to 100."),
+                       jetNDauCharged=Var("?userCand('jetForLepJetVar').isNonnull()?userFloat('jetNDauChargedMVASel'):0",
+                                          "uint8", doc="number of charged daughters of the closest jet"),
+                       ),
+    externalVariables=cms.PSet(
+        promptMVA=ExtVar(cms.InputTag("electronPROMPTMVA"), float,
+                         doc="Prompt MVA lepton ID score. Corresponds to the previous mvaTTH", precision=14),
+        fsrPhotonIdx=ExtVar(cms.InputTag("leptonFSRphotons:eleFsrIndex"), "int16",
+                            doc="Index of the lowest-dR/ET2 among associated FSR photons"),
         # pnScore_prompt=ExtVar(cms.InputTag("electronPNetScores:prompt"), float,
         #                       doc="PNet electron ID score for lepton from W/Z/H bosons", precision=14),
         # pnScore_heavy=ExtVar(cms.InputTag("electronPNetScores:heavy"), float,
@@ -973,7 +1085,7 @@ electronTable = simplePATElectronFlatTableProducer.clone(
         # parTScore_light=ExtVar(cms.InputTag("electronParTScores:light"), float,
         #                        doc="ParT electron ID score for lepton from hadrons w/o b or c quarks", precision=14),
         # parTScore_fake=ExtVar(cms.InputTag("electronParTScores:fake"), float,
-        #                       doc="ParT electron ID score for leptons with no matched generated particle", precision=14),    
+        #                       doc="ParT electron ID score for leptons with no matched generated particle", precision=14),
         parTScore_prompt=ExtVar(cms.InputTag("electronParTLLScores:prompt"), float,
                                 doc="ParTLL electron ID score for lepton from W/Z/H bosons", precision=14),
         parTScore_tau=ExtVar(cms.InputTag("electronParTLLScores:tau"), float,
@@ -983,7 +1095,7 @@ electronTable = simplePATElectronFlatTableProducer.clone(
         parTScore_light=ExtVar(cms.InputTag("electronParTLLScores:light"), float,
                                doc="ParTLL electron ID score for lepton from hadrons w/o b or c quarks", precision=14),
         parTScore_fake=ExtVar(cms.InputTag("electronParTLLScores:fake"), float,
-                              doc="ParTLL electron ID score for leptons with no matched generated particle", precision=14),    
+                              doc="ParTLL electron ID score for leptons with no matched generated particle", precision=14),
     ),
 )
 
@@ -1147,6 +1259,7 @@ _eleVarsExtra = cms.PSet(
                        doc="PF relative isolation dR=0.4, total (with rho*EA PU Fall17V2 PU corrections)", precision=10),
 )
 
+
 ############# electron Table END#####################
 # Depends on particlelevel producer run in particlelevel_cff
 tautaggerForMatching = cms.EDProducer("GenJetTauTaggerProducer",
@@ -1221,10 +1334,13 @@ electronMCTable = cms.EDProducer("CandMCMatchTableProducer",
                                      "finalGenParticles"),
                                  )
 
-electronTask = cms.Task(bitmapVIDForEle,bitmapVIDForEleFall17V2,bitmapVIDForEleHEEP,isoForEle,isoForEleFall17V2,ptRatioRelForEle,seedGainEle,slimmedElectronsWithUserData,finalElectrons)
+electronTask = cms.Task(bitmapVIDForEle, bitmapVIDForEleFall17V2, bitmapVIDForEleHEEP, isoForEle,
+                        isoForEleFall17V2, ptRatioRelForEle, seedGainEle, slimmedElectronsWithUserData, finalElectrons)
 # electronTablesTask = cms.Task(electronPROMPTMVA, electronPNetVariables, electronPNetScores, electronParTVariables, electronParTTrainVariables, electronParTScores, electronParTLLScores, electronTable)
-electronTablesTask = cms.Task(electronPROMPTMVA, electronParTTrainVariables, electronParTLLScores, electronTable)
-electronMCTask = cms.Task(tautaggerForMatching, matchingElecPhoton, electronsMCMatchForTable, electronsMCMatchForTableAlt, electronMCTable)
+electronTablesTask = cms.Task(
+    electronPROMPTMVA, electronParTTrainVariables, electronParTLLScores, electronTable)
+electronMCTask = cms.Task(tautaggerForMatching, matchingElecPhoton,
+                          electronsMCMatchForTable, electronsMCMatchForTableAlt, electronMCTable)
 
 _electronTask_Run2 = electronTask.copy()
 _electronTask_Run2.remove(bitmapVIDForEle)
