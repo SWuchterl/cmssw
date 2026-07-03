@@ -1,0 +1,23 @@
+import FWCore.ParameterSet.Config as cms
+
+ntuplizer_electron = cms.EDAnalyzer('ElectronNtuplizer',
+                                    src=cms.InputTag(
+                                        "electronParTTrainVariables"),
+                                    srcLeptons=cms.InputTag(
+                                        "linkedObjects", "electrons"),
+                                    srcMcTable=cms.InputTag("electronMCTable"),
+                                    leptonSelection=cms.string(
+                                        "pt > 5 && abs(eta)< 2.4"),
+                                    )
+
+
+def customize_ntuplizer(process):
+    process.ntuplizer_electron = ntuplizer_electron
+    process.nanoSequenceMC.insert(process.nanoSequenceMC.index(
+        process.nanoSequenceOnlyFullSim)+1, process.ntuplizer_electron)
+    process.TFileService = cms.Service("TFileService",
+                                       fileName=cms.string("tree.root"),
+                                       closeFileFast=cms.untracked.bool(True)
+                                       )
+
+    return process

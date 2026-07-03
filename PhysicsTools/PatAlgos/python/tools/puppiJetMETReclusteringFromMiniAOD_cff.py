@@ -26,6 +26,7 @@ def puppiJetMETReclusterFromMiniAOD(process, runOnMC, useExistingWeights=False, 
   from RecoBTag.ONNXRuntime.pfParticleNetFromMiniAODAK4_cff import _pfParticleNetFromMiniAODAK4PuppiForwardJetTagsAll as pfParticleNetFromMiniAODAK4PuppiForwardJetTagsAll
   from RecoBTag.ONNXRuntime.pfUnifiedParticleTransformerAK4_cff import _pfUnifiedParticleTransformerAK4JetTagsAll as pfUnifiedParticleTransformerAK4JetTagsAll
   from RecoBTag.ONNXRuntime.pfUnifiedParticleTransformerAK4V1_cff import _pfUnifiedParticleTransformerAK4V1JetTagsAll as pfUnifiedParticleTransformerAK4V1JetTagsAll
+  from RecoBTag.ONNXRuntime.pfNoPIDParticleTransformerAK4_cff import _pfNoPIDParticleTransformerAK4JetTagsAll as pfNoPIDParticleTransformerAK4JetTagsAll
 
   btagDiscriminatorsAK4 = cms.PSet(
    names=cms.vstring(
@@ -39,6 +40,7 @@ def puppiJetMETReclusterFromMiniAOD(process, runOnMC, useExistingWeights=False, 
     + pfParticleNetFromMiniAODAK4PuppiForwardJetTagsAll
     + pfUnifiedParticleTransformerAK4JetTagsAll
     + pfUnifiedParticleTransformerAK4V1JetTagsAll
+    + pfNoPIDParticleTransformerAK4JetTagsAll
   )
 
   # AK8 taggers

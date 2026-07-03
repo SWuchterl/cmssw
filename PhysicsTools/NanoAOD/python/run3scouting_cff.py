@@ -404,7 +404,8 @@ scoutingParticleTable = cms.EDProducer("SimpleRun3ScoutingParticleFlatTableProdu
 
 scoutingPFJetTable = cms.EDProducer("SimpleRun3ScoutingPFJetFlatTableProducer",
     src = cms.InputTag("hltScoutingPFPacker"),
-    cut = cms.string(""),
+    # cut = cms.string(""),
+    cut = cms.string("pt>10"),
     name = cms.string("ScoutingPFJet"),
     doc  = cms.string("Scouting PFJet"),
     singleton = cms.bool(False),
@@ -551,7 +552,7 @@ scoutingPFJetReclusterParticleNetJetTags = cms.EDProducer("BoostedJetONNXJetTags
 scoutingPFJetReclusterTable = cms.EDProducer("SimplePFJetFlatTableProducer",
     src = cms.InputTag("scoutingPFJetRecluster"),
     name = cms.string("ScoutingPFJetRecluster"),
-    cut = cms.string(""),
+    cut = cms.string("pt>10"),
     doc = cms.string("ak4 jet from reclustering scouting PF candidates"),
     singleton = cms.bool(False),
     extension = cms.bool(False),
@@ -832,5 +833,246 @@ scoutingFatPFJetReclusterMatchGenExtensionTable = cms.EDProducer("SimplePFJetFla
     variables = cms.PSet(),
     externalVariables = cms.PSet(
         genJetAK8Idx = ExtVar(cms.InputTag("scoutingFatPFJetReclusterMatchGen"), int, doc="gen jet idx"),
+    ),
+)
+
+#########################
+# AK15 PFJet Reclustered #
+#########################
+
+# AK15 jet clustering
+
+scoutingFatPFJet15Recluster = ak4PFJets.clone(
+    src = ("scoutingPFCandidate"),
+    rParam   = 1.5,
+    jetPtMin = 150.0,
+)
+
+# AK15 jet tagging
+
+scoutingFatPFJet15ReclusterParticleNetJetTagInfos = cms.EDProducer("DeepBoostedJetTagInfoProducer",
+    jet_radius = cms.double(1.5),
+    min_jet_pt = cms.double(50),
+    max_jet_eta = cms.double(2.5),
+    min_pt_for_track_properties = cms.double(0.95),
+    min_pt_for_pfcandidates = cms.double(0.1),
+    use_puppiP4 = cms.bool(False),
+    include_neutrals = cms.bool(True),
+    sort_by_sip2dsig = cms.bool(False),
+    min_puppi_wgt = cms.double(-1.0),
+    flip_ip_sign = cms.bool(False),
+    sip3dSigMax = cms.double(-1.0),
+    use_hlt_features = cms.bool(False),
+    pf_candidates = cms.InputTag("scoutingPFCandidate"),
+    jets = cms.InputTag("scoutingFatPFJet15Recluster"),
+    puppi_value_map = cms.InputTag(""),
+    use_scouting_features = cms.bool(True),
+    normchi2_value_map = cms.InputTag("scoutingPFCandidate", "normchi2"),
+    dz_value_map = cms.InputTag("scoutingPFCandidate", "dz"),
+    dxy_value_map = cms.InputTag("scoutingPFCandidate", "dxy"),
+    dzsig_value_map = cms.InputTag("scoutingPFCandidate", "dzsig"),
+    dxysig_value_map = cms.InputTag("scoutingPFCandidate", "dxysig"),
+    lostInnerHits_value_map = cms.InputTag("scoutingPFCandidate", "lostInnerHits"),
+    quality_value_map = cms.InputTag("scoutingPFCandidate", "quality"),
+    trkPt_value_map = cms.InputTag("scoutingPFCandidate", "trkPt"),
+    trkEta_value_map = cms.InputTag("scoutingPFCandidate", "trkEta"),
+    trkPhi_value_map = cms.InputTag("scoutingPFCandidate", "trkPhi"),
+)
+
+from RecoBTag.ONNXRuntime.boostedJetONNXJetTagsProducer_cfi import boostedJetONNXJetTagsProducer
+scoutingFatPFJet15ReclusterParticleNetJetTags = cms.EDProducer("BoostedJetONNXJetTagsProducer",
+    jets = cms.InputTag("scoutingFatPFJet15Recluster"),
+    produceValueMap = cms.untracked.bool(True),
+    src = cms.InputTag("scoutingFatPFJet15ReclusterParticleNetJetTagInfos"),
+    preprocess_json = cms.string("RecoBTag/Combined/data/Run3Scouting/ParticleNetAK8/General/V00/preprocess.json"),
+    model_path = cms.FileInPath("RecoBTag/Combined/data/Run3Scouting/ParticleNetAK8/General/V00/particle-net.onnx"),
+    flav_names = cms.vstring(["probQCDall", "probHbb","probHcc", "probHqq"]),
+    debugMode = cms.untracked.bool(False),
+)
+
+scoutingFatPFJet15ReclusterGlobalParticleTransformerJetTagInfos = cms.EDProducer("DeepBoostedJetTagInfoProducer",
+    jet_radius = cms.double(1.5),
+    min_jet_pt = cms.double(50),
+    max_jet_eta = cms.double(2.5),
+    min_pt_for_track_properties = cms.double(0.95),
+    min_pt_for_pfcandidates = cms.double(0.1),
+    use_puppiP4 = cms.bool(False),
+    include_neutrals = cms.bool(True),
+    sort_by_sip2dsig = cms.bool(False),
+    min_puppi_wgt = cms.double(-1.0),
+    flip_ip_sign = cms.bool(False),
+    sip3dSigMax = cms.double(-1.0),
+    use_hlt_features = cms.bool(False),
+    pf_candidates = cms.InputTag("scoutingPFCandidate"),
+    jets = cms.InputTag("scoutingFatPFJet15Recluster"),
+    puppi_value_map = cms.InputTag(""),
+    use_scouting_features = cms.bool(True),
+    normchi2_value_map = cms.InputTag("scoutingPFCandidate", "normchi2"),
+    dz_value_map = cms.InputTag("scoutingPFCandidate", "dz"),
+    dxy_value_map = cms.InputTag("scoutingPFCandidate", "dxy"),
+    dzsig_value_map = cms.InputTag("scoutingPFCandidate", "dzsig"),
+    dxysig_value_map = cms.InputTag("scoutingPFCandidate", "dxysig"),
+    lostInnerHits_value_map = cms.InputTag("scoutingPFCandidate", "lostInnerHits"),
+    quality_value_map = cms.InputTag("scoutingPFCandidate", "quality"),
+    trkPt_value_map = cms.InputTag("scoutingPFCandidate", "trkPt"),
+    trkEta_value_map = cms.InputTag("scoutingPFCandidate", "trkEta"),
+    trkPhi_value_map = cms.InputTag("scoutingPFCandidate", "trkPhi"),
+)
+
+scoutingFatPFJet15ReclusterGlobalParticleTransformerJetTags = cms.EDProducer("BoostedJetONNXJetTagsProducer",
+    jets = cms.InputTag("scoutingFatPFJet15Recluster"),
+    produceValueMap = cms.untracked.bool(True),
+    src = cms.InputTag("scoutingFatPFJet15ReclusterGlobalParticleTransformerJetTagInfos"),
+    preprocess_json = cms.string("RecoBTag/Combined/data/HLT/GlobalParticleTransformerAK15/V00/preprocess.json"),
+    model_path = cms.FileInPath("RecoBTag/Combined/data/HLT/GlobalParticleTransformerAK15/V00/model_ak15_2024.onnx"),
+    flav_names = cms.vstring([
+             "probQCD", "probXbb", "probXcc", "probXss", "probXqq", "probXbs", "probXgg", "probXee", "probXmm", "probXtauhtaue", "probXtauhtaum", "probXtauhtauh", "probXbc", "probXcs", "probXud", "massCorrGeneric", "massCorrGenericX2p", "massCorrGenericW2p", "massCorrResonance"
+     ]),
+    debugMode = cms.untracked.bool(False),
+)
+
+run3_scouting_2024.toModify(
+    scoutingFatPFJet15ReclusterGlobalParticleTransformerJetTags,
+    model_path = cms.FileInPath("RecoBTag/Combined/data/HLT/GlobalParticleTransformerAK15/V00/model_ak15_2024.onnx")
+)
+
+# AK15 jet softdrop mass
+
+scoutingFatPFJet15ReclusterSoftDrop = ak4PFJets.clone(
+    src = ("scoutingPFCandidate"),
+    rParam   = 1.5,
+    jetPtMin = 150.0,
+    useSoftDrop = cms.bool(True),
+    zcut = cms.double(0.1),
+    beta = cms.double(0.0),
+    R0   = cms.double(1.5),
+    useExplicitGhosts = cms.bool(True),
+    writeCompound = cms.bool(True),
+    jetCollInstanceName=cms.string("SubJets"),
+)
+
+scoutingFatPFJet15ReclusterSoftDropMass = cms.EDProducer("RecoJetDeltaRValueMapProducer",
+    src = cms.InputTag("scoutingFatPFJet15Recluster"),
+    matched = cms.InputTag("scoutingFatPFJet15ReclusterSoftDrop"),
+    distMax = cms.double(1.5),
+    value = cms.string("mass")
+)
+
+# AK15 jet regressed mass
+
+scoutingFatPFJet15ReclusterParticleNetMassRegressionJetTags = cms.EDProducer("BoostedJetONNXJetTagsProducer",
+    jets = cms.InputTag("scoutingFatPFJet15Recluster"),
+    produceValueMap = cms.untracked.bool(True),
+    src = cms.InputTag("scoutingFatPFJet15ReclusterParticleNetJetTagInfos"),
+    preprocess_json = cms.string("RecoBTag/Combined/data/Run3Scouting/ParticleNetAK8/MassRegression/V00/preprocess.json"),
+    model_path = cms.FileInPath("RecoBTag/Combined/data/Run3Scouting/ParticleNetAK8/MassRegression/V00/particle-net.onnx"),
+    flav_names = cms.vstring(["mass"]),
+    debugMode = cms.untracked.bool(False),
+)
+
+# AK15 jet substructure variables 
+
+from RecoJets.JetProducers.ECF_cff import ecfNbeta1
+scoutingFatPFJet15ReclusterEcfNbeta1 = ecfNbeta1.clone(src = cms.InputTag("scoutingFatPFJet15Recluster"), srcWeights="")
+
+from RecoJets.JetProducers.nJettinessAdder_cfi import Njettiness
+scoutingFatPFJet15ReclusterNjettiness = Njettiness.clone(src = cms.InputTag("scoutingFatPFJet15Recluster"), srcWeights="")
+
+# output AK15 jet to nanoaod::flattable
+
+scoutingFatPFJet15ReclusterTable = cms.EDProducer("SimplePFJetFlatTableProducer",
+    src = cms.InputTag("scoutingFatPFJet15Recluster"),
+    name = cms.string("ScoutingFatPFJet15Recluster"),
+    cut = cms.string(""),
+    doc = cms.string("ak15 jet from re-clustering scouting PF Candidates"),
+    singleton = cms.bool(False),
+    extension = cms.bool(False),
+    variables = cms.PSet(
+        P4Vars,
+        area = Var("jetArea()", float, doc="jet catchment area, for JECs",precision=10),
+        # energy fractions
+        chHEF = Var("chargedHadronEnergyFraction()", float, doc="charged Hadron Energy Fraction", precision= 6),
+        neHEF = Var("neutralHadronEnergyFraction()", float, doc="neutral Hadron Energy Fraction", precision= 6),
+        chEmEF = Var("chargedEmEnergyFraction()", float, doc="charged Electromagnetic Energy Fraction", precision= 6),
+        neEmEF = Var("neutralEmEnergyFraction()", float, doc="neutral Electromagnetic Energy Fraction", precision= 6),
+        muEF = Var("muonEnergyFraction()", float, doc="muon Energy Fraction", precision= 6),
+        hfHEF = Var("HFHadronEnergyFraction()",float,doc="hadronic Energy Fraction in HF",precision= 6),
+        hfEmEF = Var("HFEMEnergyFraction()",float,doc="electromagnetic Energy Fraction in HF",precision= 6),
+        # multiplicities
+        nCh = Var("chargedHadronMultiplicity()", int, doc="number of charged hadrons in the jet"),
+        nNh = Var("neutralHadronMultiplicity()", int, doc="number of neutral hadrons in the jet"),
+        nMuons = Var("muonMultiplicity()", int, doc="number of muons in the jet"),
+        nElectrons = Var("electronMultiplicity()", int, doc="number of electrons in the jet"),
+        nPhotons = Var("photonMultiplicity()", int, doc="number of photons in the jet"),
+        nConstituents = Var("numberOfDaughters()", "uint8", doc="number of particles in the jet")
+    ),
+    externalVariables = cms.PSet(
+        # jet tagging probabilities
+        particleNet_prob_QCD = ExtVar(cms.InputTag("scoutingFatPFJet15ReclusterParticleNetJetTags:probQCDall"), float, doc="ParticleNet probability of QCD", precision=10),
+        particleNet_prob_Hbb = ExtVar(cms.InputTag("scoutingFatPFJet15ReclusterParticleNetJetTags:probHbb"), float, doc="ParticleNet probability of Hbb", precision=10),
+        particleNet_prob_Hcc = ExtVar(cms.InputTag("scoutingFatPFJet15ReclusterParticleNetJetTags:probHcc"), float, doc="ParticleNet probability of Hcc", precision=10),
+        particleNet_prob_Hqq = ExtVar(cms.InputTag("scoutingFatPFJet15ReclusterParticleNetJetTags:probHqq"), float, doc="ParticleNet probability of Hqq", precision=10),
+        scoutGlobalParT_prob_QCD = ExtVar(cms.InputTag("scoutingFatPFJet15ReclusterGlobalParticleTransformerJetTags:probQCD"), float, doc="Mass-decorrelated Scouting GlobalParT QCD score", precision=10),
+        scoutGlobalParT_prob_Xbb = ExtVar(cms.InputTag("scoutingFatPFJet15ReclusterGlobalParticleTransformerJetTags:probXbb"), float, doc="Mass-decorrelated Scouting GlobalParT X->bb score", precision=10),
+        scoutGlobalParT_prob_Xcc = ExtVar(cms.InputTag("scoutingFatPFJet15ReclusterGlobalParticleTransformerJetTags:probXcc"), float, doc="Mass-decorrelated Scouting GlobalParT X->cc score", precision=10),
+        scoutGlobalParT_prob_Xss = ExtVar(cms.InputTag("scoutingFatPFJet15ReclusterGlobalParticleTransformerJetTags:probXss"), float, doc="Mass-decorrelated Scouting GlobalParT X->ss score", precision=10),
+        scoutGlobalParT_prob_Xqq = ExtVar(cms.InputTag("scoutingFatPFJet15ReclusterGlobalParticleTransformerJetTags:probXqq"), float, doc="Mass-decorrelated Scouting GlobalParT X->qq score", precision=10),
+        scoutGlobalParT_prob_Xbc = ExtVar(cms.InputTag("scoutingFatPFJet15ReclusterGlobalParticleTransformerJetTags:probXbc"), float, doc="Mass-decorrelated Scouting GlobalParT X->bc score", precision=10),
+        scoutGlobalParT_prob_Xbs = ExtVar(cms.InputTag("scoutingFatPFJet15ReclusterGlobalParticleTransformerJetTags:probXbs"), float, doc="Mass-decorrelated Scouting GlobalParT X->bs score", precision=10),
+        scoutGlobalParT_prob_Xcs = ExtVar(cms.InputTag("scoutingFatPFJet15ReclusterGlobalParticleTransformerJetTags:probXcs"), float, doc="Mass-decorrelated Scouting GlobalParT X->cs score", precision=10),
+        scoutGlobalParT_prob_Xud = ExtVar(cms.InputTag("scoutingFatPFJet15ReclusterGlobalParticleTransformerJetTags:probXud"), float, doc="Mass-decorrelated Scouting GlobalParT X->ud score", precision=10),
+        scoutGlobalParT_prob_Xgg = ExtVar(cms.InputTag("scoutingFatPFJet15ReclusterGlobalParticleTransformerJetTags:probXgg"), float, doc="Mass-decorrelated Scouting GlobalParT X->gg score", precision=10),
+        scoutGlobalParT_prob_Xtauhtaue = ExtVar(cms.InputTag("scoutingFatPFJet15ReclusterGlobalParticleTransformerJetTags:probXtauhtaue"), float, doc="Mass-decorrelated Scouting GlobalParT X->tauhtaue score", precision=10),
+        scoutGlobalParT_prob_Xtauhtaum = ExtVar(cms.InputTag("scoutingFatPFJet15ReclusterGlobalParticleTransformerJetTags:probXtauhtaum"), float, doc="Mass-decorrelated Scouting GlobalParT X->tauhtaum score", precision=10),
+        scoutGlobalParT_prob_Xtauhtauh = ExtVar(cms.InputTag("scoutingFatPFJet15ReclusterGlobalParticleTransformerJetTags:probXtauhtauh"), float, doc="Mass-decorrelated Scouting GlobalParT X->tauhtauh score", precision=10),
+        # softdrop mass
+        msoftdrop = ExtVar(cms.InputTag("scoutingFatPFJet15ReclusterSoftDropMass"), float, doc="Softdrop mass", precision=10),
+        # regressed mass
+        particleNet_mass = ExtVar(cms.InputTag("scoutingFatPFJet15ReclusterParticleNetMassRegressionJetTags:mass"), float, doc="ParticleNet regressed mass", precision=10),
+        scoutGlobalParT_massCorrGeneric = ExtVar(cms.InputTag("scoutingFatPFJet15ReclusterGlobalParticleTransformerJetTags:massCorrGeneric"), float, doc="Mass-decorrelated Scouting GlobalParT mass regression corrector with respect to the original jet mass, optimised for generic jet cases. Use (massCorrGeneric * mass) to get the regressed mass", precision=10),
+        scoutGlobalParT_massCorrGenericX2p = ExtVar(cms.InputTag("scoutingFatPFJet15ReclusterGlobalParticleTransformerJetTags:massCorrGenericX2p"), float, doc="Mass-decorrelated Scouting GlobalParT mass regression corrector with respect to the original jet mass, optimised for generic X2p jet cases. Use (massCorrGenericX2p * mass) to get the regressed mass", precision=10),
+        scoutGlobalParT_massCorrGenericW2p = ExtVar(cms.InputTag("scoutingFatPFJet15ReclusterGlobalParticleTransformerJetTags:massCorrGenericW2p"), float, doc="Mass-decorrelated Scouting GlobalParT mass regression corrector with respect to the original jet mass, optimised for generic W jet cases. Use (massCorrGenericW2p * mass) to get the regressed mass", precision=10),
+        scoutGlobalParT_massCorrResonance = ExtVar(cms.InputTag("scoutingFatPFJet15ReclusterGlobalParticleTransformerJetTags:massCorrResonance"), float, doc="Scouting GlobalParT mass regression corrector with respect to the original jet mass, optimised for resonance jets. Use (massCorrResonance * mass) to get the regressed mass", precision=10),
+        # substructure variables    
+        n2b1 = ExtVar(cms.InputTag("scoutingFatPFJet15ReclusterEcfNbeta1:ecfN2"), float, doc="N2 with beta=1", precision=10),
+        n3b1 = ExtVar(cms.InputTag("scoutingFatPFJet15ReclusterEcfNbeta1:ecfN3"), float, doc="N3 with beta=1", precision=10),
+        tau1 = ExtVar(cms.InputTag("scoutingFatPFJet15ReclusterNjettiness:tau1"), float, doc="Nsubjettiness (1 axis)", precision=10),
+        tau2 = ExtVar(cms.InputTag("scoutingFatPFJet15ReclusterNjettiness:tau2"), float, doc="Nsubjettiness (2 axis)", precision=10),
+        tau3 = ExtVar(cms.InputTag("scoutingFatPFJet15ReclusterNjettiness:tau3"), float, doc="Nsubjettiness (3 axis)", precision=10),
+        tau4 = ExtVar(cms.InputTag("scoutingFatPFJet15ReclusterNjettiness:tau4"), float, doc="Nsubjettiness (4 axis)", precision=10),
+    ),
+)
+
+# AK15 gen jet matching (only for MC)
+
+# slimmedGenJetsAK15 = cms.EDProducer("PATGenJetSlimmer",
+#     src = cms.InputTag("ak15GenJetsNoNu"),
+#     packedGenParticles = cms.InputTag("packedGenParticles"),
+#     cut = cms.string("pt > 80"),
+#     cutLoose = cms.string("pt > 10."),
+#     nLoose = cms.uint32(3),
+#     clearDaughters = cms.bool(False), #False means rekeying
+#     dropSpecific = cms.bool(False),
+# )
+
+scoutingFatPFJet15ReclusterMatchGen = cms.EDProducer("RecoJetToGenJetDeltaRValueMapProducer",
+    src = cms.InputTag("scoutingFatPFJet15Recluster"),
+    # matched = cms.InputTag("slimmedGenJetsAK15"),
+    # matched = cms.InputTag("ak15GenJetsNoNu"),
+    # matched = cms.InputTag("slimmedGenJetsAK8"),
+    matched = cms.InputTag("ak15GenJetsNoNu"),
+    distMax = cms.double(1.5),
+    value = cms.string("index"),
+)
+
+scoutingFatPFJet15ReclusterMatchGenExtensionTable = cms.EDProducer("SimplePFJetFlatTableProducer",
+    src = cms.InputTag("scoutingFatPFJet15Recluster"),
+    name = cms.string("ScoutingFatPFJet15Recluster"),
+    cut = cms.string(""),
+    singleton = cms.bool(False),
+    extension = cms.bool(True),
+    variables = cms.PSet(),
+    externalVariables = cms.PSet(
+        genJetAK15Idx = ExtVar(cms.InputTag("scoutingFatPFJet15ReclusterMatchGen"), int, doc="gen jet idx"),
     ),
 )
