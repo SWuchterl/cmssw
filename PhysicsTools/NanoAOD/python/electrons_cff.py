@@ -718,6 +718,8 @@ electronParTTrainVariables = cms.EDProducer(
     secondary_vertices=cms.InputTag("slimmedSecondaryVertices"),
     pfCandidates=cms.InputTag("packedPFCandidates"),
     ltCandidates=cms.InputTag("lostTracks"),
+    barrelEcalHits=cms.InputTag("reducedEgamma", "reducedEBRecHits"),
+    endcapEcalHits=cms.InputTag("reducedEgamma", "reducedEERecHits"),
     leptonVars=cms.PSet(
         Lepton_mask=cms.string("1"),
         Lepton_pt=cms.string("pt"),
@@ -902,6 +904,15 @@ electronParTTrainVariables = cms.EDProducer(
         SV_mass=cms.string("mass"),
         SV_mass_log=cms.string("log(mass+1.e-8)"),
         SV_mask=cms.string("1"),
+    ),
+    rhVars=cms.PSet(
+        RH_energy=cms.string("energy"),
+        RH_energy_log=cms.string("log(energy+1.e-8)"),
+        RH_time=cms.string("time"),
+        RH_timeError=cms.string("timeError"),
+        RH_chi2=cms.string("chi2"),
+        RH_energyError=cms.string("energyError"),
+        RH_mask=cms.string("1"),
     ),
 )
 
