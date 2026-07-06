@@ -3,6 +3,11 @@
 #include <unordered_set>
 #include <unordered_map>
 static constexpr size_t kMaxFeatureLen = 60;
+// RecHits can exceed the other categories' typical multiplicity (bremsstrahlung clusters,
+// endcap 5x5 windows), so give that category its own, larger cap.
+static constexpr size_t kMaxRecHitLen = 250;
+
+static size_t maxLenForCategory(const std::string& cat) { return (cat == "RH") ? kMaxRecHitLen : kMaxFeatureLen; }
 
 template <typename T>
 MvaNtuplizer<T>::MvaNtuplizer(const edm::ParameterSet& iConfig) :
@@ -49,10 +54,10 @@ void MvaNtuplizer<T>::analyze(const edm::Event& iEvent, const edm::EventSetup& i
         output_scalar_vars[name] = 0.f;
         continue;
       }
-      output_vars[name] = std::vector<float>(kMaxFeatureLen);
       // extract category prefix before first underscore, e.g. PF_var -> PF
       auto pos = name.find('_');
       std::string cat = (pos == std::string::npos) ? name : name.substr(0, pos);
+      output_vars[name] = std::vector<float>(maxLenForCategory(cat));
       categories.insert(cat);
     }
     // create one length branch per category (named n<cat>) first
@@ -100,12 +105,12 @@ void MvaNtuplizer<T>::analyze(const edm::Event& iEvent, const edm::EventSetup& i
       }
       auto it = output_vars.find(var.first);
       if (it == output_vars.end()) continue;
-      const size_t ncopy = std::min(var.second.size(), kMaxFeatureLen);
-      if (ncopy > 0)
-        std::copy(var.second.begin(), var.second.begin() + ncopy, it->second.begin());
-      // determine category and update its length
+      // determine category and its cap
       auto pos = var.first.find('_');
       std::string cat = (pos == std::string::npos) ? var.first : var.first.substr(0, pos);
+      const size_t ncopy = std::min(var.second.size(), maxLenForCategory(cat));
+      if (ncopy > 0)
+        std::copy(var.second.begin(), var.second.begin() + ncopy, it->second.begin());
       auto cit = cat_len.find(cat);
       if (cit == cat_len.end() || cat_len[cat] < ncopy) cat_len[cat] = static_cast<unsigned>(ncopy);
     }

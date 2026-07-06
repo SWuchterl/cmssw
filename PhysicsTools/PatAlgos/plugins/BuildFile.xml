@@ -37,5 +37,9 @@
   <use name="TrackingTools/Records"/>
   <use name="RecoTauTag/RecoTau"/>
   <use name="RecoBTag/FeatureTools"/>
+  <use name="DataFormats/EcalRecHit"/>
+  <use name="DataFormats/EcalDetId"/>
+  <use name="Geometry/CaloGeometry"/>
+  <use name="Geometry/Records"/>
   <use name="root"/>
 </library>
