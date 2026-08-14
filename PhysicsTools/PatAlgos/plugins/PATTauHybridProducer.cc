@@ -348,7 +348,7 @@ void PATTauHybridProducer::fillTauFromJet(reco::PFTau& pfTau, const reco::JetBas
     pfChs = reco::tau::pfChargedCands(*jet);
   }
   // take 1st charged candidate with charge as of tau (collection is pt-sorted)
-  if (pfTau.charge() == 0 || pfChs.size() == 1) {
+  if (!pfChs.empty() && (pfTau.charge() == 0 || pfChs.size() == 1)) {
     pfTau.setleadChargedHadrCand(pfChs[0]);
     pfTau.setleadCand(pfChs[0]);
     pfChsSig.push_back(pfChs[0]);
