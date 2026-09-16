@@ -139,8 +139,8 @@ void ParTLeptonProducer<LeptonType>::fillDescriptions(edm::ConfigurationDescript
   desc.add<edm::InputTag>("src")->setComment("input variables");
   desc.add<edm::InputTag>("srcLeps")->setComment("input physics object collection. src and srcLeps must be in synch");
   desc.add<std::vector<std::string>>("flav_names")->setComment("Names of the oputput classes");
-  desc.add<std::string>("preprocess_json", "PhysicsTools/NanoAOD/data/ParTMuonId/preprocess.json");
-  desc.add<edm::FileInPath>("model_path", edm::FileInPath("PhysicsTools/NanoAOD/data/ParTMuonId/model.onnx"));
+  desc.add<std::string>("preprocess_json", "PhysicsTools/NanoAOD/data/ParTMuonId/v2/preprocess.json");
+  desc.add<edm::FileInPath>("model_path", edm::FileInPath("PhysicsTools/NanoAOD/data/ParTMuonId/v2/muon_ParT_2024.onnx"));
   desc.addOptionalUntracked<bool>("debugMode", false);
 
   std::string modname;
