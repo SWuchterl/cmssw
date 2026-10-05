@@ -1262,3 +1262,15 @@ run2_egamma.toReplaceWith(electronTask, _electronTask_Run2)
 # Revert back to AK4 CHS jets for Run2 inputs
 run2_nanoAOD_ANY.toModify(
     ptRatioRelForEle, srcJet="updatedJets")
+
+# Opt-in: drop the pT window of the electron gen matching (deltaR < 0.3 only).
+# maxDPtRel = 0.0 cannot be used: MatchByDRDPt requires |dpt|/pt < maxDPtRel, so 0.0 rejects every match.
+# MatchByDRDPt (CommonTools/UtilAlgos) is deliberately not changed: it is shared by the muon, photon, tau,
+# low-pT electron and trigger matchers.
+def customizeElectronGenMatchNoPtWindow(process, maxDPtRel=1.e9):
+    for m in ("electronsMCMatchForTable", "electronsMCMatchForTableAlt"):
+        if hasattr(process, m):
+            getattr(process, m).maxDPtRel = maxDPtRel
+    if hasattr(process, "electronMCTable"):
+        process.electronMCTable.docString = "MC matching to status==1 electrons or photons, deltaR < 0.3, no pT window"
+    return process
