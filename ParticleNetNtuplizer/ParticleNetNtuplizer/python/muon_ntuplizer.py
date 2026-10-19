@@ -152,6 +152,9 @@ ntuplizer_muon_training = ntuplizer_muon.clone(
 def customize_training_ntuplizer(process):
     process.muonParTLLTrainingFeatures = muonParTLLTrainingFeatures
     process.muonTablesTask.add(process.muonParTLLTrainingFeatures)
+    # string features bound once at construction instead of resolved on every call: same values, faster
+    for label in ('muonParTLLTrainingFeatures', 'muonParTVariables', 'muonPNetVariables'):
+        getattr(process, label).lazyEval = cms.untracked.bool(False)
     process.ntuplizer_muon = ntuplizer_muon_training
     process.nanoSequenceMC.insert(process.nanoSequenceMC.index(process.nanoSequenceOnlyFullSim)+1, process.ntuplizer_muon)
     process.TFileService = cms.Service("TFileService",

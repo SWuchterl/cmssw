@@ -395,6 +395,9 @@ ntuplizer_electron_training = ntuplizer_electron.clone(
 def customize_training_ntuplizer(process):
     process.electronParTLLTrainingFeatures = electronParTLLTrainingFeatures
     process.electronTablesTask.add(process.electronParTLLTrainingFeatures)
+    # string features bound once at construction instead of resolved on every call: same values, faster
+    for label in ('electronParTLLTrainingFeatures', 'electronParTVariables'):
+        getattr(process, label).lazyEval = cms.untracked.bool(False)
     process.ntuplizer_electron = ntuplizer_electron_training
     process.nanoSequenceMC.insert(process.nanoSequenceMC.index(
         process.nanoSequenceOnlyFullSim)+1, process.ntuplizer_electron)
