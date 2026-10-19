@@ -163,7 +163,19 @@ namespace Rivet {
       }
 
       // Photons
-      Particles fsparticles = apply<FinalState>(event, "FS").particles();
+      // pseudorapidity, azimuth and pT of the final-state particles once per event instead of once per photon:
+      // deltaR(particle, photon) is deltaR of exactly these values, so the isolation is unchanged
+      const Particles& fsparticles = apply<FinalState>(event, "FS").particles();
+      std::vector<double> fsEta, fsPhi, fsPt;
+      fsEta.reserve(fsparticles.size());
+      fsPhi.reserve(fsparticles.size());
+      fsPt.reserve(fsparticles.size());
+      for (auto const& fsparticle : fsparticles) {
+        const Vector3 v = fsparticle.momentum().vector3();
+        fsEta.push_back(v.pseudorapidity());
+        fsPhi.push_back(v.azimuthalAngle());
+        fsPt.push_back(fsparticle.pt());
+      }
 
       for (auto& photon : apply<FinalState>(event, "Photons").particlesByPt()) {
         if (photon.pt() < _phoMinPt)
@@ -173,15 +185,15 @@ namespace Rivet {
           continue;
 
         double photonptsum = 0;
+        const Vector3 pv = photon.momentum().vector3();
+        const double phoEta = pv.pseudorapidity(), phoPhi = pv.azimuthalAngle();
 
-        for (auto& fsparticle : fsparticles) {
-          if (deltaR(fsparticle, photon) == 0)
+        for (size_t i = 0; i < fsEta.size(); ++i) {
+          const double dR = deltaR(fsEta[i], fsPhi[i], phoEta, phoPhi);
+          if (dR == 0 || dR > _phoIsoConeSize)
             continue;
 
-          if (deltaR(fsparticle, photon) > _phoIsoConeSize)
-            continue;
-
-          photonptsum += fsparticle.pt();
+          photonptsum += fsPt[i];
         }
 
         if (photonptsum / photon.pt() > _phoMaxRelIso)
