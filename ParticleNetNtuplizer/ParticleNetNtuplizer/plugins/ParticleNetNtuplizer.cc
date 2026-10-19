@@ -485,9 +485,13 @@ void MvaNtuplizer<T>::analyze(const edm::Event& iEvent, const edm::EventSetup& i
   if (src->size() != leptons->size()){throw cms::Exception("Tables and leptons not aligned");}
   if (src->size() != mcTable->nRows()){throw cms::Exception("Tables and leptons not aligned");}
 
-  // First time initialize branches if theres a lepton to read them from
-  if (src->size() > 0 && output_vars.empty()){
-    const auto& taginfo = (*src)[0];
+  // First time initialize branches if theres a selected lepton to read them from (the producers can leave the
+  // features of unselected leptons empty)
+  size_t firstSelected = 0;
+  while (firstSelected < src->size() && !selector_(leptons->at(firstSelected)))
+    ++firstSelected;
+  if (firstSelected < src->size() && output_vars.empty()){
+    const auto& taginfo = (*src)[firstSelected];
     // create fixed-size arrays (vectors sized to kMaxFeatureLen) and collect categories
     std::unordered_set<std::string> categories;
     for (const auto& var : taginfo.get_all()){

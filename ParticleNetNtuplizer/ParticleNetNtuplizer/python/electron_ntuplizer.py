@@ -399,6 +399,9 @@ def customize_training_ntuplizer(process):
     for label in ('electronParTLLTrainingFeatures', 'electronParTVariables'):
         getattr(process, label).lazyEval = cms.untracked.bool(False)
     process.ntuplizer_electron = ntuplizer_electron_training
+    # features and scores only for the leptons the tree keeps (the others get empty features and score -1)
+    for label in ('electronParTLLTrainingFeatures', 'electronParTVariables', 'electronParTLLScores'):
+        getattr(process, label).leptonSelection = cms.string(process.ntuplizer_electron.leptonSelection.value())
     process.nanoSequenceMC.insert(process.nanoSequenceMC.index(
         process.nanoSequenceOnlyFullSim)+1, process.ntuplizer_electron)
     process.TFileService = cms.Service("TFileService",

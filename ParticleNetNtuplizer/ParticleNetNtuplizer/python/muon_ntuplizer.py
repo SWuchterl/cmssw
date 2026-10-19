@@ -156,6 +156,9 @@ def customize_training_ntuplizer(process):
     for label in ('muonParTLLTrainingFeatures', 'muonParTVariables', 'muonPNetVariables'):
         getattr(process, label).lazyEval = cms.untracked.bool(False)
     process.ntuplizer_muon = ntuplizer_muon_training
+    # features and scores only for the leptons the tree keeps (the others get empty features and score -1)
+    for label in ('muonParTLLTrainingFeatures', 'muonParTVariables', 'muonPNetVariables', 'muonParTLLScores', 'muonPNetScores'):
+        getattr(process, label).leptonSelection = cms.string(process.ntuplizer_muon.leptonSelection.value())
     process.nanoSequenceMC.insert(process.nanoSequenceMC.index(process.nanoSequenceOnlyFullSim)+1, process.ntuplizer_muon)
     process.TFileService = cms.Service("TFileService",
                                        fileName=cms.string("tree.root"),
