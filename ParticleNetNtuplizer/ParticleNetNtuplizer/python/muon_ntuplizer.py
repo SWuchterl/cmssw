@@ -23,6 +23,7 @@ def customize_ntuplizer(process):
 # Training ntuple (Run 3): own feature producer, independent of the inputs of the ONNX models in NanoAOD
 # ---------------------------------------------------------------------------
 from ParticleNetNtuplizer.ParticleNetNtuplizer.electron_ntuplizer import _cpfVars, _npfVars, _ltVars, _svVars, _trainingMaxLengths
+from PhysicsTools.NanoAOD.muons_cff import muonPOGHighLevelVars
 
 _muPfIso03 = "(pfIsolationR03().sumChargedHadronPt + max(pfIsolationR03().sumNeutralHadronEt + pfIsolationR03().sumPhotonEt - pfIsolationR03().sumPUPt/2,0.0))/pt"
 
@@ -43,6 +44,8 @@ muonParTLLTrainingFeatures = cms.EDProducer(
         rhoCentralChargedPileUp=cms.InputTag("fixedGridRhoFastjetCentralChargedPileUp"),
     ),
     leptonVars=cms.PSet(
+        # MuonPOG high-level track variables (requested by MuonPOG), same definitions as muonParTTrainVariables
+        muonPOGHighLevelVars,
         Lepton_mask=cms.string("1"),
         Lepton_pt=cms.string("pt"),
         Lepton_pt_log=cms.string("log(max(pt,1.e-8))"),
@@ -92,6 +95,8 @@ muonParTLLTrainingFeatures = cms.EDProducer(
         Lepton_ID_tightId=cms.string("passed('CutBasedIdTight')"),
         Lepton_ID_softId=cms.string("passed('SoftCutBasedId')"),
         Lepton_ID_softMvaId=cms.string("passed('SoftMvaId')"),
+        Lepton_ID_softMva=cms.string("softMvaValue()"),
+        Lepton_ID_softMvaRun3=cms.string("softMvaRun3Value()"),
         Lepton_ID_highPtId=cms.string("?passed('CutBasedIdGlobalHighPt')?2:passed('CutBasedIdTrkHighPt')"),
         Lepton_ID_mvaMuID_WP=cms.string("userFloat('mvaIDMuon_wpMedium') + userFloat('mvaIDMuon_wpTight')"),
         Lepton_ID_pfIsoId=cms.string("passed('PFIsoVeryLoose')+passed('PFIsoLoose')+passed('PFIsoMedium')+passed('PFIsoTight')+passed('PFIsoVeryTight')+passed('PFIsoVeryVeryTight')"),
