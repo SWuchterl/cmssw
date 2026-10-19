@@ -535,11 +535,11 @@ muonParTTrainVariables = cms.EDProducer(
         # Lepton_ID_PNET_heavy=cms.InputTag("muonPNetScores:heavy"),
         # Lepton_ID_PNET_light=cms.InputTag("muonPNetScores:light"),
         # Lepton_ID_PNET_tau=cms.InputTag("muonPNetScores:tau"),
-        # Lepton_ID_ParT_prompt=cms.InputTag("muonParTScores:prompt"),
-        # Lepton_ID_ParT_heavy=cms.InputTag("muonParTScores:heavy"),
-        # Lepton_ID_ParT_light=cms.InputTag("muonParTScores:light"),
-        # Lepton_ID_ParT_tau=cms.InputTag("muonParTScores:tau"),
-        # Lepton_ID_ParT_fake=cms.InputTag("muonParTScores:fake"),
+        Lepton_ParTv1_prompt=cms.InputTag("muonParTScores:prompt"),
+        Lepton_ParTv1_heavy=cms.InputTag("muonParTScores:heavy"),
+        Lepton_ParTv1_light=cms.InputTag("muonParTScores:light"),
+        Lepton_ParTv1_tau=cms.InputTag("muonParTScores:tau"),
+        Lepton_ParTv1_fake=cms.InputTag("muonParTScores:fake"),
         # it's own outputs for testing
         # Lepton_ID_ParT_prompt=cms.InputTag("muonParTLLScores:prompt"),
         # Lepton_ID_ParT_heavy=cms.InputTag("muonParTLLScores:heavy"),
@@ -635,13 +635,13 @@ muonParTTrainVariables = cms.EDProducer(
 
 
 from PhysicsTools.PatAlgos.muonParTTags_cfi import muonParTTags as _muonParTTags
-# muonParTScores = _muonParTTags.clone(
-#     src=cms.InputTag("muonParTVariables"),
-#     srcLeps=cms.InputTag("linkedObjects", "muons"),
-#     model_path='PhysicsTools/NanoAOD/data/ParTMuonId/model.onnx',
-#     preprocess_json='PhysicsTools/NanoAOD/data/ParTMuonId/preprocess.json',
-#     flav_names=cms.vstring(["prompt", "tau", "heavy", "light", "fake"]),
-# )
+muonParTScores = _muonParTTags.clone(
+    src=cms.InputTag("muonParTVariables"),
+    srcLeps=cms.InputTag("linkedObjects", "muons"),
+    model_path='PhysicsTools/NanoAOD/data/ParTMuonId/model.onnx',
+    preprocess_json='PhysicsTools/NanoAOD/data/ParTMuonId/preprocess.json',
+    flav_names=cms.vstring(["prompt", "tau", "heavy", "light", "fake"]),
+)
 
 muonParTLLScores = _muonParTTags.clone(
     src=cms.InputTag("muonParTTrainVariables"),
@@ -787,4 +787,4 @@ muonMCTable = cms.EDProducer("CandMCMatchTableProducer",
 muonTask = cms.Task(slimmedMuonsUpdated,isoForMu,ptRatioRelForMu,slimmedMuonsWithUserData,finalMuons,finalLooseMuons)
 muonMCTask = cms.Task(muonsMCMatchForTable,muonMCTable)
 # muonTablesTask = cms.Task(muonPROMPTMVA,muonMVALowPt,muonBSConstrain,muonTable,muonMVAID,muonPNetVariables,muonPNetScores, muonParTVariables, muonParTTrainVariables, muonParTScores, muonParTLLScores)
-muonTablesTask = cms.Task(muonPROMPTMVA,muonMVALowPt,muonBSConstrain,muonTable,muonMVAID,muonPNetVariables,muonPNetScores, muonParTTrainVariables, muonParTLLScores)
+muonTablesTask = cms.Task(muonPROMPTMVA,muonMVALowPt,muonBSConstrain,muonTable,muonMVAID,muonPNetVariables,muonPNetScores, muonParTVariables, muonParTScores, muonParTTrainVariables, muonParTLLScores)

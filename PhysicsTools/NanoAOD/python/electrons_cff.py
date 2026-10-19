@@ -810,11 +810,11 @@ electronParTTrainVariables = cms.EDProducer(
         # Lepton_ID_PNET_heavy=cms.InputTag("electronPNetScores:heavy"),
         # Lepton_ID_PNET_light=cms.InputTag("electronPNetScores:light"),
         # Lepton_ID_PNET_tau=cms.InputTag("electronPNetScores:unknown"),
-        # Lepton_ID_ParT_prompt=cms.InputTag("electronParTScores:prompt"),
-        # Lepton_ID_ParT_heavy=cms.InputTag("electronParTScores:heavy"),
-        # Lepton_ID_ParT_light=cms.InputTag("electronParTScores:light"),
-        # Lepton_ID_ParT_tau=cms.InputTag("electronParTScores:tau"),
-        # Lepton_ID_ParT_fake=cms.InputTag("electronParTScores:fake"),
+        Lepton_ParTv1_prompt=cms.InputTag("electronParTScores:prompt"),
+        Lepton_ParTv1_heavy=cms.InputTag("electronParTScores:heavy"),
+        Lepton_ParTv1_light=cms.InputTag("electronParTScores:light"),
+        Lepton_ParTv1_tau=cms.InputTag("electronParTScores:tau"),
+        Lepton_ParTv1_fake=cms.InputTag("electronParTScores:fake"),
         # it's own outputs for testing
         # Lepton_ID_ParT_prompt=cms.InputTag("electronParTLLScores:prompt"),
         # Lepton_ID_ParT_heavy=cms.InputTag("electronParTLLScores:heavy"),
@@ -921,15 +921,15 @@ electronParTTrainVariables = cms.EDProducer(
     leptonVars=_legacy_ParTVariables_LeptonPSet
 )
 
-# electronParTScores = _electronParTTags.clone(
-#     src=cms.InputTag("electronParTVariables"),
-#     srcLeps=cms.InputTag("linkedObjects", "electrons"),
-#     model_path=cms.FileInPath(
-#         'PhysicsTools/NanoAOD/data/ParTElectronId/model.onnx'),
-#     preprocess_json=cms.string(
-#         'PhysicsTools/NanoAOD/data/ParTElectronId/preprocess.json'),
-#     flav_names=cms.vstring(["prompt", "tau", "heavy", "light", "fake"]),
-# )
+electronParTScores = _electronParTTags.clone(
+    src=cms.InputTag("electronParTVariables"),
+    srcLeps=cms.InputTag("linkedObjects", "electrons"),
+    model_path=cms.FileInPath(
+        'PhysicsTools/NanoAOD/data/ParTElectronId/model.onnx'),
+    preprocess_json=cms.string(
+        'PhysicsTools/NanoAOD/data/ParTElectronId/preprocess.json'),
+    flav_names=cms.vstring(["prompt", "tau", "heavy", "light", "fake"]),
+)
 
 electronParTLLScores = _electronParTTags.clone(
     src=cms.InputTag("electronParTTrainVariables"),
@@ -1349,7 +1349,7 @@ electronTask = cms.Task(bitmapVIDForEle, bitmapVIDForEleFall17V2, bitmapVIDForEl
                         isoForEleFall17V2, ptRatioRelForEle, seedGainEle, slimmedElectronsWithUserData, finalElectrons)
 # electronTablesTask = cms.Task(electronPROMPTMVA, electronPNetVariables, electronPNetScores, electronParTVariables, electronParTTrainVariables, electronParTScores, electronParTLLScores, electronTable)
 electronTablesTask = cms.Task(
-    electronPROMPTMVA, electronParTTrainVariables, electronParTLLScores, electronTable)
+    electronPROMPTMVA, electronParTVariables, electronParTScores, electronParTTrainVariables, electronParTLLScores, electronTable)
 electronMCTask = cms.Task(tautaggerForMatching, matchingElecPhoton,
                           electronsMCMatchForTable, electronsMCMatchForTableAlt, electronMCTable)
 
