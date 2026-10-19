@@ -5,4 +5,7 @@
 <use name="PhysicsTools/UtilAlgos"/>
 <use name="FWCore/ServiceRegistry"/>
 <use name="DataFormats/NanoAOD"/>
+<use name="DataFormats/HepMCCandidate"/>
+<use name="DataFormats/JetReco"/>
+<use name="SimDataFormats/PileupSummaryInfo"/>
 <flags EDM_PLUGIN="1"/>
