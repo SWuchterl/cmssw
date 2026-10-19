@@ -22,7 +22,7 @@ def customize_ntuplizer(process):
 # ---------------------------------------------------------------------------
 # Training ntuple (Run 3): own feature producer, independent of the inputs of the ONNX models in NanoAOD
 # ---------------------------------------------------------------------------
-from ParticleNetNtuplizer.ParticleNetNtuplizer.electron_ntuplizer import _cpfVars, _npfVars, _ltVars, _svVars, _trainingMaxLengths
+from ParticleNetNtuplizer.ParticleNetNtuplizer.electron_ntuplizer import _cpfVars, _npfVars, _ltVars, _svVars, _trainingMaxLengths, _lean_linked_objects
 from ParticleNetNtuplizer.ParticleNetNtuplizer.electron_ntuplizer import _asinh
 from PhysicsTools.NanoAOD.muons_cff import muonPOGHighLevelVars
 
@@ -155,6 +155,7 @@ def customize_training_ntuplizer(process):
     # string features bound once at construction instead of resolved on every call: same values, faster
     for label in ('muonParTLLTrainingFeatures', 'muonParTVariables', 'muonPNetVariables'):
         getattr(process, label).lazyEval = cms.untracked.bool(False)
+    process = _lean_linked_objects(process)
     process.ntuplizer_muon = ntuplizer_muon_training
     # features and scores only for the leptons the tree keeps (the others get empty features and score -1)
     for label in ('muonParTLLTrainingFeatures', 'muonParTVariables', 'muonPNetVariables', 'muonParTLLScores', 'muonPNetScores'):

@@ -379,6 +379,26 @@ _trainingMaxLengths = cms.PSet(
     ESC=cms.uint32(100),
 )
 
+def _lean_linked_objects(process):
+    """The training features read only the leptons of linkedObjects, none of its cross-links: give it no photons, taus,
+    jets, low-pT electrons and boosted taus, so that their NanoAOD chains (photon VID/MVA/isolation, low-pT electron
+    update, jet user data) do not run. The electrons and muons it copies are unchanged."""
+    if hasattr(process, "ntupleNoPhotons"):
+        return process
+    from PhysicsTools.PatAlgos.tools.helpers import getPatAlgosToolsTask, addToProcessAndTask
+    for label, selector, src in [("ntupleNoPhotons", "PATPhotonRefSelector", "slimmedPhotons"),
+                                 ("ntupleNoTaus", "PATTauRefSelector", "slimmedTaus"),
+                                 ("ntupleNoJets", "PATJetRefSelector", "slimmedJetsPuppi")]:
+        addToProcessAndTask(label, cms.EDFilter(selector, src=cms.InputTag(src), cut=cms.string("pt < 0")), process,
+                            getPatAlgosToolsTask(process))
+    process.linkedObjects.photons = "ntupleNoPhotons"
+    process.linkedObjects.taus = "ntupleNoTaus"
+    process.linkedObjects.jets = "ntupleNoJets"
+    process.linkedObjects.lowPtElectrons = ""
+    process.linkedObjects.boostedTaus = ""
+    return process
+
+
 ntuplizer_electron_training = ntuplizer_electron.clone(
     src="electronParTLLTrainingFeatures",
     maxLengths=_trainingMaxLengths,
@@ -398,6 +418,7 @@ def customize_training_ntuplizer(process):
     # string features bound once at construction instead of resolved on every call: same values, faster
     for label in ('electronParTLLTrainingFeatures', 'electronParTVariables'):
         getattr(process, label).lazyEval = cms.untracked.bool(False)
+    process = _lean_linked_objects(process)
     process.ntuplizer_electron = ntuplizer_electron_training
     # features and scores only for the leptons the tree keeps (the others get empty features and score -1)
     for label in ('electronParTLLTrainingFeatures', 'electronParTVariables', 'electronParTLLScores'):
