@@ -514,14 +514,22 @@ muonParTTrainVariables = cms.EDProducer(
         Lepton_innerTrackOriginalAlgo=cms.string("? innerTrack().isNonnull() ? innerTrack().originalAlgo() : -99"),
         Lepton_isRPC=cms.string("isRPCMuon"),
         Lepton_timAtIpInOutErr=cms.string("time().timeAtIpInOutErr"),
-        # let's also add the classic mva and cutbased IDs for comparison
-        # Lepton_ID_cutBasedLoose=cms.string("passed('CutBasedIdLoose')"),
-        # Lepton_ID_cutBasedMedium=cms.string("passed('CutBasedIdMedium')"),
-        # Lepton_ID_cutBasedMediumPrompt=cms.string("passed('CutBasedIdMediumPrompt')"),
-        # Lepton_ID_cutBasedTight=cms.string("passed('CutBasedIdTight')"),
-        # Lepton_ID_mva=cms.string("userFloat('mvaIDMuon')"),
+        # legacy NanoAOD muon IDs, only for comparison with the ParT training (same expressions as muonTable)
+        Lepton_highPtId=cms.string("?passed('CutBasedIdGlobalHighPt')?2:passed('CutBasedIdTrkHighPt')"),
+        Lepton_looseId=cms.string("passed('CutBasedIdLoose')"),
+        Lepton_mediumId=cms.string("passed('CutBasedIdMedium')"),
+        Lepton_mediumPromptId=cms.string("passed('CutBasedIdMediumPrompt')"),
+        Lepton_tightId=cms.string("passed('CutBasedIdTight')"),
+        Lepton_softId=cms.string("passed('SoftCutBasedId')"),
+        Lepton_softMvaId=cms.string("passed('SoftMvaId')"),
+        Lepton_softMva=cms.string("softMvaValue()"),
+        Lepton_softMvaRun3=cms.string("softMvaRun3Value()"),
     ),
     leptonVarsExt=cms.PSet(
+        # legacy NanoAOD muon ID scores, only for comparison with the ParT training
+        Lepton_pnScore_prompt=cms.InputTag("muonPNetScores:prompt"),
+        Lepton_pnScore_tau=cms.InputTag("muonPNetScores:tau"),
+        Lepton_mvaLowPt=cms.InputTag("muonMVALowPt"),
         # Lepton_ID_promptMVA=cms.InputTag("muonPROMPTMVA"),
         # Lepton_ID_PNET_prompt=cms.InputTag("muonPNetScores:prompt"),
         # Lepton_ID_PNET_heavy=cms.InputTag("muonPNetScores:heavy"),
