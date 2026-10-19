@@ -787,10 +787,10 @@ electronParTTrainVariables = electronParTVariables.clone(
         Lepton_eoverp=cms.string("eSuperClusterOverP()"),
         # Lepton_mvaId=cms.string("userFloat('mvaNoIso')"),
         # and some of the other IDs for comparison
-        Lepton_cutBasedVeto=cms.string("userInt('cutBasedID_veto')"),
-        Lepton_cutBasedLoose=cms.string("userInt('cutBasedID_loose')"),
-        Lepton_cutBasedMedium=cms.string("userInt('cutBasedID_medium')"),
-        Lepton_cutBasedTight=cms.string("userInt('cutBasedID_tight')"),
+        Lepton_ID_cutBasedVeto=cms.string("userInt('cutBasedID_veto')"),
+        Lepton_ID_cutBasedLoose=cms.string("userInt('cutBasedID_loose')"),
+        Lepton_ID_cutBasedMedium=cms.string("userInt('cutBasedID_medium')"),
+        Lepton_ID_cutBasedTight=cms.string("userInt('cutBasedID_tight')"),
         # Lepton_ID_mvaIsoWP80=cms.string("userInt('mvaIso_WP80')"),
         # Lepton_ID_mvaIsoWP90=cms.string("userInt('mvaIso_WP90')"),
         # Lepton_ID_mvaNoIsoWP80=cms.string("userInt('mvaNoIso_WP80')"),
@@ -799,12 +799,12 @@ electronParTTrainVariables = electronParTVariables.clone(
         # Lepton_ID_mvaNoIso=cms.string("userFloat('mvaNoIso')")
     ),
     leptonVarsExt=dict(
-        Lepton_promptMVA=cms.InputTag("electronPROMPTMVA"),
-        Lepton_ParT_prompt=cms.InputTag("electronParTLLScores:prompt"),
-        Lepton_ParT_heavy=cms.InputTag("electronParTLLScores:heavy"),
-        Lepton_ParT_light=cms.InputTag("electronParTLLScores:light"),
-        Lepton_ParT_tau=cms.InputTag("electronParTLLScores:tau"),
-        Lepton_ParT_fake=cms.InputTag("electronParTLLScores:fake"),
+        Lepton_ID_promptMVA=cms.InputTag("electronPROMPTMVA"),
+        Lepton_ID_ParTLL_prompt=cms.InputTag("electronParTLLScores:prompt"),
+        Lepton_ID_ParTLL_heavy=cms.InputTag("electronParTLLScores:heavy"),
+        Lepton_ID_ParTLL_light=cms.InputTag("electronParTLLScores:light"),
+        Lepton_ID_ParTLL_tau=cms.InputTag("electronParTLLScores:tau"),
+        Lepton_ID_ParTLL_fake=cms.InputTag("electronParTLLScores:fake"),
     ),
     pfVars=dict(
         PF_pt=cms.string("pt"),
