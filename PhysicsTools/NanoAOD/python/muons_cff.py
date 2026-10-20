@@ -398,8 +398,8 @@ muonBSConstrain = cms.EDProducer("MuonBeamspotConstraintValueMapProducer",
 
 # MuonPOG high-level track variables (from custom_muon_cff.py), shared by muonParTTrainVariables
 # and the training ntuplizer (ParticleNetNtuplizer/python/muon_ntuplizer.py).
-# Training-tree convention: no sentinels, a missing track gives 0 and its Lepton_has* flag is 0;
-# _log = log(max(x, 1.e-8)).
+# Training-tree convention: no sentinels. A value that is missing (no such track, its Lepton_has* flag is 0)
+# or that the reconstruction could not compute is 0, and so is its _log; _log = log(max(x, 1.e-8)) for x > 0.
 # positionChi2 (== Lepton_local_chi2) and trkKink (== Lepton_kink) are not repeated
 # muonHits is not added: in MiniAOD it is 1 for every global muon, i.e. == Lepton_global_muon
 # *_log variants are added next to the columns with extreme tails
@@ -447,12 +447,14 @@ muonPOGHighLevelVars = cms.PSet(
     Lepton_dyt_phi=cms.string("? dytTrack().isNonnull() && dytTrack().isAvailable() ? dytTrack().phi(): 0"),
     Lepton_dyt_charge=cms.string("? dytTrack().isNonnull() && dytTrack().isAvailable() ? dytTrack().charge(): 0"),
     Lepton_dyt_muonHits=cms.string("? dytTrack().isNonnull() && dytTrack().isAvailable() ? dytTrack().hitPattern().numberOfValidMuonHits() : 0"),
-    Lepton_momentumChi2=cms.string("combinedQuality().chi2LocalMomentum"),
-    Lepton_momentumChi2_log=cms.string("log(max(combinedQuality().chi2LocalMomentum,1.e-8))"),
+    # combinedQuality() is 0 without a global track; glbKink and glbTrackProbability are also 0 when the global refit
+    # failed, chi2LocalMomentum is -1 when the STA-TK propagation failed (the same muons have Lepton_local_chi2 = -1)
+    Lepton_momentumChi2=cms.string("max(combinedQuality().chi2LocalMomentum,0)"),
+    Lepton_momentumChi2_log=cms.string("? combinedQuality().chi2LocalMomentum > 0 ? log(max(combinedQuality().chi2LocalMomentum,1.e-8)) : 0"),
     Lepton_glbKink=cms.string("combinedQuality().glbKink"),
-    Lepton_glbKink_log=cms.string("log(max(combinedQuality().glbKink,1.e-8))"),
+    Lepton_glbKink_log=cms.string("? combinedQuality().glbKink > 0 ? log(max(combinedQuality().glbKink,1.e-8)) : 0"),
     Lepton_glbTrackProbability=cms.string("combinedQuality().glbTrackProbability"),
-    Lepton_glbTrackProbability_log=cms.string("log(max(combinedQuality().glbTrackProbability,1.e-8))"),
+    Lepton_glbTrackProbability_log=cms.string("? combinedQuality().glbTrackProbability > 0 ? log(max(combinedQuality().glbTrackProbability,1.e-8)) : 0"),
     Lepton_trkRelChi2=cms.string("combinedQuality().trkRelChi2"),
     # extra muon-system / track-quality variables (from custom_muon_cff.py)
     Lepton_innerTrack_ptErr=cms.string("? innerTrack().isNonnull() && innerTrack().isAvailable() ? innerTrack().ptError()/innerTrack().pt() : 0"),
