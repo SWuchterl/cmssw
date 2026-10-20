@@ -35,6 +35,8 @@ muonParTLLTrainingFeatures = cms.EDProducer(
     pfCandidates=cms.InputTag("packedPFCandidates"),
     ltCandidates=cms.InputTag("lostTracks"),
     trainingMode=cms.bool(True),
+    # v5 branches made in C++ (CPF_dxyRes_asinh, LT_dxyRes_asinh), as in the electron tree
+    v5Features=cms.bool(True),
     # full float32 precision as in the CMSSW inference: 12 bits made ParT pair ln m2 noise for close pairs (+27% size)
     reduceMantissaBits=cms.int32(0),
     rhoSrc=cms.InputTag("fixedGridRhoFastjetAll"),
