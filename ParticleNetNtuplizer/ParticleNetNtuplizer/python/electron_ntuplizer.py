@@ -419,6 +419,9 @@ def customize_training_ntuplizer(process):
     for label in ('electronParTLLTrainingFeatures', 'electronParTVariables'):
         getattr(process, label).lazyEval = cms.untracked.bool(False)
     process = _lean_linked_objects(process)
+    # the tree uses only the particle-level leptons and photons (|eta| < 2.5, dressing cone 0.1, photon isolation
+    # cone 0.4), which never involve final-state particles beyond |eta| = 3: no particle-level objects from them
+    process.particleLevel.particleMaxEta = 3.0
     process.ntuplizer_electron = ntuplizer_electron_training
     # features and scores only for the leptons the tree keeps (the others get empty features and score -1)
     for label in ('electronParTLLTrainingFeatures', 'electronParTVariables', 'electronParTLLScores'):
