@@ -14,10 +14,12 @@
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
 
+#include "FWCore/MessageLogger/interface/MessageLogger.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/Utilities/interface/StreamID.h"
 #include "FWCore/Utilities/interface/ESGetToken.h"
 
+#include "CommonTools/Utils/interface/StringCutObjectSelector.h"
 #include "CommonTools/Utils/interface/StringObjectFunction.h"
 #include "DataFormats/BTauReco/interface/DeepBoostedJetFeatures.h"
 #include "DataFormats/Candidate/interface/VertexCompositePtrCandidate.h"
@@ -52,6 +54,7 @@
 #include "RecoVertex/VertexPrimitives/interface/ConvertToFromReco.h"
 #include "RecoBTag/FeatureTools/interface/deep_helpers.h"
 
+#include <optional>
 #include <type_traits>
 #include <set>
 #include <unordered_map>
@@ -112,8 +115,21 @@ private:
   void parse_vars_into(const edm::ParameterSet& varsPSet, std::vector<std::unique_ptr<VarWithName<VarType>>>& vars) {
     for (const std::string& vname : varsPSet.getParameterNamesForType<std::string>()) {
       const std::string& func = varsPSet.getParameter<std::string>(vname);
-      vars.push_back(std::make_unique<VarWithName<VarType>>(vname, StringObjectFunction<VarType, true>(func)));
+      vars.push_back(std::make_unique<VarWithName<VarType>>(vname, make_function<VarType>(vname, func)));
     }
+  }
+  // non-lazy if lazyEval is false and the expression allows it: the lazy lookup is needed only for methods of
+  // derived classes; both give the same values
+  template <typename VarType>
+  StringObjectFunction<VarType, true> make_function(const std::string& vname, const std::string& func) {
+    if (!lazyEval_) {
+      try {
+        return StringObjectFunction<VarType, true>(func, false);
+      } catch (const cms::Exception&) {
+        lazy_vars_.push_back(vname);
+      }
+    }
+    return StringObjectFunction<VarType, true>(func, true);
   }
 
   template <typename VarType>
@@ -168,6 +184,13 @@ private:
   // optional precision reduction of all non-integer features (0 = off); training and inference stay identical
   // because both run this producer before the model
   int reduce_mantissa_bits_ = 0;
+  // lazy evaluation of the string variables: resolves the methods on every call (needed only for methods of
+  // derived classes); false binds each expression once at construction where possible, with identical values
+  bool lazyEval_ = true;
+  // variables kept lazy although lazyEval is false (methods of derived classes, e.g. pat::Jet methods on a userCand)
+  std::vector<std::string> lazy_vars_;
+  // leptons failing it get empty features (not used downstream); the collection stays aligned with src
+  std::optional<StringCutObjectSelector<LeptonType>> selection_;
   edm::EDGetTokenT<HBHERecHitCollection> hbhe_token_;
   edm::EDGetTokenT<reco::CaloClusterCollection> es_clusters_token_;
   edm::Handle<HBHERecHitCollection> hbheHits_;
@@ -213,6 +236,9 @@ LeptonTagInfoCollectionProducer<LeptonType>::LeptonTagInfoCollectionProducer(con
       pf_varsPSet_(iConfig.getParameter<edm::ParameterSet>("pfVars")),
       lt_varsPSet_(iConfig.getParameter<edm::ParameterSet>("ltVars")),
       sv_varsPSet_(iConfig.getParameter<edm::ParameterSet>("svVars")) {
+  lazyEval_ = iConfig.getUntrackedParameter<bool>("lazyEval");
+  if (const auto& cut = iConfig.getParameter<std::string>("leptonSelection"); !cut.empty())
+    selection_.emplace(cut);
   parse_vars_into(lepton_varsPSet_, lepton_vars_);
   parse_vars_into(pf_varsPSet_, pf_vars_);
   parse_vars_into(lt_varsPSet_, lt_vars_);
@@ -261,6 +287,13 @@ LeptonTagInfoCollectionProducer<LeptonType>::LeptonTagInfoCollectionProducer(con
     }
   }
 
+  if (!lazy_vars_.empty()) {
+    edm::LogInfo log("LeptonTagInfoCollectionProducer");
+    log << "lazy evaluation kept for " << lazy_vars_.size() << " variables:";
+    for (const auto& name : lazy_vars_)
+      log << " " << name;
+  }
+
   produces<LeptonTagInfoCollection>();
 }
 
@@ -296,6 +329,10 @@ void LeptonTagInfoCollectionProducer<LeptonType>::fillDescriptions(edm::Configur
   }
 
   desc.add<bool>("trainingMode", false);
+  desc.addUntracked<bool>("lazyEval", true)
+      ->setComment("lazy evaluation of the string variables; false binds them once where possible (faster, same values)");
+  desc.add<std::string>("leptonSelection", "")
+      ->setComment("leptons failing this cut get empty features, the collection stays aligned; empty = all");
   desc.addOptional<bool>("v5Features", false);
   desc.addOptional<int>("reduceMantissaBits", 0)->setComment("0 = full float precision");
   desc.addOptional<edm::InputTag>("rhoSrc", edm::InputTag("fixedGridRhoFastjetAll"));
@@ -371,6 +408,10 @@ void LeptonTagInfoCollectionProducer<LeptonType>::produce(edm::Event& iEvent, co
 
   for (size_t ilep = 0; ilep < src->size(); ilep++) {
     const auto& lep = (*src)[ilep];
+    if (selection_ && !(*selection_)(lep)) {
+      output_info->emplace_back();
+      continue;
+    }
     edm::RefToBase<LeptonType> lep_ref(src, ilep);
     DeepBoostedJetFeatures features;
     fill_lepton_features(lep, features);

@@ -22,7 +22,7 @@ def customize_ntuplizer(process):
 # ---------------------------------------------------------------------------
 # Training ntuple (Run 3): own feature producer, independent of the inputs of the ONNX models in NanoAOD
 # ---------------------------------------------------------------------------
-from ParticleNetNtuplizer.ParticleNetNtuplizer.electron_ntuplizer import _cpfVars, _npfVars, _ltVars, _svVars, _trainingMaxLengths
+from ParticleNetNtuplizer.ParticleNetNtuplizer.electron_ntuplizer import _cpfVars, _npfVars, _ltVars, _svVars, _trainingMaxLengths, _lean_linked_objects
 from ParticleNetNtuplizer.ParticleNetNtuplizer.electron_ntuplizer import _asinh
 from PhysicsTools.NanoAOD.muons_cff import muonPOGHighLevelVars
 
@@ -126,11 +126,7 @@ muonParTLLTrainingFeatures = cms.EDProducer(
         Lepton_ID_PNet_heavy=cms.InputTag("muonPNetScores:heavy"),
         Lepton_ID_PNet_light=cms.InputTag("muonPNetScores:light"),
         Lepton_ID_PNet_tau=cms.InputTag("muonPNetScores:tau"),
-        Lepton_ID_ParTLL_prompt=cms.InputTag("muonParTLLScores:prompt"),
-        Lepton_ID_ParTLL_tau=cms.InputTag("muonParTLLScores:tau"),
-        Lepton_ID_ParTLL_heavy=cms.InputTag("muonParTLLScores:heavy"),
-        Lepton_ID_ParTLL_light=cms.InputTag("muonParTLLScores:light"),
-        Lepton_ID_ParTLL_fake=cms.InputTag("muonParTLLScores:fake"),
+        # no ParT lepton ID scores (Lepton_ID_ParTLL_*): their ONNX inference was half of the CPU time
     ),
     pfVars=cms.PSet(),
     cpfVars=_cpfVars,
@@ -152,7 +148,14 @@ ntuplizer_muon_training = ntuplizer_muon.clone(
 def customize_training_ntuplizer(process):
     process.muonParTLLTrainingFeatures = muonParTLLTrainingFeatures
     process.muonTablesTask.add(process.muonParTLLTrainingFeatures)
+    # string features bound once at construction instead of resolved on every call: same values, faster
+    for label in ('muonParTLLTrainingFeatures', 'muonParTVariables', 'muonPNetVariables'):
+        getattr(process, label).lazyEval = cms.untracked.bool(False)
+    process = _lean_linked_objects(process)
     process.ntuplizer_muon = ntuplizer_muon_training
+    # features and scores only for the leptons the tree keeps (the others get empty features and score -1)
+    for label in ('muonParTLLTrainingFeatures', 'muonParTVariables', 'muonPNetVariables', 'muonParTLLScores', 'muonPNetScores'):
+        getattr(process, label).leptonSelection = cms.string(process.ntuplizer_muon.leptonSelection.value())
     process.nanoSequenceMC.insert(process.nanoSequenceMC.index(process.nanoSequenceOnlyFullSim)+1, process.ntuplizer_muon)
     process.TFileService = cms.Service("TFileService",
                                        fileName=cms.string("tree.root"),

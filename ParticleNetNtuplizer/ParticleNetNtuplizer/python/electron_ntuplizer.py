@@ -324,11 +324,7 @@ electronParTLLTrainingFeatures = cms.EDProducer(
     ),
     leptonVarsExt=cms.PSet(
         Lepton_ID_promptMVA=cms.InputTag("electronPROMPTMVA"),
-        Lepton_ID_ParTLL_prompt=cms.InputTag("electronParTLLScores:prompt"),
-        Lepton_ID_ParTLL_tau=cms.InputTag("electronParTLLScores:tau"),
-        Lepton_ID_ParTLL_heavy=cms.InputTag("electronParTLLScores:heavy"),
-        Lepton_ID_ParTLL_light=cms.InputTag("electronParTLLScores:light"),
-        Lepton_ID_ParTLL_fake=cms.InputTag("electronParTLLScores:fake"),
+        # no ParT lepton ID scores (Lepton_ID_ParTLL_*): their ONNX inference was half of the CPU time
     ),
     pfVars=cms.PSet(),
     cpfVars=_cpfVars,
@@ -379,6 +375,26 @@ _trainingMaxLengths = cms.PSet(
     ESC=cms.uint32(100),
 )
 
+def _lean_linked_objects(process):
+    """The training features read only the leptons of linkedObjects, none of its cross-links: give it no photons, taus,
+    jets, low-pT electrons and boosted taus, so that their NanoAOD chains (photon VID/MVA/isolation, low-pT electron
+    update, jet user data) do not run. The electrons and muons it copies are unchanged."""
+    if hasattr(process, "ntupleNoPhotons"):
+        return process
+    from PhysicsTools.PatAlgos.tools.helpers import getPatAlgosToolsTask, addToProcessAndTask
+    for label, selector, src in [("ntupleNoPhotons", "PATPhotonRefSelector", "slimmedPhotons"),
+                                 ("ntupleNoTaus", "PATTauRefSelector", "slimmedTaus"),
+                                 ("ntupleNoJets", "PATJetRefSelector", "slimmedJetsPuppi")]:
+        addToProcessAndTask(label, cms.EDFilter(selector, src=cms.InputTag(src), cut=cms.string("pt < 0")), process,
+                            getPatAlgosToolsTask(process))
+    process.linkedObjects.photons = "ntupleNoPhotons"
+    process.linkedObjects.taus = "ntupleNoTaus"
+    process.linkedObjects.jets = "ntupleNoJets"
+    process.linkedObjects.lowPtElectrons = ""
+    process.linkedObjects.boostedTaus = ""
+    return process
+
+
 ntuplizer_electron_training = ntuplizer_electron.clone(
     src="electronParTLLTrainingFeatures",
     maxLengths=_trainingMaxLengths,
@@ -395,7 +411,17 @@ ntuplizer_electron_training = ntuplizer_electron.clone(
 def customize_training_ntuplizer(process):
     process.electronParTLLTrainingFeatures = electronParTLLTrainingFeatures
     process.electronTablesTask.add(process.electronParTLLTrainingFeatures)
+    # string features bound once at construction instead of resolved on every call: same values, faster
+    for label in ('electronParTLLTrainingFeatures', 'electronParTVariables'):
+        getattr(process, label).lazyEval = cms.untracked.bool(False)
+    process = _lean_linked_objects(process)
+    # the tree uses only the particle-level leptons and photons (|eta| < 2.5, dressing cone 0.1, photon isolation
+    # cone 0.4), which never involve final-state particles beyond |eta| = 3: no particle-level objects from them
+    process.particleLevel.particleMaxEta = 3.0
     process.ntuplizer_electron = ntuplizer_electron_training
+    # features and scores only for the leptons the tree keeps (the others get empty features and score -1)
+    for label in ('electronParTLLTrainingFeatures', 'electronParTVariables', 'electronParTLLScores'):
+        getattr(process, label).leptonSelection = cms.string(process.ntuplizer_electron.leptonSelection.value())
     process.nanoSequenceMC.insert(process.nanoSequenceMC.index(
         process.nanoSequenceOnlyFullSim)+1, process.ntuplizer_electron)
     process.TFileService = cms.Service("TFileService",
