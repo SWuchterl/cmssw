@@ -623,109 +623,17 @@ _legacy_ParTVariables_LeptonPSet = cms.PSet(
         "?(pt()>0.)?(dr03HcalTowerSumEt(1)*1./pt()):0."),
 )
 
-ParTVariables_LeptonPSet = cms.PSet(
-    Lepton_pt_log=cms.string("log(pt+1.e-8)"),
-    Lepton_eta=cms.string("eta"),
-    Lepton_dxy=cms.string("dB('PV2D')"),
-    Lepton_dz=cms.string("dB('PVDZ')"),
-    Lepton_sip3d=cms.string("dB('PV3D')/max(1.e-6,edB('PV3D'))"),
-    Lepton_closeTrackNLayers=cms.string(
-        "closestCtfTrackNLayers()"),
-    Lepton_deltaetacltrkcalo=cms.string(
-        "deltaEtaSeedClusterTrackAtCalo"),
-    Lepton_dEtaInSeed=cms.string(
-        "deltaEtaSuperClusterTrackAtVtx()-superCluster().eta()+superCluster().seed().eta()"),
-    Lepton_hcaloverecal_log=cms.string(
-        "log(full5x5_hcalOverEcal()+1.e-8)"),
-    Lepton_r9full=cms.string("full5x5_r9()"),
-    Lepton_e1x5bye5x5=cms.string(
-        "1-full5x5_e1x5()/full5x5_e5x5()"),
-    Lepton_sigmaietaieta=cms.string("full5x5_sigmaIetaIeta()"),
-    Lepton_sigmaiphiiphi=cms.string("full5x5_sigmaIphiIphi()"),
-    Lepton_supcl_etaWidth=cms.string(
-        "superCluster().etaWidth()"),
-    Lepton_supcl_phiWidth=cms.string(
-        "superCluster().phiWidth()"),
-    Lepton_fbrem=cms.string("fbrem()"),
-    Lepton_eoverp_log=cms.string("log(eSuperClusterOverP()+1.e-8)"),
-    Lepton_passConversionVeto=cms.string("passConversionVeto()"),
-    Lepton_dr03HcalDepth1TowerSumEt_Rel=cms.string(
-        "?(pt()>0.)?(dr03HcalTowerSumEt(1)*1./pt()):-100"),
-    Lepton_jetNDauChargedMVASel=cms.string(
-        "?userCand('jetForLepJetVar').isNonnull()?userFloat('jetNDauChargedMVASel'):0"),
-    Lepton_miniRelIsoCharged_log=cms.string(
-        "log((userFloat('miniIsoChg')/pt)+1.e-8)"),
-    Lepton_miniRelIsoNeutral_log=cms.string(
-        "log(((userFloat('miniIsoAll')-userFloat('miniIsoChg'))/pt)+1.e-8)"),
-    Lepton_pfRelIso03_all_log=cms.string(
-        "log((userFloat('PFIsoAll')/pt)+1.e-8)"),
-    Lepton_jetPNet=cms.string(
-        "?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:BvsAll'),0.0):0.0"),
-    Lepton_jetPtRelv2_log=cms.string(
-        "log((?userCand('jetForLepJetVar').isNonnull()?userFloat('ptRel'):0)+1.e-8)"),
-    Lepton_jetPtRatio=cms.string(
-        "?userCand('jetForLepJetVar').isNonnull()?min(userFloat('ptRatio'),1.5):1.0/(1.0+(pfIsolationVariables().sumChargedHadronPt + max(pfIsolationVariables().sumNeutralHadronEt + pfIsolationVariables().sumPhotonEt - pfIsolationVariables().sumPUPt/2,0.0))/pt)"),
-    Lepton_mvaId=cms.string(
-        "userFloat('mvaNoIso')"),
-)
-
 electronParTVariables = cms.EDProducer(
-    "ElectronTagInfoCollectionProducer",
-    src=cms.InputTag("linkedObjects", "electrons"),
-    secondary_vertices=cms.InputTag("slimmedSecondaryVertices"),
-    pvSrc=cms.InputTag("offlineSlimmedPrimaryVertices"),
-    pfCandidates=cms.InputTag("packedPFCandidates"),
-    leptonVars=ParTVariables_LeptonPSet,
-    pfVars=cms.PSet(
-        PF_pt_log=cms.string("log(pt+1.e-8)"),
-        PF_trackerLayersWithMeasurement=cms.string(
-            "?hasTrackDetails?bestTrack().hitPattern().trackerLayersWithMeasurement():0"),
-        PF_hcalFraction=cms.string("hcalFraction"),
-        PF_puppiWeightNoLep=cms.string("puppiWeightNoLep"),
-        PF_charge=cms.string("charge"),
-        PF_isElectron=cms.string("?abs(pdgId)==11?1:0"),
-        PF_isMuon=cms.string("?abs(pdgId)==13?1:0"),
-        PF_isChargedHadron=cms.string("?abs(pdgId)==211?1:0"),
-        PF_isNeutralHadron=cms.string("?abs(pdgId)==130?1:0"),
-        PF_isPhoton=cms.string("?abs(pdgId)==22?1:0"),
-        PF_fromPV=cms.string("fromPV"),
-        PF_mask=cms.string("1")
-    ),
-    svVars=cms.PSet(
-        SV_pt_log=cms.string("log(pt+1.e-8)"),
-        SV_eta=cms.string("eta"),
-        SV_phi=cms.string("phi"),
-        SV_ndof=cms.string("vertexNdof"),
-        SV_chi2=cms.string("vertexChi2"),
-        SV_nTracks=cms.string(
-            "numberOfDaughters"),
-        SV_mass=cms.string("mass"),
-        SV_mass_log=cms.string("log(mass+1.e-8)"),
-        SV_mask=cms.string("1"),
-    ),
-)
-
-(run2_egamma_2016 | run2_egamma_2017 | run2_egamma_2018).toModify(
-    electronParTVariables,
-    leptonVars=_legacy_ParTVariables_LeptonPSet
-)
-
-
-electronParTTrainVariables = cms.EDProducer(
     "ElectronTagInfoCollectionProducer",
     src=cms.InputTag("linkedObjects", "electrons"),
     pvSrc=cms.InputTag("offlineSlimmedPrimaryVertices"),
     secondary_vertices=cms.InputTag("slimmedSecondaryVertices"),
     pfCandidates=cms.InputTag("packedPFCandidates"),
     ltCandidates=cms.InputTag("lostTracks"),
-    barrelEcalHits=cms.InputTag("reducedEgamma", "reducedEBRecHits"),
-    endcapEcalHits=cms.InputTag("reducedEgamma", "reducedEERecHits"),
     leptonVars=cms.PSet(
         Lepton_mask=cms.string("1"),
-        Lepton_pt=cms.string("pt"),
         Lepton_pt_log=cms.string("log(pt+1.e-8)"),
         Lepton_eta=cms.string("eta"),
-        Lepton_phi=cms.string("phi"),
         Lepton_px=cms.string("px"),
         Lepton_py=cms.string("py"),
         Lepton_pz=cms.string("pz"),
@@ -733,39 +641,16 @@ electronParTTrainVariables = cms.EDProducer(
         Lepton_energy_log=cms.string("log(energy+1.e-8)"),
         Lepton_jetNDauChargedMVASel=cms.string(
             "?userCand('jetForLepJetVar').isNonnull()?userFloat('jetNDauChargedMVASel'):0"),
-        Lepton_miniPFRelIso_all=cms.string("userFloat('miniIsoAll')/pt"),
-        Lepton_miniRelIsoCharged=cms.string("(userFloat('miniIsoChg')/pt)"),
-        Lepton_miniRelIsoCharged_log=cms.string(
-            "log((userFloat('miniIsoChg')/pt)+1.e-8)"),
-        Lepton_miniRelIsoNeutral=cms.string(
-            "((userFloat('miniIsoAll')-userFloat('miniIsoChg'))/pt)"),
-        Lepton_miniRelIsoNeutral_log=cms.string(
-            "log(((userFloat('miniIsoAll')-userFloat('miniIsoChg'))/pt)+1.e-8)"),
-        Lepton_pfRelIso03_all=cms.string("(userFloat('PFIsoAll')/pt)"),
-        Lepton_pfRelIso03_all_log=cms.string(
-            "log((userFloat('PFIsoAll')/pt)+1.e-8)"),
-        Lepton_jetPtRelv2_log=cms.string(
-            "?userCand('jetForLepJetVar').isNonnull()?log(abs(userFloat('ptRel'))+1.e-8):0"),
-        # Lepton_jetPNet=cms.string("?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:BvsAll'),0.0):0.0"),
-        # Lepton_jetPNet_TauVsJet=cms.string("?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:TauVsJet'),0.0):0.0"),
-        # Lepton_jetPNet_CvsL=cms.string("?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:CvsL'),0.0):0.0"),
-        # Lepton_jetPNet_CvsB=cms.string("?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:CvsB'),0.0):0.0"),
-        # Lepton_jetPNet_QvsG=cms.string("?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:QvsG'),0.0):0.0"),
         Lepton_jetPtRatio=cms.string(
             "?userCand('jetForLepJetVar').isNonnull()?min(userFloat('ptRatio'),1.5):1.0/(1.0+(pfIsolationVariables().sumChargedHadronPt + max(pfIsolationVariables().sumNeutralHadronEt + pfIsolationVariables().sumPhotonEt - pfIsolationVariables().sumPUPt/2,0.0))/pt)"),
-        Lepton_dxy=cms.string("dB('PV2D')"),
-        Lepton_dxy_sig=cms.string("?edB('PV2D')>0?dB('PV2D')/edB('PV2D'):0"),
         Lepton_dxy_asinh=cms.string(
             "log(abs(dB('PV2D')+sqrt(dB('PV2D')*dB('PV2D')+1.0+1.e-8)))"),
         Lepton_dxy_sig_asinh=cms.string(
             "?edB('PV2D')>0?log(abs((dB('PV2D')/edB('PV2D'))+sqrt((dB('PV2D')/edB('PV2D'))*(dB('PV2D')/edB('PV2D')) + 1))+1.e-8):0"),
-        Lepton_sip3d=cms.string("dB('PV3D')"),
         Lepton_sip3d_asinh=cms.string(
             "log(abs(dB('PV3D')+sqrt(dB('PV3D')*dB('PV3D')+1.0+1.e-8)))"),
-        Lepton_sip3d_sig=cms.string("?edB('PV3D')>0?dB('PV3D')/edB('PV3D'):0"),
         Lepton_sip3d_sig_asinh=cms.string(
             "?edB('PV3D')>0?log(abs((dB('PV3D')/edB('PV3D'))+sqrt((dB('PV3D')/edB('PV3D'))*(dB('PV3D')/edB('PV3D')) + 1))+1.e-8):0"),
-        Lepton_dz=cms.string("dB('PVDZ')"),
         Lepton_dz_asinh=cms.string(
             "log(abs(dB('PVDZ')+sqrt(dB('PVDZ')*dB('PVDZ')+1.0+1.e-8)))"),
         Lepton_dz_sig_asinh=cms.string(
@@ -775,7 +660,6 @@ electronParTTrainVariables = cms.EDProducer(
         Lepton_deltaetacltrkcalo=cms.string("deltaEtaSeedClusterTrackAtCalo"),
         Lepton_dEtaInSeed=cms.string(
             "deltaEtaSuperClusterTrackAtVtx()-superCluster().eta()+superCluster().seed().eta()"),
-        Lepton_hcaloverecal=cms.string("full5x5_hcalOverEcal()"),
         Lepton_hcaloverecal_log=cms.string(
             "log(full5x5_hcalOverEcal()+1.e-8)"),
         Lepton_r9full=cms.string("full5x5_r9()"),
@@ -785,45 +669,13 @@ electronParTTrainVariables = cms.EDProducer(
         Lepton_supcl_etaWidth=cms.string("superCluster().etaWidth()"),
         Lepton_supcl_phiWidth=cms.string("superCluster().phiWidth()"),
         Lepton_fbrem=cms.string("fbrem()"),
-        Lepton_fbrem_reallog=cms.string("log(abs(fbrem()+1.e-8))"),
-        Lepton_eoverp=cms.string("eSuperClusterOverP()"),
         Lepton_eoverp_log=cms.string("log(eSuperClusterOverP()+1.e-8)"),
         Lepton_passConversionVeto=cms.string("passConversionVeto()"),
         Lepton_dr03HcalDepth1TowerSumEt_Rel=cms.string(
             "?(pt()>0.)?(dr03HcalTowerSumEt(1)*1./pt()):0."),
-        # Lepton_mvaId=cms.string("userFloat('mvaNoIso')"),
-        # and some of the other IDs for comparison
-        # Lepton_ID_cutBasedVeto=cms.string("userInt('cutBasedID_veto')"),
-        # Lepton_ID_cutBasedLoose=cms.string("userInt('cutBasedID_loose')"),
-        # Lepton_ID_cutBasedMedium=cms.string("userInt('cutBasedID_medium')"),
-        # Lepton_ID_cutBasedTight=cms.string("userInt('cutBasedID_tight')"),
-        # Lepton_ID_mvaIsoWP80=cms.string("userInt('mvaIso_WP80')"),
-        # Lepton_ID_mvaIsoWP90=cms.string("userInt('mvaIso_WP90')"),
-        # Lepton_ID_mvaNoIsoWP80=cms.string("userInt('mvaNoIso_WP80')"),
-        # Lepton_ID_mvaNoIsoWP90=cms.string("userInt('mvaNoIso_WP90')"),
-        # Lepton_ID_mvaIso=cms.string("userFloat('mvaIso')"),
-        # Lepton_ID_mvaNoIso=cms.string("userFloat('mvaNoIso')")
     ),
-    leptonVarsExt=cms.PSet(
-        # Lepton_ID_promptMVA=cms.InputTag("electronPROMPTMVA"),
-        # Lepton_ID_PNET_prompt=cms.InputTag("electronPNetScores:prompt"),
-        # Lepton_ID_PNET_heavy=cms.InputTag("electronPNetScores:heavy"),
-        # Lepton_ID_PNET_light=cms.InputTag("electronPNetScores:light"),
-        # Lepton_ID_PNET_tau=cms.InputTag("electronPNetScores:unknown"),
-        # Lepton_ID_ParT_prompt=cms.InputTag("electronParTScores:prompt"),
-        # Lepton_ID_ParT_heavy=cms.InputTag("electronParTScores:heavy"),
-        # Lepton_ID_ParT_light=cms.InputTag("electronParTScores:light"),
-        # Lepton_ID_ParT_tau=cms.InputTag("electronParTScores:tau"),
-        # Lepton_ID_ParT_fake=cms.InputTag("electronParTScores:fake"),
-        # it's own outputs for testing
-        # Lepton_ID_ParT_prompt=cms.InputTag("electronParTLLScores:prompt"),
-        # Lepton_ID_ParT_heavy=cms.InputTag("electronParTLLScores:heavy"),
-        # Lepton_ID_ParT_light=cms.InputTag("electronParTLLScores:light"),
-        # Lepton_ID_ParT_tau=cms.InputTag("electronParTLLScores:tau"),
-        # Lepton_ID_ParT_fake=cms.InputTag("electronParTLLScores:fake"),
-    ),
+    leptonVarsExt=cms.PSet(),
     pfVars=cms.PSet(
-        PF_pt=cms.string("pt"),
         PF_pt_log=cms.string("log(pt+1.e-8)"),
         PF_px_glob=cms.string("px"),
         PF_py_glob=cms.string("py"),
@@ -851,7 +703,6 @@ electronParTTrainVariables = cms.EDProducer(
         PF_lostInnerHits=cms.string("?hasTrackDetails?lostInnerHits():0"),
     ),
     ltVars=cms.PSet(
-        LT_pt=cms.string("pt"),
         LT_pt_log=cms.string("log(pt+1.e-8)"),
         LT_px_glob=cms.string("px"),
         LT_py_glob=cms.string("py"),
@@ -869,13 +720,9 @@ electronParTTrainVariables = cms.EDProducer(
             "?abs(pdgId)==22?1:0"),
         LT_isChargedHadron=cms.string(
             "?abs(pdgId)==211?1:0"),
-        LT_puppiWeightNoLep=cms.string(
-            "puppiWeightNoLep"),
         LT_fromPV=cms.string("fromPV"),
         LT_numberOfPixelHits=cms.string(
             "numberOfPixelHits"),
-        LT_hcalFraction=cms.string(
-            "hcalFraction"),
         LT_trackerLayersWithMeasurement=cms.string(
             "?hasTrackDetails?bestTrack().hitPattern().trackerLayersWithMeasurement():0"),
         LT_mask=cms.string("1"),
@@ -883,13 +730,9 @@ electronParTTrainVariables = cms.EDProducer(
         LT_qdotp=cms.string("?hasTrackDetails?charge()*pt():0"),
         LT_ass=cms.string("?hasTrackDetails?pvAssociationQuality():0"),
         LT_chi2=cms.string("?hasTrackDetails?bestTrack().chi2():0"),
-        LT_caloFraction=cms.string("caloFraction"),
         LT_lostInnerHits=cms.string("?hasTrackDetails?lostInnerHits():0"),
     ),
     svVars=cms.PSet(
-        SV_eta=cms.string("eta"),
-        SV_phi=cms.string("phi"),
-        SV_pt=cms.string("pt"),
         SV_px_glob=cms.string("px"),
         SV_py_glob=cms.string("py"),
         SV_pz_glob=cms.string("pz"),
@@ -901,9 +744,84 @@ electronParTTrainVariables = cms.EDProducer(
         SV_chi2norm=cms.string("vertexChi2/vertexNdof"),
         SV_nTracks=cms.string(
             "numberOfDaughters"),
-        SV_mass=cms.string("mass"),
         SV_mass_log=cms.string("log(mass+1.e-8)"),
         SV_mask=cms.string("1"),
+    ),
+)
+
+
+# training ntuple: the electronParTLLScores inputs (electronParTVariables) plus extra columns,
+# kept separate so the scores can be stored here without a dependency cycle
+electronParTTrainVariables = electronParTVariables.clone(
+    barrelEcalHits=cms.InputTag("reducedEgamma", "reducedEBRecHits"),
+    endcapEcalHits=cms.InputTag("reducedEgamma", "reducedEERecHits"),
+    leptonVars=dict(
+        Lepton_pt=cms.string("pt"),
+        Lepton_phi=cms.string("phi"),
+        Lepton_miniPFRelIso_all=cms.string("userFloat('miniIsoAll')/pt"),
+        Lepton_miniRelIsoCharged=cms.string("(userFloat('miniIsoChg')/pt)"),
+        Lepton_miniRelIsoCharged_log=cms.string(
+            "log((userFloat('miniIsoChg')/pt)+1.e-8)"),
+        Lepton_miniRelIsoNeutral=cms.string(
+            "((userFloat('miniIsoAll')-userFloat('miniIsoChg'))/pt)"),
+        Lepton_miniRelIsoNeutral_log=cms.string(
+            "log(((userFloat('miniIsoAll')-userFloat('miniIsoChg'))/pt)+1.e-8)"),
+        Lepton_pfRelIso03_all=cms.string("(userFloat('PFIsoAll')/pt)"),
+        Lepton_pfRelIso03_all_log=cms.string(
+            "log((userFloat('PFIsoAll')/pt)+1.e-8)"),
+        Lepton_jetPtRelv2_log=cms.string(
+            "?userCand('jetForLepJetVar').isNonnull()?log(abs(userFloat('ptRel'))+1.e-8):0"),
+        # Lepton_jetPNet=cms.string("?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:BvsAll'),0.0):0.0"),
+        # Lepton_jetPNet_TauVsJet=cms.string("?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:TauVsJet'),0.0):0.0"),
+        # Lepton_jetPNet_CvsL=cms.string("?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:CvsL'),0.0):0.0"),
+        # Lepton_jetPNet_CvsB=cms.string("?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:CvsB'),0.0):0.0"),
+        # Lepton_jetPNet_QvsG=cms.string("?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:QvsG'),0.0):0.0"),
+        Lepton_dxy=cms.string("dB('PV2D')"),
+        Lepton_dxy_sig=cms.string("?edB('PV2D')>0?dB('PV2D')/edB('PV2D'):0"),
+        Lepton_sip3d=cms.string("dB('PV3D')"),
+        Lepton_sip3d_sig=cms.string("?edB('PV3D')>0?dB('PV3D')/edB('PV3D'):0"),
+        Lepton_dz=cms.string("dB('PVDZ')"),
+        # electron specific variables
+        Lepton_hcaloverecal=cms.string("full5x5_hcalOverEcal()"),
+        Lepton_fbrem_reallog=cms.string("log(abs(fbrem()+1.e-8))"),
+        Lepton_eoverp=cms.string("eSuperClusterOverP()"),
+        # Lepton_mvaId=cms.string("userFloat('mvaNoIso')"),
+        # and some of the other IDs for comparison
+        Lepton_ID_cutBasedVeto=cms.string("userInt('cutBasedID_veto')"),
+        Lepton_ID_cutBasedLoose=cms.string("userInt('cutBasedID_loose')"),
+        Lepton_ID_cutBasedMedium=cms.string("userInt('cutBasedID_medium')"),
+        Lepton_ID_cutBasedTight=cms.string("userInt('cutBasedID_tight')"),
+        # Lepton_ID_mvaIsoWP80=cms.string("userInt('mvaIso_WP80')"),
+        # Lepton_ID_mvaIsoWP90=cms.string("userInt('mvaIso_WP90')"),
+        # Lepton_ID_mvaNoIsoWP80=cms.string("userInt('mvaNoIso_WP80')"),
+        # Lepton_ID_mvaNoIsoWP90=cms.string("userInt('mvaNoIso_WP90')"),
+        # Lepton_ID_mvaIso=cms.string("userFloat('mvaIso')"),
+        # Lepton_ID_mvaNoIso=cms.string("userFloat('mvaNoIso')")
+    ),
+    leptonVarsExt=dict(
+        Lepton_ID_promptMVA=cms.InputTag("electronPROMPTMVA"),
+        Lepton_ID_ParTLL_prompt=cms.InputTag("electronParTLLScores:prompt"),
+        Lepton_ID_ParTLL_heavy=cms.InputTag("electronParTLLScores:heavy"),
+        Lepton_ID_ParTLL_light=cms.InputTag("electronParTLLScores:light"),
+        Lepton_ID_ParTLL_tau=cms.InputTag("electronParTLLScores:tau"),
+        Lepton_ID_ParTLL_fake=cms.InputTag("electronParTLLScores:fake"),
+    ),
+    pfVars=dict(
+        PF_pt=cms.string("pt"),
+    ),
+    ltVars=dict(
+        LT_pt=cms.string("pt"),
+        LT_puppiWeightNoLep=cms.string(
+            "puppiWeightNoLep"),
+        LT_hcalFraction=cms.string(
+            "hcalFraction"),
+        LT_caloFraction=cms.string("caloFraction"),
+    ),
+    svVars=dict(
+        SV_eta=cms.string("eta"),
+        SV_phi=cms.string("phi"),
+        SV_pt=cms.string("pt"),
+        SV_mass=cms.string("mass"),
     ),
     rhVars=cms.PSet(
         RH_energy=cms.string("energy"),
@@ -921,18 +839,8 @@ electronParTTrainVariables = cms.EDProducer(
     leptonVars=_legacy_ParTVariables_LeptonPSet
 )
 
-# electronParTScores = _electronParTTags.clone(
-#     src=cms.InputTag("electronParTVariables"),
-#     srcLeps=cms.InputTag("linkedObjects", "electrons"),
-#     model_path=cms.FileInPath(
-#         'PhysicsTools/NanoAOD/data/ParTElectronId/model.onnx'),
-#     preprocess_json=cms.string(
-#         'PhysicsTools/NanoAOD/data/ParTElectronId/preprocess.json'),
-#     flav_names=cms.vstring(["prompt", "tau", "heavy", "light", "fake"]),
-# )
-
 electronParTLLScores = _electronParTTags.clone(
-    src=cms.InputTag("electronParTTrainVariables"),
+    src=cms.InputTag("electronParTVariables"),
     srcLeps=cms.InputTag("linkedObjects", "electrons"),
     model_path=cms.FileInPath(
         'PhysicsTools/NanoAOD/data/ParTElectronId/v2/electron_ParT_2024.onnx'),
@@ -1349,7 +1257,7 @@ electronTask = cms.Task(bitmapVIDForEle, bitmapVIDForEleFall17V2, bitmapVIDForEl
                         isoForEleFall17V2, ptRatioRelForEle, seedGainEle, slimmedElectronsWithUserData, finalElectrons)
 # electronTablesTask = cms.Task(electronPROMPTMVA, electronPNetVariables, electronPNetScores, electronParTVariables, electronParTTrainVariables, electronParTScores, electronParTLLScores, electronTable)
 electronTablesTask = cms.Task(
-    electronPROMPTMVA, electronParTTrainVariables, electronParTLLScores, electronTable)
+    electronPROMPTMVA, electronParTVariables, electronParTTrainVariables, electronParTLLScores, electronTable)
 electronMCTask = cms.Task(tautaggerForMatching, matchingElecPhoton,
                           electronsMCMatchForTable, electronsMCMatchForTableAlt, electronMCTable)
 

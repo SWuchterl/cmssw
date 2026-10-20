@@ -4,5 +4,10 @@
 <use name="FWCore/PluginManager"/>
 <use name="PhysicsTools/UtilAlgos"/>
 <use name="FWCore/ServiceRegistry"/>
+<use name="FWCore/MessageLogger"/>
+<use name="FWCore/Utilities"/>
 <use name="DataFormats/NanoAOD"/>
+<use name="DataFormats/HepMCCandidate"/>
+<use name="DataFormats/JetReco"/>
+<use name="SimDataFormats/PileupSummaryInfo"/>
 <flags EDM_PLUGIN="1"/>

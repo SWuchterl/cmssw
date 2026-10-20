@@ -289,99 +289,6 @@ muonPNetScores = _muonPNetTags.clone(
 
 muonParTVariables = cms.EDProducer(
     "MuonTagInfoCollectionProducer",
-    pvSrc=cms.InputTag("offlineSlimmedPrimaryVertices"),
-    secondary_vertices=cms.InputTag("slimmedSecondaryVertices"),
-    src=cms.InputTag("linkedObjects", "muons"),
-    pfCandidates=cms.InputTag("packedPFCandidates"),
-    leptonVars=cms.PSet(
-        Lepton_pt=cms.string("pt"),
-        Lepton_pt_log=cms.string("log(pt+1.e-8)"),
-        Lepton_eta=cms.string("eta"),
-        Lepton_jetNDauChargedMVASel=cms.string(
-            "?userCand('jetForLepJetVar').isNonnull()?userFloat('jetNDauChargedMVASel'):0"),
-        Lepton_miniRelIsoCharged_log=cms.string(
-            "log((userFloat('miniIsoChg')/pt)+1.e-8)"),
-        Lepton_miniRelIsoNeutral_log=cms.string(
-            "log(((userFloat('miniIsoAll')-userFloat('miniIsoChg'))/pt)+1.e-8)"),
-        Lepton_pfRelIso03_all_log=cms.string(
-            "log(((pfIsolationR03().sumChargedHadronPt + max(pfIsolationR03().sumNeutralHadronEt + pfIsolationR03().sumPhotonEt - pfIsolationR03().sumPUPt/2,0.0))/pt)+1.e-8)"),
-        Lepton_jetPtRelv2_log=cms.string(
-            "log((?userCand('jetForLepJetVar').isNonnull()?userFloat('ptRel'):0)+1.e-8)"),
-        Lepton_jetPNet=cms.string(
-            "?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:BvsAll'),0.0):0.0"),
-        Lepton_jetPtRatio=cms.string(
-            "?userCand('jetForLepJetVar').isNonnull()?min(userFloat('ptRatio'),1.5):1.0/(1.0+(pfIsolationR04().sumChargedHadronPt + max(pfIsolationR04().sumNeutralHadronEt + pfIsolationR04().sumPhotonEt - pfIsolationR04().sumPUPt/2,0.0))/pt)"),
-        Lepton_dxy=cms.string(
-            "log(abs(dB('PV2D')))"),
-        Lepton_sip3d=cms.string(
-            "abs(dB('PV3D')/edB('PV3D'))"),
-        Lepton_dz=cms.string(
-            "log(abs(dB('PVDZ')))"),
-        Lepton_segmentComp=cms.string(
-            "segmentCompatibility"),
-        Lepton_global_muon=cms.string(
-            "isGlobalMuon"),
-        Lepton_validFraction=cms.string(
-            "?innerTrack.isNonnull?innerTrack().validFraction:-99"),
-        Lepton_local_chi2=cms.string(
-            "combinedQuality().chi2LocalPosition"),
-        Lepton_kink=cms.string(
-            "combinedQuality().trkKink"),
-        Lepton_n_MatchedStations=cms.string(
-            "numberOfMatchedStations()"),
-        Lepton_Valid_pixel=cms.string(
-            "?innerTrack.isNonnull()?innerTrack().hitPattern().numberOfValidPixelHits():-99"),
-        Lepton_tracker_layers=cms.string(
-            "?innerTrack.isNonnull()?innerTrack().hitPattern().trackerLayersWithMeasurement():-99"),
-        Lepton_mvaId=cms.string(
-            "userFloat('mvaIDMuon')"),
-    ),
-    pfVars=cms.PSet(
-        PF_pt=cms.string("pt"),
-        PF_pt_log=cms.string("log(pt+1.e-8)"),
-        PF_charge=cms.string("charge"),
-        PF_isElectron=cms.string(
-            "?abs(pdgId)==11?1:0"),
-        PF_isMuon=cms.string(
-            "?abs(pdgId)==13?1:0"),
-        PF_isNeutralHadron=cms.string(
-            "?abs(pdgId)==130?1:0"),
-        PF_isPhoton=cms.string(
-            "?abs(pdgId)==22?1:0"),
-        PF_isChargedHadron=cms.string(
-            "?abs(pdgId)==211?1:0"),
-        PF_puppiWeightNoLep=cms.string(
-            "puppiWeightNoLep"),
-        PF_fromPV=cms.string("fromPV"),
-        PF_numberOfPixelHits=cms.string(
-            "numberOfPixelHits"),
-        PF_hcalFraction=cms.string(
-            "hcalFraction"),
-        PF_trackerLayersWithMeasurement=cms.string(
-            "?hasTrackDetails?bestTrack().hitPattern().trackerLayersWithMeasurement:0"),
-        PF_mask=cms.string("1"),
-    ),
-    svVars=cms.PSet(
-        SV_pt_log=cms.string("log(pt+1.e-8)"),
-        SV_eta=cms.string("eta"),
-        SV_phi=cms.string("phi"),
-        SV_ndof=cms.string("vertexNdof"),
-        SV_chi2=cms.string("vertexChi2"),
-        SV_nTracks=cms.string(
-            "numberOfDaughters"),
-        SV_mass=cms.string("mass"),
-        SV_mass_log=cms.string("log(mass+1.e-8)"),
-        SV_mask=cms.string("1"),
-    ),
-)
-
-from TrackingTools.TransientTrack.TransientTrackBuilder_cfi import *
-muonBSConstrain = cms.EDProducer("MuonBeamspotConstraintValueMapProducer",
-    src = cms.InputTag("linkedObjects","muons"),
-)
-
-muonParTTrainVariables = cms.EDProducer(
-    "MuonTagInfoCollectionProducer",
     src=cms.InputTag("linkedObjects", "muons"),
     pvSrc=cms.InputTag("offlineSlimmedPrimaryVertices"),
     secondary_vertices=cms.InputTag("slimmedSecondaryVertices"),
@@ -389,78 +296,27 @@ muonParTTrainVariables = cms.EDProducer(
     ltCandidates=cms.InputTag("lostTracks"),
     leptonVars=cms.PSet(
         Lepton_mask=cms.string("1"),
-        Lepton_pt=cms.string("pt"),
         Lepton_pt_log=cms.string("log(pt+1.e-8)"),
         Lepton_eta=cms.string("eta"),
-        Lepton_phi=cms.string("phi"),
         Lepton_px=cms.string("px"),
         Lepton_py=cms.string("py"),
         Lepton_pz=cms.string("pz"),
         Lepton_energy=cms.string("energy"),
         Lepton_energy_log=cms.string("log(energy+1.e-8)"),
         Lepton_jetNDauChargedMVASel=cms.string("?userCand('jetForLepJetVar').isNonnull()?userFloat('jetNDauChargedMVASel'):0"),
-        Lepton_miniRelIsoCharged=cms.string("(userFloat('miniIsoChg')/pt)"),
-        Lepton_miniRelIsoCharged_log=cms.string("log((userFloat('miniIsoChg')/pt)+1.e-8)"),
-        Lepton_miniPFRelIso_all=cms.string("userFloat('miniIsoAll')/pt"),
-        Lepton_miniRelIsoNeutral=cms.string("((userFloat('miniIsoAll')-userFloat('miniIsoChg'))/pt)"),
-        Lepton_miniRelIsoNeutral_log=cms.string("log(((userFloat('miniIsoAll')-userFloat('miniIsoChg'))/pt)+1.e-8)"),
-        Lepton_pfRelIso03_all_log=cms.string("log(((pfIsolationR03().sumChargedHadronPt + max(pfIsolationR03().sumNeutralHadronEt + pfIsolationR03().sumPhotonEt - pfIsolationR03().sumPUPt/2,0.0))/pt)+1.e-8)"),
-        Lepton_pfRelIso03_all=cms.string("((pfIsolationR03().sumChargedHadronPt + max(pfIsolationR03().sumNeutralHadronEt + pfIsolationR03().sumPhotonEt - pfIsolationR03().sumPUPt/2,0.0))/pt)"),
         Lepton_jetPtRelv2_log=cms.string("?userCand('jetForLepJetVar').isNonnull()?log(abs(userFloat('ptRel'))+1.e-8):0.0"),
-        # Lepton_jetPNet=cms.string("?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:BvsAll'),0.0):0.0"),
-        # Lepton_jetPNet_TauVsJet=cms.string("?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:TauVsJet'),0.0):0.0"),
-        # Lepton_jetPNet_CvsL=cms.string("?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:CvsL'),0.0):0.0"),
-        # Lepton_jetPNet_CvsB=cms.string("?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:CvsB'),0.0):0.0"),
-        # Lepton_jetPNet_QvsG=cms.string("?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:QvsG'),0.0):0.0"),
         Lepton_jetPtRatio=cms.string("?userCand('jetForLepJetVar').isNonnull()?min(userFloat('ptRatio'),1.5):1.0/(1.0+(pfIsolationR04().sumChargedHadronPt + max(pfIsolationR04().sumNeutralHadronEt + pfIsolationR04().sumPhotonEt - pfIsolationR04().sumPUPt/2,0.0))/pt)"),
-        Lepton_dxy=cms.string("dB('PV2D')"),
-        Lepton_dxy_sig=cms.string("?edB('PV2D')>0?dB('PV2D')/edB('PV2D'):0"),
         Lepton_dxy_asinh=cms.string("log(abs(dB('PV2D')+sqrt(dB('PV2D')*dB('PV2D')+1.0+1.e-8)))"),
         Lepton_dxy_sig_asinh=cms.string("?edB('PV2D')>0?log(abs((dB('PV2D')/edB('PV2D'))+sqrt((dB('PV2D')/edB('PV2D'))*(dB('PV2D')/edB('PV2D')) + 1))+1.e-8):0"),
-        Lepton_sip3d=cms.string("dB('PV3D')"),
         Lepton_sip3d_asinh=cms.string("log(abs(dB('PV3D')+sqrt(dB('PV3D')*dB('PV3D')+1.0+1.e-8)))"),
-        Lepton_sip3d_sig=cms.string("?edB('PV3D')>0?dB('PV3D')/edB('PV3D'):0"),
         Lepton_sip3d_sig_asinh=cms.string("?edB('PV3D')>0?log(abs((dB('PV3D')/edB('PV3D'))+sqrt((dB('PV3D')/edB('PV3D'))*(dB('PV3D')/edB('PV3D')) + 1))+1.e-8):0"),
-        Lepton_dz=cms.string("dB('PVDZ')"),
         Lepton_dz_asinh=cms.string("log(abs(dB('PVDZ')+sqrt(dB('PVDZ')*dB('PVDZ')+1.0+1.e-8)))"),
         Lepton_dz_sig_asinh=cms.string("?edB('PVDZ')>0?log(abs((dB('PVDZ')/edB('PVDZ'))+sqrt((dB('PVDZ')/edB('PVDZ'))*(dB('PVDZ')/edB('PVDZ'))+1.0+1.e-8))):0"),
         # muon specific variables
         Lepton_segmentComp=cms.string("segmentCompatibility"),
-        Lepton_global_muon=cms.string("isGlobalMuon"),
-        Lepton_validFraction=cms.string("?innerTrack.isNonnull()?innerTrack().validFraction:-1"),
-        Lepton_local_chi2=cms.string("combinedQuality().chi2LocalPosition"),
-        Lepton_kink=cms.string("combinedQuality().trkKink"),
-        Lepton_n_MatchedStations=cms.string("numberOfMatchedStations()"),
-        Lepton_Valid_pixel=cms.string("?innerTrack.isNonnull()?innerTrack().hitPattern().numberOfValidPixelHits():-1"),
-        Lepton_tracker_layers=cms.string("?innerTrack.isNonnull()?innerTrack().hitPattern().trackerLayersWithMeasurement():-1"),
-        Lepton_mvaId=cms.string("userFloat('mvaIDMuon')"),
-        # let's also add the classic mva and cutbased IDs for comparison
-        # Lepton_ID_cutBasedLoose=cms.string("passed('CutBasedIdLoose')"),
-        # Lepton_ID_cutBasedMedium=cms.string("passed('CutBasedIdMedium')"),
-        # Lepton_ID_cutBasedMediumPrompt=cms.string("passed('CutBasedIdMediumPrompt')"),
-        # Lepton_ID_cutBasedTight=cms.string("passed('CutBasedIdTight')"),
-        # Lepton_ID_mva=cms.string("userFloat('mvaIDMuon')"),
     ),
-    leptonVarsExt=cms.PSet(
-        # Lepton_ID_promptMVA=cms.InputTag("muonPROMPTMVA"),
-        # Lepton_ID_PNET_prompt=cms.InputTag("muonPNetScores:prompt"),
-        # Lepton_ID_PNET_heavy=cms.InputTag("muonPNetScores:heavy"),
-        # Lepton_ID_PNET_light=cms.InputTag("muonPNetScores:light"),
-        # Lepton_ID_PNET_tau=cms.InputTag("muonPNetScores:tau"),
-        # Lepton_ID_ParT_prompt=cms.InputTag("muonParTScores:prompt"),
-        # Lepton_ID_ParT_heavy=cms.InputTag("muonParTScores:heavy"),
-        # Lepton_ID_ParT_light=cms.InputTag("muonParTScores:light"),
-        # Lepton_ID_ParT_tau=cms.InputTag("muonParTScores:tau"),
-        # Lepton_ID_ParT_fake=cms.InputTag("muonParTScores:fake"),
-        # it's own outputs for testing
-        # Lepton_ID_ParT_prompt=cms.InputTag("muonParTLLScores:prompt"),
-        # Lepton_ID_ParT_heavy=cms.InputTag("muonParTLLScores:heavy"),
-        # Lepton_ID_ParT_light=cms.InputTag("muonParTLLScores:light"),
-        # Lepton_ID_ParT_tau=cms.InputTag("muonParTLLScores:tau"),
-        # Lepton_ID_ParT_fake=cms.InputTag("muonParTLLScores:fake"),
-    ),
+    leptonVarsExt=cms.PSet(),
     pfVars=cms.PSet(
-        PF_pt=cms.string("pt"),
         PF_pt_log=cms.string("log(pt+1.e-8)"),
         PF_px_glob=cms.string("px"),
         PF_py_glob=cms.string("py"),
@@ -489,7 +345,6 @@ muonParTTrainVariables = cms.EDProducer(
         PF_lostInnerHits=cms.string("?hasTrackDetails?lostInnerHits():0"),
     ),
     ltVars=cms.PSet(
-        LT_pt=cms.string("pt"),
         LT_pt_log=cms.string("log(pt+1.e-8)"),
         LT_px_glob=cms.string("px"),
         LT_py_glob=cms.string("py"),
@@ -507,13 +362,9 @@ muonParTTrainVariables = cms.EDProducer(
             "?abs(pdgId)==22?1:0"),
         LT_isChargedHadron=cms.string(
             "?abs(pdgId)==211?1:0"),
-        LT_puppiWeightNoLep=cms.string(
-            "puppiWeightNoLep"),
         LT_fromPV=cms.string("fromPV"),
         LT_numberOfPixelHits=cms.string(
             "numberOfPixelHits"),
-        LT_hcalFraction=cms.string(
-            "hcalFraction"),
         LT_trackerLayersWithMeasurement=cms.string(
             "?hasTrackDetails?bestTrack().hitPattern().trackerLayersWithMeasurement():0"),
         LT_mask=cms.string("1"),
@@ -522,13 +373,9 @@ muonParTTrainVariables = cms.EDProducer(
         LT_qdotp=cms.string("?hasTrackDetails?charge()*pt():0"),
         LT_ass=cms.string("?hasTrackDetails?pvAssociationQuality():0"),
         LT_chi2=cms.string("?hasTrackDetails?bestTrack().chi2():0"),
-        LT_caloFraction=cms.string("caloFraction"),
         LT_lostInnerHits=cms.string("?hasTrackDetails?lostInnerHits():0"),
     ),
     svVars=cms.PSet(
-        SV_eta=cms.string("eta"),
-        SV_phi=cms.string("phi"),
-        SV_pt=cms.string("pt"),
         SV_px_glob=cms.string("px"),
         SV_py_glob=cms.string("py"),
         SV_pz_glob=cms.string("pz"),
@@ -539,24 +386,193 @@ muonParTTrainVariables = cms.EDProducer(
         SV_chi2=cms.string("vertexChi2"),
         SV_chi2norm=cms.string("vertexChi2/vertexNdof"),
         SV_nTracks=cms.string("numberOfDaughters"),
-        SV_mass=cms.string("mass"),
         SV_mass_log=cms.string("log(mass+1.e-8)"),
         SV_mask=cms.string("1"),
     ),
 )
 
+from TrackingTools.TransientTrack.TransientTrackBuilder_cfi import *
+muonBSConstrain = cms.EDProducer("MuonBeamspotConstraintValueMapProducer",
+    src = cms.InputTag("linkedObjects","muons"),
+)
+
+# MuonPOG high-level track variables (from custom_muon_cff.py), shared by muonParTTrainVariables
+# and the training ntuplizer (ParticleNetNtuplizer/python/muon_ntuplizer.py).
+# Training-tree convention: no sentinels. A value that is missing (no such track, its Lepton_has* flag is 0)
+# or that the reconstruction could not compute is 0, and so is its _log; _log = log(max(x, 1.e-8)) for x > 0.
+# positionChi2 (== Lepton_local_chi2) and trkKink (== Lepton_kink) are not repeated
+# muonHits is not added: in MiniAOD it is 1 for every global muon, i.e. == Lepton_global_muon
+# *_log variants are added next to the columns with extreme tails
+muonPOGHighLevelVars = cms.PSet(
+    Lepton_hasGlobalTrack=cms.string("? globalTrack().isNonnull() ? 1 : 0"),
+    Lepton_hasBestTrack=cms.string("? muonBestTrack().isNonnull() && muonBestTrack().isAvailable() ? 1 : 0"),
+    Lepton_hasTuneP=cms.string("? tunePMuonBestTrack().isNonnull() && tunePMuonBestTrack().isAvailable() ? 1 : 0"),
+    Lepton_hasTpfms=cms.string("? tpfmsTrack().isNonnull() && tpfmsTrack().isAvailable() ? 1 : 0"),
+    Lepton_hasPicky=cms.string("? pickyTrack().isNonnull() && pickyTrack().isAvailable() ? 1 : 0"),
+    Lepton_hasDyt=cms.string("? dytTrack().isNonnull() && dytTrack().isAvailable() ? 1 : 0"),
+    Lepton_hasInnerTrack=cms.string("? innerTrack().isNonnull() && innerTrack().isAvailable() ? 1 : 0"),
+    Lepton_hasOuterTrack=cms.string("? outerTrack().isNonnull() && outerTrack().isAvailable() ? 1 : 0"),
+    Lepton_globalTrack_ptErr=cms.string("? globalTrack().isNonnull() ? globalTrack().ptError()/globalTrack().pt() : 0"),
+    Lepton_globalTrack_ptErr_log=cms.string("? globalTrack().isNonnull() ? log(max(globalTrack().ptError()/globalTrack().pt(),1.e-8)) : 0"),
+    Lepton_globalTrack_pt=cms.string("? globalTrack().isNonnull() ? globalTrack().pt(): 0"),
+    Lepton_globalTrack_eta=cms.string("? globalTrack().isNonnull() ? globalTrack().eta(): 0"),
+    Lepton_globalTrack_phi=cms.string("? globalTrack().isNonnull() ? globalTrack().phi(): 0"),
+    Lepton_globalTrack_charge=cms.string("? globalTrack().isNonnull() ? globalTrack().charge(): 0"),
+    Lepton_best_pt=cms.string("? muonBestTrack().isNonnull() && muonBestTrack().isAvailable() ? muonBestTrack().pt(): 0"),
+    Lepton_best_pterr=cms.string("? muonBestTrack().isNonnull() && muonBestTrack().isAvailable() ? muonBestTrack().ptError() : 0"),
+    Lepton_best_eta=cms.string("? muonBestTrack().isNonnull() && muonBestTrack().isAvailable() ? muonBestTrack().eta(): 0"),
+    Lepton_best_phi=cms.string("? muonBestTrack().isNonnull() && muonBestTrack().isAvailable() ? muonBestTrack().phi(): 0"),
+    Lepton_best_charge=cms.string("? muonBestTrack().isNonnull() && muonBestTrack().isAvailable() ? muonBestTrack().charge(): 0"),
+    Lepton_tuneP_pt=cms.string("? tunePMuonBestTrack().isNonnull() && tunePMuonBestTrack().isAvailable() ? tunePMuonBestTrack().pt() : 0"),
+    Lepton_tuneP_eta=cms.string("? tunePMuonBestTrack().isNonnull() && tunePMuonBestTrack().isAvailable() ? tunePMuonBestTrack().eta(): 0"),
+    Lepton_tuneP_phi=cms.string("? tunePMuonBestTrack().isNonnull() && tunePMuonBestTrack().isAvailable() ? tunePMuonBestTrack().phi(): 0"),
+    Lepton_tuneP_muonHits=cms.string("? tunePMuonBestTrack().isNonnull() && tunePMuonBestTrack().isAvailable() ? tunePMuonBestTrack().hitPattern().numberOfValidMuonHits() : 0"),
+    # TeV refits are only kept in MiniAOD for pt > 100 (saveTeVMuons), Lepton_has* = 0 otherwise
+    Lepton_tpfms_pt=cms.string("? tpfmsTrack().isNonnull() && tpfmsTrack().isAvailable() ? tpfmsTrack().pt() : 0"),
+    Lepton_tpfms_pterr=cms.string("? tpfmsTrack().isNonnull() && tpfmsTrack().isAvailable() ? tpfmsTrack().ptError() : 0"),
+    Lepton_tpfms_pterr_log=cms.string("? tpfmsTrack().isNonnull() && tpfmsTrack().isAvailable() ? log(max(tpfmsTrack().ptError(),1.e-8)) : 0"),
+    Lepton_tpfms_eta=cms.string("? tpfmsTrack().isNonnull() && tpfmsTrack().isAvailable() ? tpfmsTrack().eta(): 0"),
+    Lepton_tpfms_phi=cms.string("? tpfmsTrack().isNonnull() && tpfmsTrack().isAvailable() ? tpfmsTrack().phi(): 0"),
+    Lepton_tpfms_charge=cms.string("? tpfmsTrack().isNonnull() && tpfmsTrack().isAvailable() ? tpfmsTrack().charge(): 0"),
+    Lepton_tpfms_muonHits=cms.string("? tpfmsTrack().isNonnull() && tpfmsTrack().isAvailable() ? tpfmsTrack().hitPattern().numberOfValidMuonHits() : 0"),
+    Lepton_picky_pt=cms.string("? pickyTrack().isNonnull() && pickyTrack().isAvailable() ? pickyTrack().pt() : 0"),
+    Lepton_picky_pterr=cms.string("? pickyTrack().isNonnull() && pickyTrack().isAvailable() ? pickyTrack().ptError() : 0"),
+    Lepton_picky_eta=cms.string("? pickyTrack().isNonnull() && pickyTrack().isAvailable() ? pickyTrack().eta(): 0"),
+    Lepton_picky_phi=cms.string("? pickyTrack().isNonnull() && pickyTrack().isAvailable() ? pickyTrack().phi(): 0"),
+    Lepton_picky_charge=cms.string("? pickyTrack().isNonnull() && pickyTrack().isAvailable() ? pickyTrack().charge(): 0"),
+    Lepton_picky_muonHits=cms.string("? pickyTrack().isNonnull() && pickyTrack().isAvailable() ? pickyTrack().hitPattern().numberOfValidMuonHits() : 0"),
+    Lepton_dyt_pt=cms.string("? dytTrack().isNonnull() && dytTrack().isAvailable() ? dytTrack().pt() : 0"),
+    Lepton_dyt_pterr=cms.string("? dytTrack().isNonnull() && dytTrack().isAvailable() ? dytTrack().ptError() : 0"),
+    Lepton_dyt_eta=cms.string("? dytTrack().isNonnull() && dytTrack().isAvailable() ? dytTrack().eta(): 0"),
+    Lepton_dyt_phi=cms.string("? dytTrack().isNonnull() && dytTrack().isAvailable() ? dytTrack().phi(): 0"),
+    Lepton_dyt_charge=cms.string("? dytTrack().isNonnull() && dytTrack().isAvailable() ? dytTrack().charge(): 0"),
+    Lepton_dyt_muonHits=cms.string("? dytTrack().isNonnull() && dytTrack().isAvailable() ? dytTrack().hitPattern().numberOfValidMuonHits() : 0"),
+    # combinedQuality() is 0 without a global track; glbKink and glbTrackProbability are also 0 when the global refit
+    # failed, chi2LocalMomentum is -1 when the STA-TK propagation failed (the same muons have Lepton_local_chi2 = -1)
+    Lepton_momentumChi2=cms.string("max(combinedQuality().chi2LocalMomentum,0)"),
+    Lepton_momentumChi2_log=cms.string("? combinedQuality().chi2LocalMomentum > 0 ? log(max(combinedQuality().chi2LocalMomentum,1.e-8)) : 0"),
+    Lepton_glbKink=cms.string("combinedQuality().glbKink"),
+    Lepton_glbKink_log=cms.string("? combinedQuality().glbKink > 0 ? log(max(combinedQuality().glbKink,1.e-8)) : 0"),
+    Lepton_glbTrackProbability=cms.string("combinedQuality().glbTrackProbability"),
+    Lepton_glbTrackProbability_log=cms.string("? combinedQuality().glbTrackProbability > 0 ? log(max(combinedQuality().glbTrackProbability,1.e-8)) : 0"),
+    Lepton_trkRelChi2=cms.string("combinedQuality().trkRelChi2"),
+    # extra muon-system / track-quality variables (from custom_muon_cff.py)
+    Lepton_innerTrack_ptErr=cms.string("? innerTrack().isNonnull() && innerTrack().isAvailable() ? innerTrack().ptError()/innerTrack().pt() : 0"),
+    Lepton_innerTrack_ptErr_log=cms.string("? innerTrack().isNonnull() && innerTrack().isAvailable() ? log(max(innerTrack().ptError()/innerTrack().pt(),1.e-8)) : 0"),
+    Lepton_innerTrack_pt=cms.string("? innerTrack().isNonnull() && innerTrack().isAvailable() ? innerTrack().pt(): 0"),
+    Lepton_innerTrack_pt_log=cms.string("? innerTrack().isNonnull() && innerTrack().isAvailable() ? log(max(innerTrack().pt(),1.e-8)) : 0"),
+    Lepton_innerTrack_eta=cms.string("? innerTrack().isNonnull() && innerTrack().isAvailable() ? innerTrack().eta(): 0"),
+    Lepton_innerTrack_phi=cms.string("? innerTrack().isNonnull() && innerTrack().isAvailable() ? innerTrack().phi(): 0"),
+    Lepton_innerTrack_charge=cms.string("? innerTrack().isNonnull() && innerTrack().isAvailable() ? innerTrack().charge(): 0"),
+    # outerTrack == standAloneMuon for pat::Muon, so the standalone* variables are not repeated
+    Lepton_outerTrack_ptErr=cms.string("? outerTrack().isNonnull() && outerTrack().isAvailable() ? outerTrack().ptError()/outerTrack().pt() : 0"),
+    Lepton_outerTrack_ptErr_log=cms.string("? outerTrack().isNonnull() && outerTrack().isAvailable() ? log(max(outerTrack().ptError()/outerTrack().pt(),1.e-8)) : 0"),
+    Lepton_outerTrack_pt=cms.string("? outerTrack().isNonnull() && outerTrack().isAvailable() ? outerTrack().pt(): 0"),
+    Lepton_outerTrack_pt_log=cms.string("? outerTrack().isNonnull() && outerTrack().isAvailable() ? log(max(outerTrack().pt(),1.e-8)) : 0"),
+    Lepton_outerTrack_eta=cms.string("? outerTrack().isNonnull() && outerTrack().isAvailable() ? outerTrack().eta(): 0"),
+    Lepton_outerTrack_phi=cms.string("? outerTrack().isNonnull() && outerTrack().isAvailable() ? outerTrack().phi(): 0"),
+    Lepton_outerTrack_charge=cms.string("? outerTrack().isNonnull() && outerTrack().isAvailable() ? outerTrack().charge(): 0"),
+    Lepton_outerTrack_MuonHits=cms.string("? outerTrack().isNonnull() && outerTrack().isAvailable() ? outerTrack().hitPattern().numberOfValidMuonHits() : 0"),
+    Lepton_trkChi2=cms.string("? globalTrack().isNonnull() ? globalTrack().normalizedChi2() : ? innerTrack().isNonnull() && innerTrack().isAvailable() ? innerTrack().normalizedChi2() : 0"),
+    Lepton_trkChi2_outerTrack=cms.string("? outerTrack().isNonnull() && outerTrack().isAvailable() ? outerTrack().normalizedChi2() : 0"),
+    Lepton_trkChi2_outerTrack_log=cms.string("? outerTrack().isNonnull() && outerTrack().isAvailable() ? log(max(outerTrack().normalizedChi2(),1.e-8)) : 0"),
+    # the fit can give a chi2 a little below 0 (rounding, down to -3e-5)
+    Lepton_trkChi2_innerTrack=cms.string("? innerTrack().isNonnull() && innerTrack().isAvailable() ? max(innerTrack().normalizedChi2(),0) : 0"),
+    Lepton_pixelLayers=cms.string("? innerTrack().isNonnull() && innerTrack().isAvailable() ? innerTrack().hitPattern().pixelLayersWithMeasurement() : 0"),
+    Lepton_muonStations=cms.string("? outerTrack().isNonnull() && outerTrack().isAvailable() ? outerTrack().hitPattern().muonStationsWithValidHits() : 0"),
+    Lepton_DTHits=cms.string("? outerTrack().isNonnull() && outerTrack().isAvailable() ? outerTrack().hitPattern().numberOfValidMuonDTHits() : 0"),
+    Lepton_CSCHits=cms.string("? outerTrack().isNonnull() && outerTrack().isAvailable() ? outerTrack().hitPattern().numberOfValidMuonCSCHits() : 0"),
+    Lepton_RPCHits=cms.string("? outerTrack().isNonnull() && outerTrack().isAvailable() ? outerTrack().hitPattern().numberOfValidMuonRPCHits() : 0"),
+    Lepton_nShowers=cms.string("numberOfShowers()"),
+    Lepton_expectedMatchedStations=cms.string("expectedNnumberOfMatchedStations()"),
+    Lepton_stationMask=cms.string("stationMask()"),
+    Lepton_RPCLayers=cms.string("numberOfMatchedRPCLayers()"),
+    Lepton_innerTrackAlgo=cms.string("? innerTrack().isNonnull() && innerTrack().isAvailable() ? innerTrack().algo() : 0"),
+    Lepton_innerTrackOriginalAlgo=cms.string("? innerTrack().isNonnull() && innerTrack().isAvailable() ? innerTrack().originalAlgo() : 0"),
+    Lepton_isRPC=cms.string("isRPCMuon"),
+    Lepton_timAtIpInOutErr=cms.string("time().timeAtIpInOutErr"),
+)
+
+# training ntuple: the muonParTLLScores inputs (muonParTVariables) plus extra columns,
+# kept separate so the scores can be stored here without a dependency cycle
+muonParTTrainVariables = muonParTVariables.clone(
+    leptonVars=dict(
+        muonPOGHighLevelVars.parameters_(),
+        Lepton_pt=cms.string("pt"),
+        Lepton_phi=cms.string("phi"),
+        Lepton_miniRelIsoCharged=cms.string("(userFloat('miniIsoChg')/pt)"),
+        Lepton_miniRelIsoCharged_log=cms.string("log((userFloat('miniIsoChg')/pt)+1.e-8)"),
+        Lepton_miniPFRelIso_all=cms.string("userFloat('miniIsoAll')/pt"),
+        Lepton_miniRelIsoNeutral=cms.string("((userFloat('miniIsoAll')-userFloat('miniIsoChg'))/pt)"),
+        Lepton_miniRelIsoNeutral_log=cms.string("log(((userFloat('miniIsoAll')-userFloat('miniIsoChg'))/pt)+1.e-8)"),
+        Lepton_pfRelIso03_all_log=cms.string("log(((pfIsolationR03().sumChargedHadronPt + max(pfIsolationR03().sumNeutralHadronEt + pfIsolationR03().sumPhotonEt - pfIsolationR03().sumPUPt/2,0.0))/pt)+1.e-8)"),
+        Lepton_pfRelIso03_all=cms.string("((pfIsolationR03().sumChargedHadronPt + max(pfIsolationR03().sumNeutralHadronEt + pfIsolationR03().sumPhotonEt - pfIsolationR03().sumPUPt/2,0.0))/pt)"),
+        # Lepton_jetPNet=cms.string("?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:BvsAll'),0.0):0.0"),
+        # Lepton_jetPNet_TauVsJet=cms.string("?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:TauVsJet'),0.0):0.0"),
+        # Lepton_jetPNet_CvsL=cms.string("?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:CvsL'),0.0):0.0"),
+        # Lepton_jetPNet_CvsB=cms.string("?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:CvsB'),0.0):0.0"),
+        # Lepton_jetPNet_QvsG=cms.string("?userCand('jetForLepJetVar').isNonnull()?max(userCand('jetForLepJetVar').bDiscriminator('pfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTags:QvsG'),0.0):0.0"),
+        Lepton_dxy=cms.string("dB('PV2D')"),
+        Lepton_dxy_sig=cms.string("?edB('PV2D')>0?dB('PV2D')/edB('PV2D'):0"),
+        Lepton_sip3d=cms.string("dB('PV3D')"),
+        Lepton_sip3d_sig=cms.string("?edB('PV3D')>0?dB('PV3D')/edB('PV3D'):0"),
+        Lepton_dz=cms.string("dB('PVDZ')"),
+        # muon specific variables
+        Lepton_global_muon=cms.string("isGlobalMuon"),
+        Lepton_validFraction=cms.string("?innerTrack.isNonnull()?innerTrack().validFraction:-1"),
+        Lepton_local_chi2=cms.string("combinedQuality().chi2LocalPosition"),
+        Lepton_kink=cms.string("combinedQuality().trkKink"),
+        Lepton_n_MatchedStations=cms.string("numberOfMatchedStations()"),
+        Lepton_Valid_pixel=cms.string("?innerTrack.isNonnull()?innerTrack().hitPattern().numberOfValidPixelHits():-1"),
+        Lepton_tracker_layers=cms.string("?innerTrack.isNonnull()?innerTrack().hitPattern().trackerLayersWithMeasurement():-1"),
+        Lepton_mvaId=cms.string("userFloat('mvaIDMuon')"),
+        # legacy NanoAOD muon IDs, only for comparison with the ParT training (same expressions as muonTable)
+        Lepton_ID_highPtId=cms.string("?passed('CutBasedIdGlobalHighPt')?2:passed('CutBasedIdTrkHighPt')"),
+        Lepton_ID_looseId=cms.string("passed('CutBasedIdLoose')"),
+        Lepton_ID_mediumId=cms.string("passed('CutBasedIdMedium')"),
+        Lepton_ID_mediumPromptId=cms.string("passed('CutBasedIdMediumPrompt')"),
+        Lepton_ID_tightId=cms.string("passed('CutBasedIdTight')"),
+        Lepton_ID_softId=cms.string("passed('SoftCutBasedId')"),
+        Lepton_ID_softMvaId=cms.string("passed('SoftMvaId')"),
+        Lepton_ID_softMva=cms.string("softMvaValue()"),
+        Lepton_ID_softMvaRun3=cms.string("softMvaRun3Value()"),
+    ),
+    leptonVarsExt=dict(
+        # legacy NanoAOD muon ID scores, only for comparison with the ParT training
+        Lepton_ID_PNet_prompt=cms.InputTag("muonPNetScores:prompt"),
+        Lepton_ID_PNet_tau=cms.InputTag("muonPNetScores:tau"),
+        Lepton_ID_mvaLowPt=cms.InputTag("muonMVALowPt"),
+        Lepton_ID_ParTLL_prompt=cms.InputTag("muonParTLLScores:prompt"),
+        Lepton_ID_ParTLL_heavy=cms.InputTag("muonParTLLScores:heavy"),
+        Lepton_ID_ParTLL_light=cms.InputTag("muonParTLLScores:light"),
+        Lepton_ID_ParTLL_tau=cms.InputTag("muonParTLLScores:tau"),
+        Lepton_ID_ParTLL_fake=cms.InputTag("muonParTLLScores:fake"),
+    ),
+    pfVars=dict(
+        PF_pt=cms.string("pt"),
+    ),
+    ltVars=dict(
+        LT_pt=cms.string("pt"),
+        LT_puppiWeightNoLep=cms.string(
+            "puppiWeightNoLep"),
+        LT_hcalFraction=cms.string(
+            "hcalFraction"),
+        # new stuff
+        LT_caloFraction=cms.string("caloFraction"),
+    ),
+    svVars=dict(
+        SV_eta=cms.string("eta"),
+        SV_phi=cms.string("phi"),
+        SV_pt=cms.string("pt"),
+        SV_mass=cms.string("mass"),
+    ),
+)
+
 
 from PhysicsTools.PatAlgos.muonParTTags_cfi import muonParTTags as _muonParTTags
-# muonParTScores = _muonParTTags.clone(
-#     src=cms.InputTag("muonParTVariables"),
-#     srcLeps=cms.InputTag("linkedObjects", "muons"),
-#     model_path='PhysicsTools/NanoAOD/data/ParTMuonId/model.onnx',
-#     preprocess_json='PhysicsTools/NanoAOD/data/ParTMuonId/preprocess.json',
-#     flav_names=cms.vstring(["prompt", "tau", "heavy", "light", "fake"]),
-# )
 
 muonParTLLScores = _muonParTTags.clone(
-    src=cms.InputTag("muonParTTrainVariables"),
+    src=cms.InputTag("muonParTVariables"),
     srcLeps=cms.InputTag("linkedObjects", "muons"),
     model_path='PhysicsTools/NanoAOD/data/ParTMuonId/v2/muon_ParT_2024.onnx',
     preprocess_json='PhysicsTools/NanoAOD/data/ParTMuonId/v2/preprocess.json',
@@ -699,4 +715,4 @@ muonMCTable = cms.EDProducer("CandMCMatchTableProducer",
 muonTask = cms.Task(slimmedMuonsUpdated,isoForMu,ptRatioRelForMu,slimmedMuonsWithUserData,finalMuons,finalLooseMuons)
 muonMCTask = cms.Task(muonsMCMatchForTable,muonMCTable)
 # muonTablesTask = cms.Task(muonPROMPTMVA,muonMVALowPt,muonBSConstrain,muonTable,muonMVAID,muonPNetVariables,muonPNetScores, muonParTVariables, muonParTTrainVariables, muonParTScores, muonParTLLScores)
-muonTablesTask = cms.Task(muonPROMPTMVA,muonMVALowPt,muonBSConstrain,muonTable,muonMVAID,muonPNetVariables,muonPNetScores, muonParTTrainVariables, muonParTLLScores)
+muonTablesTask = cms.Task(muonPROMPTMVA,muonMVALowPt,muonBSConstrain,muonTable,muonMVAID,muonPNetVariables,muonPNetScores, muonParTVariables, muonParTTrainVariables, muonParTLLScores)
