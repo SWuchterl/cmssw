@@ -476,7 +476,8 @@ muonPOGHighLevelVars = cms.PSet(
     Lepton_trkChi2=cms.string("? globalTrack().isNonnull() ? globalTrack().normalizedChi2() : ? innerTrack().isNonnull() && innerTrack().isAvailable() ? innerTrack().normalizedChi2() : 0"),
     Lepton_trkChi2_outerTrack=cms.string("? outerTrack().isNonnull() && outerTrack().isAvailable() ? outerTrack().normalizedChi2() : 0"),
     Lepton_trkChi2_outerTrack_log=cms.string("? outerTrack().isNonnull() && outerTrack().isAvailable() ? log(max(outerTrack().normalizedChi2(),1.e-8)) : 0"),
-    Lepton_trkChi2_innerTrack=cms.string("? innerTrack().isNonnull() && innerTrack().isAvailable() ? innerTrack().normalizedChi2() : 0"),
+    # the fit can give a chi2 a little below 0 (rounding, down to -3e-5)
+    Lepton_trkChi2_innerTrack=cms.string("? innerTrack().isNonnull() && innerTrack().isAvailable() ? max(innerTrack().normalizedChi2(),0) : 0"),
     Lepton_pixelLayers=cms.string("? innerTrack().isNonnull() && innerTrack().isAvailable() ? innerTrack().hitPattern().pixelLayersWithMeasurement() : 0"),
     Lepton_muonStations=cms.string("? outerTrack().isNonnull() && outerTrack().isAvailable() ? outerTrack().hitPattern().muonStationsWithValidHits() : 0"),
     Lepton_DTHits=cms.string("? outerTrack().isNonnull() && outerTrack().isAvailable() ? outerTrack().hitPattern().numberOfValidMuonDTHits() : 0"),
