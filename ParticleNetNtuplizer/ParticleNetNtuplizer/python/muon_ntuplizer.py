@@ -23,6 +23,7 @@ def customize_ntuplizer(process):
 # Training ntuple (Run 3): own feature producer, independent of the inputs of the ONNX models in NanoAOD
 # ---------------------------------------------------------------------------
 from ParticleNetNtuplizer.ParticleNetNtuplizer.electron_ntuplizer import _cpfVars, _npfVars, _ltVars, _svVars, _trainingMaxLengths
+from ParticleNetNtuplizer.ParticleNetNtuplizer.electron_ntuplizer import _asinh
 from PhysicsTools.NanoAOD.muons_cff import muonPOGHighLevelVars
 
 _muPfIso03 = "(pfIsolationR03().sumChargedHadronPt + max(pfIsolationR03().sumNeutralHadronEt + pfIsolationR03().sumPhotonEt - pfIsolationR03().sumPUPt/2,0.0))/pt"
@@ -80,6 +81,10 @@ muonParTLLTrainingFeatures = cms.EDProducer(
         Lepton_dz=cms.string("dB('PVDZ')"),
         Lepton_dz_asinh=cms.string("log(abs(dB('PVDZ')+sqrt(dB('PVDZ')*dB('PVDZ')+1.0+1.e-8)))"),
         Lepton_dz_sig_asinh=cms.string("?edB('PVDZ')>0?log(abs((dB('PVDZ')/edB('PVDZ'))+sqrt((dB('PVDZ')/edB('PVDZ'))*(dB('PVDZ')/edB('PVDZ'))+1.0+1.e-8))):0"),
+        # v5: impact parameters in units of the resolution (the *_asinh above are asinh(x / 1 cm), kept), as for electrons
+        Lepton_dxyRes_asinh=cms.string(_asinh("dB('PV2D')", 0.005)),
+        Lepton_dzRes_asinh=cms.string(_asinh("dB('PVDZ')", 0.02)),
+        Lepton_sip3dRes_asinh=cms.string(_asinh("dB('PV3D')", 0.02)),
         # muon specific variables
         Lepton_segmentComp=cms.string("segmentCompatibility"),
         Lepton_global_muon=cms.string("isGlobalMuon"),
