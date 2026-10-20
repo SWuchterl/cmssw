@@ -69,6 +69,9 @@ muonParTLLTrainingFeatures = cms.EDProducer(
         Lepton_pfRelIso03_all=cms.string(_muPfIso03),
         Lepton_pfRelIso03_all_log=cms.string("log(max(" + _muPfIso03 + ",1.e-8))"),
         Lepton_jetPtRelv2_log=cms.string("?userCand('jetForLepJetVar').isNonnull()?log(max(abs(userFloat('ptRel')),1.e-8)):0.0"),
+        # asinh(ptRel / 1 GeV) as in the electron tree; _log above is kept for the old muon models
+        Lepton_jetPtRelv2_asinh=cms.string(
+            "?userCand('jetForLepJetVar').isNonnull()?" + _asinh("userFloat('ptRel')", 1.0) + ":0"),
         Lepton_jetPtRatio=cms.string("?userCand('jetForLepJetVar').isNonnull()?min(userFloat('ptRatio'),1.5):1.0/(1.0+(pfIsolationR04().sumChargedHadronPt + max(pfIsolationR04().sumNeutralHadronEt + pfIsolationR04().sumPhotonEt - pfIsolationR04().sumPUPt/2,0.0))/pt)"),
         Lepton_dxy=cms.string("dB('PV2D')"),
         Lepton_dxy_sig=cms.string("?edB('PV2D')>0?dB('PV2D')/edB('PV2D'):0"),
