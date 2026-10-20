@@ -324,11 +324,7 @@ electronParTLLTrainingFeatures = cms.EDProducer(
     ),
     leptonVarsExt=cms.PSet(
         Lepton_ID_promptMVA=cms.InputTag("electronPROMPTMVA"),
-        Lepton_ID_ParTLL_prompt=cms.InputTag("electronParTLLScores:prompt"),
-        Lepton_ID_ParTLL_tau=cms.InputTag("electronParTLLScores:tau"),
-        Lepton_ID_ParTLL_heavy=cms.InputTag("electronParTLLScores:heavy"),
-        Lepton_ID_ParTLL_light=cms.InputTag("electronParTLLScores:light"),
-        Lepton_ID_ParTLL_fake=cms.InputTag("electronParTLLScores:fake"),
+        # no ParT lepton ID scores (Lepton_ID_ParTLL_*): their ONNX inference was half of the CPU time
     ),
     pfVars=cms.PSet(),
     cpfVars=_cpfVars,

@@ -126,11 +126,7 @@ muonParTLLTrainingFeatures = cms.EDProducer(
         Lepton_ID_PNet_heavy=cms.InputTag("muonPNetScores:heavy"),
         Lepton_ID_PNet_light=cms.InputTag("muonPNetScores:light"),
         Lepton_ID_PNet_tau=cms.InputTag("muonPNetScores:tau"),
-        Lepton_ID_ParTLL_prompt=cms.InputTag("muonParTLLScores:prompt"),
-        Lepton_ID_ParTLL_tau=cms.InputTag("muonParTLLScores:tau"),
-        Lepton_ID_ParTLL_heavy=cms.InputTag("muonParTLLScores:heavy"),
-        Lepton_ID_ParTLL_light=cms.InputTag("muonParTLLScores:light"),
-        Lepton_ID_ParTLL_fake=cms.InputTag("muonParTLLScores:fake"),
+        # no ParT lepton ID scores (Lepton_ID_ParTLL_*): their ONNX inference was half of the CPU time
     ),
     pfVars=cms.PSet(),
     cpfVars=_cpfVars,
