@@ -32,6 +32,8 @@ class MvaNtuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources> {
   size_t maxLenForCategory(const std::string& cat) const;
   void fill_truth(const T& lep, const edm::Ref<std::vector<T>>& ref, const edm::Event& iEvent);
   void fill_categories(const std::vector<T>& leptons, const std::vector<int>& flav, const edm::Event& iEvent);
+  // the trees hold no NaN or inf: a value that cannot be computed is written as 0, counted per branch in nonFinite_
+  float finiteOrZero(const std::string& name, float value);
 
   using LeptonTagInfoCollection = btagbtvdeep::DeepBoostedJetFeaturesCollection;
 
@@ -68,6 +70,8 @@ class MvaNtuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources> {
   std::map<std::string, unsigned> output_cat_sizes;
   // scalar storage for Lepton_* features (fixed length 1)
   std::map<std::string, float> output_scalar_vars;
+  // number of non-finite feature values written as 0, per branch (reported in endJob)
+  std::map<std::string, unsigned> nonFinite_;
   uint8_t genPartFlav;
   long int event;
   int luminosityBlock;

@@ -1,5 +1,7 @@
 #include"ParticleNetNtuplizer/ParticleNetNtuplizer/interface/ParticleNetNtuplizer.h"
 #include "DataFormats/Math/interface/deltaR.h"
+#include "FWCore/MessageLogger/interface/MessageLogger.h"
+#include "FWCore/Utilities/interface/isFinite.h"
 #include <algorithm>
 #include <cmath>
 #include <unordered_set>
@@ -553,7 +555,7 @@ void MvaNtuplizer<T>::analyze(const edm::Event& iEvent, const edm::EventSetup& i
       // handle scalar Lepton_* features
       auto sit = output_scalar_vars.find(var.first);
       if (sit != output_scalar_vars.end()){
-        sit->second = (var.second.size() > 0) ? var.second[0] : 0.f;
+        sit->second = (var.second.size() > 0) ? finiteOrZero(var.first, var.second[0]) : 0.f;
         continue;
       }
       auto it = output_vars.find(var.first);
@@ -568,7 +570,8 @@ void MvaNtuplizer<T>::analyze(const edm::Event& iEvent, const edm::EventSetup& i
                                                    << ", other " << cat << " variables have " << cit->second;
       const size_t ncopy = std::min(var.second.size(), maxLenForCategory(cat));
       if (ncopy > 0)
-        std::copy(var.second.begin(), var.second.begin() + ncopy, it->second.begin());
+        std::transform(var.second.begin(), var.second.begin() + ncopy, it->second.begin(),
+                       [&](float value) { return finiteOrZero(var.first, value); });
     }
     // write per-category lengths into the output map (branches point to these)
     for (const auto& kv : cat_len) {
@@ -618,7 +621,18 @@ void MvaNtuplizer<T>::beginJob(){
 }
 
 template <typename T>
-void MvaNtuplizer<T>::endJob(){}
+float MvaNtuplizer<T>::finiteOrZero(const std::string& name, float value) {
+  if (edm::isFinite(value))
+    return value;
+  ++nonFinite_[name];
+  return 0.f;
+}
+
+template <typename T>
+void MvaNtuplizer<T>::endJob(){
+  for (const auto& [name, n] : nonFinite_)
+    edm::LogWarning("ParticleNetNtuplizer") << n << " non-finite values of " << name << " written as 0";
+}
 
 typedef MvaNtuplizer<pat::Muon> MuonNtuplizer;
 typedef MvaNtuplizer<pat::Electron> ElectronNtuplizer;
