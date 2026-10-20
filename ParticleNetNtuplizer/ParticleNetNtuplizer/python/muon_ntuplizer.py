@@ -92,7 +92,8 @@ muonParTLLTrainingFeatures = cms.EDProducer(
         Lepton_segmentComp=cms.string("segmentCompatibility"),
         Lepton_global_muon=cms.string("isGlobalMuon"),
         Lepton_validFraction=cms.string("?innerTrack.isNonnull()?innerTrack().validFraction:-1"),
-        Lepton_local_chi2=cms.string("combinedQuality().chi2LocalPosition"),
+        # -1 when the STA-TK propagation failed: 0, the missing-value rule of the tree (as Lepton_momentumChi2)
+        Lepton_local_chi2=cms.string("max(combinedQuality().chi2LocalPosition,0)"),
         Lepton_kink=cms.string("combinedQuality().trkKink"),
         Lepton_n_MatchedStations=cms.string("numberOfMatchedStations()"),
         Lepton_Valid_pixel=cms.string("?innerTrack.isNonnull()?innerTrack().hitPattern().numberOfValidPixelHits():-1"),
