@@ -674,6 +674,11 @@ void LeptonTagInfoCollectionProducer<LeptonType>::fill_lt_features(const LeptonT
   features.reserve("LT_dz_asinh", ltcands.size());
   features.reserve("LT_dzsig", ltcands.size());
   features.reserve("LT_dzsig_asinh", ltcands.size());
+  // v5: dxy in units of the resolution (0.02 cm), as CPF_dxyRes_asinh
+  if (v5Features_) {
+    features.add("LT_dxyRes_asinh");
+    features.reserve("LT_dxyRes_asinh", ltcands.size());
+  }
 
   for (const auto& cand : ltcands) {
     features.fill("LT_phi_rel", reco::deltaPhi(lep.phi(), cand.phi()));
@@ -682,6 +687,8 @@ void LeptonTagInfoCollectionProducer<LeptonType>::fill_lt_features(const LeptonT
     features.fill("LT_pt_rel", cand.pt() / lep.pt());
     features.fill("LT_pt_rel_log",
                   trainingMode_ ? std::log(std::max(cand.pt() / lep.pt(), 1e-8)) : log(cand.pt() / lep.pt()));
+    if (v5Features_)
+      features.fill("LT_dxyRes_asinh", cand.hasTrackDetails() ? catch_infs(std::asinh(cand.dxy() / 0.02)) : 0.f);
     if (cand.hasTrackDetails()) {
       features.fill("LT_dxySig_log", asinh(abs(cand.dxy() / cand.dxyError())));
       features.fill("LT_dzSig_log", asinh(abs(cand.dz() / cand.dzError())));

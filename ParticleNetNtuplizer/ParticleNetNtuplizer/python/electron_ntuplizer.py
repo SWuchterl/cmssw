@@ -139,7 +139,7 @@ electronParTLLTrainingFeatures = cms.EDProducer(
     barrelEcalHits=cms.InputTag("reducedEgamma", "reducedEBRecHits"),
     endcapEcalHits=cms.InputTag("reducedEgamma", "reducedEERecHits"),
     trainingMode=cms.bool(True),
-    # electron-only v5 branches made in C++ (CPF_dxyRes_asinh)
+    # v5 branches made in C++ (CPF_dxyRes_asinh, LT_dxyRes_asinh)
     v5Features=cms.bool(True),
     # full float32 precision as in the CMSSW inference: 12 bits made ParT pair ln m2 noise for close pairs (+27% size)
     reduceMantissaBits=cms.int32(0),
