@@ -473,7 +473,9 @@ muonPOGHighLevelVars = cms.PSet(
     Lepton_outerTrack_phi=cms.string("? outerTrack().isNonnull() && outerTrack().isAvailable() ? outerTrack().phi(): 0"),
     Lepton_outerTrack_charge=cms.string("? outerTrack().isNonnull() && outerTrack().isAvailable() ? outerTrack().charge(): 0"),
     Lepton_outerTrack_MuonHits=cms.string("? outerTrack().isNonnull() && outerTrack().isAvailable() ? outerTrack().hitPattern().numberOfValidMuonHits() : 0"),
-    Lepton_trkChi2=cms.string("? globalTrack().isNonnull() ? globalTrack().normalizedChi2() : ? innerTrack().isNonnull() && innerTrack().isAvailable() ? innerTrack().normalizedChi2() : 0"),
+    # global track only: the string parser evaluates a nested ? : to its condition, so the inner-track fallback gave 1
+    # for every global muon; the inner-track chi2 is Lepton_trkChi2_innerTrack
+    Lepton_trkChi2=cms.string("? globalTrack().isNonnull() ? globalTrack().normalizedChi2() : 0"),
     Lepton_trkChi2_outerTrack=cms.string("? outerTrack().isNonnull() && outerTrack().isAvailable() ? outerTrack().normalizedChi2() : 0"),
     Lepton_trkChi2_outerTrack_log=cms.string("? outerTrack().isNonnull() && outerTrack().isAvailable() ? log(max(outerTrack().normalizedChi2(),1.e-8)) : 0"),
     # the fit can give a chi2 a little below 0 (rounding, down to -3e-5)
