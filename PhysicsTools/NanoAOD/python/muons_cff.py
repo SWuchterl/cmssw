@@ -507,6 +507,16 @@ muonPOGHighLevelVars = cms.PSet(
     Lepton_nShowers=cms.string("numberOfShowers()"),
     Lepton_expectedMatchedStations=cms.string("expectedNnumberOfMatchedStations()"),
     Lepton_stationMask=cms.string("stationMask()"),
+    # one flag per station with a matched segment: stationMask bit (station - 1) + 4 * (DT 0, CSC 1);
+    # % because the string parser has no & or floor
+    Lepton_stationMask_DT1=cms.string("? stationMask() % 2 >= 1 ? 1 : 0"),
+    Lepton_stationMask_DT2=cms.string("? stationMask() % 4 >= 2 ? 1 : 0"),
+    Lepton_stationMask_DT3=cms.string("? stationMask() % 8 >= 4 ? 1 : 0"),
+    Lepton_stationMask_DT4=cms.string("? stationMask() % 16 >= 8 ? 1 : 0"),
+    Lepton_stationMask_CSC1=cms.string("? stationMask() % 32 >= 16 ? 1 : 0"),
+    Lepton_stationMask_CSC2=cms.string("? stationMask() % 64 >= 32 ? 1 : 0"),
+    Lepton_stationMask_CSC3=cms.string("? stationMask() % 128 >= 64 ? 1 : 0"),
+    Lepton_stationMask_CSC4=cms.string("? stationMask() % 256 >= 128 ? 1 : 0"),
     Lepton_RPCLayers=cms.string("numberOfMatchedRPCLayers()"),
     Lepton_innerTrackAlgo=cms.string("? innerTrack().isNonnull() && innerTrack().isAvailable() ? innerTrack().algo() : 0"),
     Lepton_innerTrackOriginalAlgo=cms.string("? innerTrack().isNonnull() && innerTrack().isAvailable() ? innerTrack().originalAlgo() : 0"),
