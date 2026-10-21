@@ -28,7 +28,10 @@ namespace {
       {"Lepton_genDressedPt", -999},   {"Lepton_genDressedEta", -999},   {"Lepton_genDressedPhi", -999},
       {"Lepton_genDressedEnergy", -999}, {"Lepton_genMatchDR", -999},   {"Lepton_genChargeFlip", -1},
       {"Lepton_genNPUTrue", -1},       {"Lepton_genCategory", -1},       {"Lepton_genCatChargeFlip", -1},
-      {"Lepton_genPromptDR", -999},    {"Lepton_genPromptPtRatio", -999}, {"Lepton_genNearestDR", -999}};
+      {"Lepton_genPromptDR", -999},    {"Lepton_genPromptPtRatio", -999}, {"Lepton_genNearestDR", -999},
+      {"Lepton_genPreFSRPdgId", -1},   {"Lepton_genPreFSRStatusFlags", -1}, {"Lepton_genPreFSRPt", -999},
+      {"Lepton_genPreFSREta", -999},   {"Lepton_genPreFSRPhi", -999},    {"Lepton_genPreFSREnergy", -999},
+      {"Lepton_genPreFSRMatchDR", -999}};
   // electron only: gen activity around the GSF track and the supercluster
   const std::vector<std::pair<std::string, float>> kTruthDefaultsEle = {
       {"Lepton_genTrkMatchPdgId", -1},    {"Lepton_genTrkMatchPt", -999},       {"Lepton_genTrkMatchDR", -999},
@@ -68,6 +71,22 @@ namespace {
         return p;
     }
     return nullptr;
+  }
+
+  // the copy of p before final-state radiation: the one flagged isLastCopyBeforeFSR at GEN on the full record
+  // (MCTruthHelper), searched among p and its earlier copies. Status-1 particles never carry the flag, so without a
+  // flagged copy p did not radiate and is its own pre-FSR copy.
+  const reco::GenParticle& lastCopyBeforeFSR(const reco::GenParticle& p) {
+    for (const reco::GenParticle* c = &p; c;) {
+      if (c->statusFlags().isLastCopyBeforeFSR())
+        return *c;
+      const reco::GenParticle* previous = nullptr;
+      for (size_t k = 0; k < c->numberOfMothers() && !previous; ++k)
+        if (c->mother(k)->pdgId() == p.pdgId())
+          previous = static_cast<const reco::GenParticle*>(c->mother(k));
+      c = previous;
+    }
+    return p;
   }
 
   // Lepton_genCategory codes; weaver merges them into the training classes
@@ -216,7 +235,7 @@ void MvaNtuplizer<T>::fill_truth(const T& lep, const edm::Ref<std::vector<T>>& r
       set("Lepton_genChargeFlip", lep.charge() * gen->pdgId() > 0 ? 1 : 0);
 
     // ancestry is taken from prunedGenParticles; the matched particle is a copy of one of them
-    const reco::Candidate* self = nullptr;
+    const reco::GenParticle* self = nullptr;
     for (const auto& p : pruned) {
       if (p.pdgId() == gen->pdgId() && p.status() == gen->status() && std::abs(p.pt() - gen->pt()) < 1e-4 * gen->pt() &&
           reco::deltaR(p, *gen) < 1e-4) {
@@ -225,6 +244,15 @@ void MvaNtuplizer<T>::fill_truth(const T& lep, const edm::Ref<std::vector<T>>& r
       }
     }
     if (self) {
+      const reco::GenParticle& pre = lastCopyBeforeFSR(*self);
+      set("Lepton_genPreFSRPdgId", pre.pdgId());
+      set("Lepton_genPreFSRStatusFlags", statusFlagWord(pre));
+      set("Lepton_genPreFSRPt", pre.pt());
+      set("Lepton_genPreFSREta", pre.eta());
+      set("Lepton_genPreFSRPhi", pre.phi());
+      set("Lepton_genPreFSREnergy", pre.energy());
+      set("Lepton_genPreFSRMatchDR", reco::deltaR(lep, pre));
+
       // first three ancestors with a pdgId different from the lepton, consecutive copies counted once
       std::vector<int> anc;
       const reco::Candidate* hadron = nullptr;
