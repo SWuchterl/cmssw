@@ -94,7 +94,10 @@ muonParTLLTrainingFeatures = cms.EDProducer(
         Lepton_validFraction=cms.string("?innerTrack.isNonnull()?innerTrack().validFraction:-1"),
         # -1 when the STA-TK propagation failed: 0, the missing-value rule of the tree (as Lepton_momentumChi2)
         Lepton_local_chi2=cms.string("max(combinedQuality().chi2LocalPosition,0)"),
-        Lepton_kink=cms.string("combinedQuality().trkKink"),
+        Lepton_local_chi2_log=cms.string("? combinedQuality().chi2LocalPosition > 0 ? log(max(combinedQuality().chi2LocalPosition,1.e-8)) : 0"),
+        # 999 when the refit or the kink search failed (MuonKinkFinder): 0, the missing-value rule of the tree
+        Lepton_kink=cms.string("? combinedQuality().trkKink != 999 ? combinedQuality().trkKink : 0"),
+        Lepton_kink_log=cms.string("? combinedQuality().trkKink > 0 && combinedQuality().trkKink != 999 ? log(max(combinedQuality().trkKink,1.e-8)) : 0"),
         Lepton_n_MatchedStations=cms.string("numberOfMatchedStations()"),
         Lepton_Valid_pixel=cms.string("?innerTrack.isNonnull()?innerTrack().hitPattern().numberOfValidPixelHits():-1"),
         Lepton_tracker_layers=cms.string("?innerTrack.isNonnull()?innerTrack().hitPattern().trackerLayersWithMeasurement():-1"),
