@@ -19,25 +19,28 @@ namespace {
 
   // missing values: -1 for indices / pdgIds / flag words, -999 for kinematics, 0 for booleans and sums
   const std::vector<std::pair<std::string, float>> kTruthDefaults = {
-      {"Lepton_genIdx", -1},           {"Lepton_genPdgId", -1},           {"Lepton_genStatusFlags", -1},
+      {"Lepton_genPdgId", -1},         {"Lepton_genStatusFlags", -1},
       {"Lepton_genMother1PdgId", -1},  {"Lepton_genMother2PdgId", -1},   {"Lepton_genMother3PdgId", -1},
       {"Lepton_genHasBAncestor", 0},   {"Lepton_genHasCAncestor", 0},    {"Lepton_genHadronPdgId", -1},
       {"Lepton_genHadronPt", -999},    {"Lepton_genFromPhoton", 0},      {"Lepton_genPhotonMotherPdgId", -1},
-      {"Lepton_genConvRadius", -999},  {"Lepton_genFromDalitz", 0},      {"Lepton_genPt", -999},
-      {"Lepton_genEta", -999},         {"Lepton_genPhi", -999},          {"Lepton_genEnergy", -999},
-      {"Lepton_genDressedPt", -999},   {"Lepton_genDressedEta", -999},   {"Lepton_genDressedPhi", -999},
-      {"Lepton_genDressedEnergy", -999}, {"Lepton_genMatchDR", -999},   {"Lepton_genChargeFlip", -1},
+      {"Lepton_genPt", -999},          {"Lepton_genEta", -999},          {"Lepton_genPhi", -999},
+      {"Lepton_genEnergy", -999},      {"Lepton_genMatchDR", -999},      {"Lepton_genChargeFlip", -1},
       {"Lepton_genNPUTrue", -1},       {"Lepton_genCategory", -1},       {"Lepton_genCatChargeFlip", -1},
       {"Lepton_genPromptDR", -999},    {"Lepton_genPromptPtRatio", -999}, {"Lepton_genNearestDR", -999},
       {"Lepton_genPreFSRPdgId", -1},   {"Lepton_genPreFSRStatusFlags", -1}, {"Lepton_genPreFSRPt", -999},
       {"Lepton_genPreFSREta", -999},   {"Lepton_genPreFSRPhi", -999},    {"Lepton_genPreFSREnergy", -999},
       {"Lepton_genPreFSRMatchDR", -999}};
-  // electron only: gen activity around the GSF track and the supercluster
+  // electron only: Dalitz decays, gen activity around the GSF track and the supercluster
   const std::vector<std::pair<std::string, float>> kTruthDefaultsEle = {
+      {"Lepton_genFromDalitz", 0},
       {"Lepton_genTrkMatchPdgId", -1},    {"Lepton_genTrkMatchPt", -999},       {"Lepton_genTrkMatchDR", -999},
       {"Lepton_genTrkMatchMotherPdgId", -1}, {"Lepton_genEMEnergySC", -999},    {"Lepton_genEMFracSC", -999},
       {"Lepton_genLeadPhotonPt", -999},   {"Lepton_genLeadPhotonMotherPdgId", -1}, {"Lepton_genHadEnergySC", -999},
       {"Lepton_genNInCone", -999},        {"Lepton_genNPi0PhotonsSC", -999},  {"Lepton_genPi0PhotonEFracSC", -999}};
+  // only with a dressed-lepton match (dressedMatch, electrons)
+  const std::vector<std::pair<std::string, float>> kTruthDefaultsDressed = {
+      {"Lepton_genDressedPt", -999}, {"Lepton_genDressedEta", -999}, {"Lepton_genDressedPhi", -999},
+      {"Lepton_genDressedEnergy", -999}};
 
   bool isBHadron(int pdg) {
     pdg = std::abs(pdg);
@@ -173,6 +176,8 @@ MvaNtuplizer<T>::MvaNtuplizer(const edm::ParameterSet& iConfig) :
     if (iConfig.exists("dressedMatch")) {
       doDressed_ = true;
       dressedMatch_token_ = consumes<edm::Association<reco::GenJetCollection>>(iConfig.getParameter<edm::InputTag>("dressedMatch"));
+      for (const auto& kv : kTruthDefaultsDressed)
+        truth_vars_[kv.first] = kv.second;
     }
     if (iConfig.exists("dressedLeptons")) {
       doDressedLeptons_ = true;
@@ -209,6 +214,9 @@ void MvaNtuplizer<T>::fill_truth(const T& lep, const edm::Ref<std::vector<T>>& r
     for (const auto& kv : kTruthDefaultsEle)
       truth_vars_[kv.first] = kv.second;
   }
+  if (doDressed_)
+    for (const auto& kv : kTruthDefaultsDressed)
+      truth_vars_[kv.first] = kv.second;
   auto set = [this](const char* name, float v) { truth_vars_.at(name) = v; };
 
   const auto& match = iEvent.get(genMatch_token_);
@@ -219,10 +227,9 @@ void MvaNtuplizer<T>::fill_truth(const T& lep, const edm::Ref<std::vector<T>>& r
     if (pu.getBunchCrossing() == 0)
       set("Lepton_genNPUTrue", pu.getTrueNumInteractions());
 
-  // 9a / 10a: the gen particle matched by the NanoAOD matcher (same as <Lepton>_genPartIdx)
+  // 9a / 10a: the gen particle matched by the NanoAOD matcher
   const reco::GenParticleRef gen = match[ref];
   if (gen.isNonnull()) {
-    set("Lepton_genIdx", gen.key());
     set("Lepton_genPdgId", gen->pdgId());
     set("Lepton_genStatusFlags", statusFlagWord(*gen));
     set("Lepton_genPt", gen->pt());
@@ -286,16 +293,17 @@ void MvaNtuplizer<T>::fill_truth(const T& lep, const edm::Ref<std::vector<T>>& r
         set("Lepton_genFromPhoton", 1);
         if (const auto* gm = firstDifferentAncestor(mother, 22))
           set("Lepton_genPhotonMotherPdgId", gm->pdgId());
-        set("Lepton_genConvRadius", gen->vertex().rho());
       }
       // Dalitz: pi0 / eta -> e+ e- gamma
-      if (mother && (mother->pdgId() == 111 || mother->pdgId() == 221) && mother->numberOfDaughters() == 3) {
-        int nEle = 0, nPho = 0;
-        for (size_t i = 0; i < mother->numberOfDaughters(); ++i) {
-          nEle += std::abs(mother->daughter(i)->pdgId()) == 11;
-          nPho += mother->daughter(i)->pdgId() == 22;
+      if constexpr (std::is_same_v<T, pat::Electron>) {
+        if (mother && (mother->pdgId() == 111 || mother->pdgId() == 221) && mother->numberOfDaughters() == 3) {
+          int nEle = 0, nPho = 0;
+          for (size_t i = 0; i < mother->numberOfDaughters(); ++i) {
+            nEle += std::abs(mother->daughter(i)->pdgId()) == 11;
+            nPho += mother->daughter(i)->pdgId() == 22;
+          }
+          set("Lepton_genFromDalitz", nEle == 2 && nPho == 1);
         }
-        set("Lepton_genFromDalitz", nEle == 2 && nPho == 1);
       }
     }
   }
