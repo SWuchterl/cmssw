@@ -135,10 +135,19 @@ muonParTLLTrainingFeatures = cms.EDProducer(
     svVars=_svVars,
 )
 
+# reco muon -> dressed gen muon (particle level, photons within dR 0.1), as electronsMCMatchForTableAlt for electrons
+from PhysicsTools.NanoAOD.electrons_cff import electronsMCMatchForTableAlt
+muonsMCMatchForTableAlt = electronsMCMatchForTableAlt.clone(
+    src=cms.InputTag("linkedObjects", "muons"),
+    matched=cms.InputTag("particleLevel", "leptons"),
+    mcPdgId=cms.vint32(13),
+)
+
 ntuplizer_muon_training = ntuplizer_muon.clone(
     src="muonParTLLTrainingFeatures",
     maxLengths=_trainingMaxLengths,
     genMatch=cms.InputTag("muonsMCMatchForTable"),
+    dressedMatch=cms.InputTag("muonsMCMatchForTableAlt"),
     prunedGenParticles=cms.InputTag("prunedGenParticles"),
     packedGenParticles=cms.InputTag("packedGenParticles"),
     pileupInfo=cms.InputTag("slimmedAddPileupInfo"),
@@ -147,6 +156,8 @@ ntuplizer_muon_training = ntuplizer_muon.clone(
 
 def customize_training_ntuplizer(process):
     process.muonParTLLTrainingFeatures = muonParTLLTrainingFeatures
+    process.muonsMCMatchForTableAlt = muonsMCMatchForTableAlt
+    process.muonMCTask.add(process.muonsMCMatchForTableAlt)
     process.muonTablesTask.add(process.muonParTLLTrainingFeatures)
     # string features bound once at construction instead of resolved on every call: same values, faster
     for label in ('muonParTLLTrainingFeatures', 'muonParTVariables', 'muonPNetVariables'):
