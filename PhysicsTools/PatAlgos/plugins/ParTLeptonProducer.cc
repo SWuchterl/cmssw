@@ -7,6 +7,8 @@
 //         Created:  Mon, 15 May 2023 08:32:03 GMT
 //
 
+#include <optional>
+
 #include "FWCore/Framework/interface/Frameworkfwd.h"
 #include "FWCore/Framework/interface/stream/EDProducer.h"
 
@@ -14,8 +16,10 @@
 #include "FWCore/Framework/interface/MakerMacros.h"
 
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
+#include "FWCore/Utilities/interface/Exception.h"
 #include "FWCore/Utilities/interface/StreamID.h"
 
+#include "CommonTools/Utils/interface/StringCutObjectSelector.h"
 #include "DataFormats/BTauReco/interface/DeepBoostedJetFeatures.h"
 #include "DataFormats/Common/interface/ValueMap.h"
 #include "DataFormats/PatCandidates/interface/Electron.h"
@@ -47,6 +51,8 @@ private:
   edm::EDGetTokenT<LeptonTagInfoCollection> src_;
   edm::EDGetTokenT<edm::View<LeptonType>> leps_;
   std::vector<std::string> flav_names_;
+  // ONNX outputs to read, concatenated in this order and matched to flav_names; empty = the first output only
+  std::vector<std::string> output_names_;
   std::vector<std::string> input_names_;            // names of each input group - the ordering is important!
   std::vector<std::vector<int64_t>> input_shapes_;  // shapes of each input group (-1 for dynamic axis)
   std::vector<unsigned> input_sizes_;               // total length of each input vector
@@ -55,6 +61,8 @@ private:
 
   cms::Ort::FloatArrays data_;
   bool debug_ = false;
+  // leptons failing it are not evaluated and keep the score -1
+  std::optional<StringCutObjectSelector<LeptonType>> selection_;
 };
 
 template <typename LeptonType>
@@ -62,7 +70,10 @@ ParTLeptonProducer<LeptonType>::ParTLeptonProducer(const edm::ParameterSet &iCon
     : src_(consumes<LeptonTagInfoCollection>(iConfig.getParameter<edm::InputTag>("src"))),
       leps_(consumes<edm::View<LeptonType>>(iConfig.getParameter<edm::InputTag>("srcLeps"))),
       flav_names_(iConfig.getParameter<std::vector<std::string>>("flav_names")),
+      output_names_(iConfig.getParameter<std::vector<std::string>>("output_names")),
       debug_(iConfig.getUntrackedParameter<bool>("debugMode", false)) {
+  if (const auto &cut = iConfig.getParameter<std::string>("leptonSelection"); !cut.empty())
+    selection_.emplace(cut);
       
   ParticleNetConstructor(iConfig, true, input_names_, prep_info_map_, input_shapes_, input_sizes_, &data_);
 
@@ -103,11 +114,21 @@ void ParTLeptonProducer<LeptonType>::produce(edm::Event &iEvent, const edm::Even
   if (!src->empty()) {
     assert(src->size() == leps->size());
     for (size_t ilep = 0; ilep < src->size(); ilep++) {
+      if (selection_ && !(*selection_)((*leps)[ilep]))
+        continue;
       const auto &taginfo = (*src)[ilep];
       make_inputs(taginfo);
       
-      auto outputs = globalCache()->run(input_names_, data_, input_shapes_)[0];
-      assert(outputs.size() == flav_names_.size());
+      std::vector<float> outputs;
+      if (output_names_.empty()) {
+        outputs = globalCache()->run(input_names_, data_, input_shapes_)[0];
+      } else {
+        for (const auto &out : globalCache()->run(input_names_, data_, input_shapes_, output_names_))
+          outputs.insert(outputs.end(), out.begin(), out.end());
+      }
+      if (outputs.size() != flav_names_.size())
+        throw cms::Exception("ParTLeptonProducer")
+            << "the model gives " << outputs.size() << " values, but " << flav_names_.size() << " flav_names are set";
       for (unsigned int iflav = 0; iflav < flav_names_.size(); ++iflav) {
         mvaScores[iflav][ilep] = outputs.at(iflav);
       }
@@ -139,6 +160,10 @@ void ParTLeptonProducer<LeptonType>::fillDescriptions(edm::ConfigurationDescript
   desc.add<edm::InputTag>("src")->setComment("input variables");
   desc.add<edm::InputTag>("srcLeps")->setComment("input physics object collection. src and srcLeps must be in synch");
   desc.add<std::vector<std::string>>("flav_names")->setComment("Names of the oputput classes");
+  desc.add<std::vector<std::string>>("output_names", {})
+      ->setComment("ONNX outputs read and concatenated in this order (one flav_name per value); empty = first output");
+  desc.add<std::string>("leptonSelection", "")
+      ->setComment("leptons failing this cut are not evaluated and get the score -1; empty = all");
   desc.add<std::string>("preprocess_json", "PhysicsTools/NanoAOD/data/ParTMuonId/v2/preprocess.json");
   desc.add<edm::FileInPath>("model_path", edm::FileInPath("PhysicsTools/NanoAOD/data/ParTMuonId/v2/muon_ParT_2024.onnx"));
   desc.addOptionalUntracked<bool>("debugMode", false);
